@@ -11,6 +11,7 @@ import ProductDetailScreen from "./src/screens/ProductDetailScreen";
 import ViewCartScreen from "./src/screens/ViewCartScreen";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckoutScreen from "./src/screens/CheckoutScreen";
+import PaymentScreen from "./src/screens/PaymentScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -69,6 +70,12 @@ const App = () => {
                     component={CheckoutScreen}
                     options={{
                         title: "Checkout",
+                    }} />
+                <Stack.Screen
+                    name="Payment"
+                    component={PaymentScreen}
+                    options={{
+                        title: "Payment",
                     }} />
             </Stack.Navigator>
         </NavigationContainer>

@@ -53,9 +53,9 @@ const ProductScreen = ({ navigation }) => {
                 data={item.items}
                 renderItem={({ item }) => (
                     <View style={styles.image_view}>
-                        <TouchableOpacity onPress={()=>navigation.navigate('ProductDetail')}>
-                            <Image 
-                                source={item.source} 
+                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail')}>
+                            <Image
+                                source={item.source}
                                 style={styles.image}
                                 resizeMode="center" />
                         </TouchableOpacity>
@@ -79,8 +79,9 @@ const ProductScreen = ({ navigation }) => {
                     placeholder='Search' />
             </View>
             <View style={styles.view2}>
-                <View style={{ width: 150, }}>
+                <View style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1, }}>
                     <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
                         open={category}
                         value={categoryValue}
                         items={categoryItems}
@@ -144,9 +145,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginHorizontal: 15,
         justifyContent: 'space-around',
+        position:'relative',
+        zIndex:1,
+        elevation:1,
     },
     view3: {
-        height:500,
+        height: 500,
         marginHorizontal: 15,
         marginTop: 10,
     },
