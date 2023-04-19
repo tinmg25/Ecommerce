@@ -6,8 +6,9 @@ import {
     Image,
     TextInput,
     TouchableOpacity,
-    Alert
+    ToastAndroid,
 } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LoginScreen = ({ navigation }) => {
 
@@ -28,22 +29,11 @@ const LoginScreen = ({ navigation }) => {
             if (response.ok) {
                 navigation.navigate('Product');
             } else {
-                Alert.alert(
-                    'Invalid email or password',
-                    'Please check your login credentials and try again!',
-                    [
-                        {
-                            text: 'OK',
-                        }
-                    ],
-                    {
-                        cancelable: false,
-                    }
-                );
+                ToastAndroid.show('Invalid Email or Password, Try Again!', ToastAndroid.SHORT)
             }
         }
         catch (e) {
-            setError("Something went wrong");
+
         }
     };
 
@@ -56,17 +46,32 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.login}>Login</Text>
             <View style={styles.view2}>
                 <Text style={styles.email_text}>Email Address</Text>
-                <TextInput
-                    style={styles.email_input}
-                    onChangeText={setEmail} />
+                <View style={styles.email_view}>
+                    <MaterialCommunityIcons
+                        style={{ alignSelf: 'center', paddingLeft: 10, color:'#000' }}
+                        name="email-outline"
+                        size={25} />
+                    <TextInput
+                        style={styles.email_input}
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
+                        inlineImageLeft='' />
+                </View>
                 <Text style={styles.pwd_text}>Password</Text>
-                <TextInput
-                    secureTextEntry
-                    style={styles.pwd_input}
-                    onChangeText={setPassword} />
+                <View style={styles.pwd_view}>
+                    <MaterialCommunityIcons
+                        style={{ alignSelf: 'center', paddingLeft: 10, color:'#000', }}
+                        name="lock-outline"
+                        size={25} />
+                    <TextInput
+                        style={styles.pwd_input}
+                        secureTextEntry
+                        value={password}
+                        onChangeText={(text) => setPassword(text)} />
+                </View>
             </View>
             <View style={styles.view3}>
-                <TouchableOpacity onPress={handleLogin}>
+                <TouchableOpacity onPress={() => handleLogin()}>
                     <Text style={styles.login_btn}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
@@ -78,7 +83,6 @@ const LoginScreen = ({ navigation }) => {
                     <Text style={styles.forgot_pwd}>forgot password?</Text>
                 </TouchableOpacity>
             </View>
-            {error && <Text>{error}</Text>}
         </View>
     );
 }
@@ -116,18 +120,31 @@ const styles = StyleSheet.create({
         color: "#000000",
         alignSelf: 'center',
     },
-    email_text: {
-        fontSize: 15,
-        color: "#000000",
-        marginBottom: 10,
-    },
-    email_input: {
+    email_view: {
+        flexDirection: 'row',
         width: 300,
         height: 50,
         borderColor: "#000000",
         borderWidth: 2,
         borderRadius: 10,
         marginBottom: 10,
+    },
+    email_text: {
+        fontSize: 15,
+        color: "#000000",
+        marginBottom: 10,
+    },
+    email_input: {
+        width:300,
+        fontSize:20,
+    },
+    pwd_view: {
+        flexDirection:'row',
+        width: 300,
+        height: 50,
+        borderColor: "#000000",
+        borderWidth: 2,
+        borderRadius: 10,
     },
     pwd_text: {
         fontSize: 15,
@@ -135,11 +152,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     pwd_input: {
-        width: 300,
-        height: 50,
-        borderColor: "#000000",
-        borderWidth: 2,
-        borderRadius: 10,
+        width:300,
+        fontSize:20,
     },
     view3: {
         marginTop: 20,
@@ -175,10 +189,8 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
 
     },
-    alertContainer: {
-        borderRadius:50,
-        borderColor:'#04144F',
-        borderWidth:2,
+    toast: {
+
     }
 });
 

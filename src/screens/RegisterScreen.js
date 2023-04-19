@@ -42,11 +42,14 @@ const RegisterScreen = ({ navigation }) => {
                     onChangeText={setEmail} />
                 <Text style={styles.pwd_text}>Password</Text>
                 <TextInput
+                    secureTextEntry
                     style={styles.pwd_input}
                     value={password}
                     onChangeText={setPassword} />
                 <Text style={styles.con_pwd_text}>Confirm Password</Text>
-                <TextInput style={styles.con_pwd_input} />
+                <TextInput
+                    secureTextEntry
+                    style={styles.con_pwd_input} />
             </View>
             <View style={styles.view3}>
                 <TouchableOpacity onPress={handleRegister}>
@@ -84,6 +87,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         marginBottom: 10,
+        fontSize:20,
     },
     pwd_text: {
         fontSize: 15,
@@ -97,6 +101,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         marginBottom: 10,
+        fontSize:20,
     },
     con_pwd_text: {
         fontSize: 15,
@@ -110,6 +115,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         marginBottom: 20,
+        fontSize:20,
     },
     view3: {
         alignSelf: 'center',

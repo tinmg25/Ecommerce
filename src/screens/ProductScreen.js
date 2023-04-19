@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TextInput,
+    Image,
+    TouchableOpacity,
+    ToastAndroid
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -67,6 +76,10 @@ const ProductScreen = ({ navigation }) => {
             />
         </View>
     );
+
+    useEffect(() => {
+        ToastAndroid.show('Login Successful',ToastAndroid.SHORT)
+    })
 
     return (
         <View style={styles.container}>
@@ -145,9 +158,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginHorizontal: 15,
         justifyContent: 'space-around',
-        position:'relative',
-        zIndex:1,
-        elevation:1,
+        position: 'relative',
+        zIndex: 1,
+        elevation: 1,
     },
     view3: {
         height: 500,
