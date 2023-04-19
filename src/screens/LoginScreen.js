@@ -16,25 +16,33 @@ const LoginScreen = ({ navigation }) => {
     const [error, setError] = useState(null);
 
     const handleLogin = async () => {
-        try{
-            const response = await fetch('http://localhost:8087/api/login',{
-                method:'POST',
+        try {
+            const response = await fetch('http://192.168.64.73:8087/api/login', {
+                method: 'POST',
                 headers: {
-                    'Content-Type' : 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error));
+            });
 
-            if(response.ok){
+            if (response.ok) {
                 navigation.navigate('Product');
             } else {
-                setError("Invalid email or password");
+                Alert.alert(
+                    'Invalid email or password',
+                    'Please check your login credentials and try again!',
+                    [
+                        {
+                            text: 'OK',
+                        }
+                    ],
+                    {
+                        cancelable: false,
+                    }
+                );
             }
         }
-        catch(e){
+        catch (e) {
             setError("Something went wrong");
         }
     };
@@ -166,6 +174,11 @@ const styles = StyleSheet.create({
         textDecorationColor: "#618CFB",
         textDecorationLine: "underline",
 
+    },
+    alertContainer: {
+        borderRadius:50,
+        borderColor:'#04144F',
+        borderWidth:2,
     }
 });
 
