@@ -41,19 +41,25 @@ const ProductScreen = ({ navigation }) => {
 
     const [category, setCategory] = useState(false);
     const [categoryValue, setCategoryValue] = useState(null);
-    const [categoryItems, setCategoryItems] = useState([
-        { label: 'Laptop', value: 'laptop' },
-        { label: 'Phone', value: 'phone' },
-        { label: 'Backpack', value: 'backpack' },
-    ]);
+    const [categoryItems, setCategoryItems] = useState([]);
+
+    useEffect(() => {
+        fetch('http://192.168.64.81:8087/api/category')
+            .then((response) => response.json())
+            .then((data) => setCategoryItems(data))
+            .catch((error) => console.error(error));
+    }, []);
 
     const [brand, setBrand] = useState(false);
     const [brandValue, setBrandValue] = useState(null);
-    const [brandItems, setBrandItems] = useState([
-        { label: 'Apple', value: 'apple' },
-        { label: 'Samsung', value: 'samsung' },
-        { label: 'Xiaomi', value: 'xiaomi' },
-    ]);
+    const [brandItems, setBrandItems] = useState([]);
+
+    useEffect(() => {
+        fetch('http://192.168.64.81:8087/api/brand')
+            .then((response) => response.json())
+            .then((data) => setBrandItems(data))
+            .catch((error) => console.error(error));
+    })
 
     const renderItem = ({ item }) => (
         <View>
@@ -77,9 +83,21 @@ const ProductScreen = ({ navigation }) => {
         </View>
     );
 
-    useEffect(() => {
-        ToastAndroid.show('Login Successful',ToastAndroid.SHORT)
-    })
+    const categoryItem = [
+        { label: '', value: null },
+        ...categoryItems.map((catItem) => ({
+            label: catItem.category_name,
+            value: catItem.category_id,
+        })),
+    ];
+
+    const brandItem = [
+        { label: '', value: null },
+        ...brandItems.map((bItem) => ({
+            label: bItem.brand_name,
+            value: bItem.brand_id,
+        })),
+    ];
 
     return (
         <View style={styles.container}>
@@ -97,18 +115,19 @@ const ProductScreen = ({ navigation }) => {
                         style={{ zIndex: 2, elevation: 2 }}
                         open={category}
                         value={categoryValue}
-                        items={categoryItems}
+                        items={categoryItem}
                         setOpen={setCategory}
                         setValue={setCategoryValue}
                         setItems={setCategoryItems}
                         placeholder='Category'
                     />
                 </View>
-                <View style={{ width: 150, }}>
+                <View style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1, }}>
                     <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
                         open={brand}
                         value={brandValue}
-                        items={brandItems}
+                        items={brandItem}
                         setOpen={setBrand}
                         setValue={setBrandValue}
                         setItems={setBrandItems}
