@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -8,7 +8,24 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ViewCartScreen = ({navigation}) => {
+const ViewCartScreen = ({ route,navigation }) => {
+
+    const { productId,productName,productPrice,productDesc} = route.params;
+
+    const [count, setCount] = useState(1);
+
+    const increment = () => {
+        setCount( count + 1);
+    }
+
+    const decrement = () => {
+        if(count<=1){
+            setCount(1);
+        } else{
+            setCount( count - 1);
+        }
+    }
+    
     return (
         <View>
             <View style={styles.main_view}>
@@ -17,15 +34,15 @@ const ViewCartScreen = ({navigation}) => {
                         style={styles.image}
                         source={require('../images/laptop1.png')}
                         resizeMode="center" />
-                    <Text style={styles.title}>ASUS Vivobook S15 S530</Text>
-                    <Text style={styles.price}>Price :</Text>
+                    <Text style={styles.title}>{productDesc}</Text>
+                    <Text style={styles.price}>Price : $ {productPrice}</Text>
                 </View>
                 <View style={styles.view2}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>decrement()}>
                         <MaterialCommunityIcons name='minus-box' size={30} />
                     </TouchableOpacity>
-                    <Text style={styles.count}>1</Text>
-                    <TouchableOpacity>
+                    <Text style={styles.count}>{count}</Text>
+                    <TouchableOpacity onPress={increment}>
                         <MaterialCommunityIcons name='plus-box' size={30} />
                     </TouchableOpacity>
                 </View>

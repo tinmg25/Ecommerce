@@ -2,26 +2,31 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ProductDetailScreen = ({ navigation }) => {
+const ProductDetailScreen = ({ route, navigation }) => {
+
+    const { productId,productName,productPrice,productDesc } = route.params;
+
     return (
         <View>
             <View style={styles.view1}>
                 <TouchableOpacity 
                     style={{alignSelf:'flex-end',marginRight:10,marginTop:5}}
-                    onPress={()=>navigation.navigate('ViewCart')}>
+                    onPress={()=>navigation.navigate('ViewCart',
+                    {
+                        productId,
+                        productName,
+                        productPrice,
+                        productDesc
+                    })}>
                     <MaterialCommunityIcons
                         style={styles.cart}
                         name='cart'
                         size={30} />
                 </TouchableOpacity>
-                <Image
-                    style={styles.image}
-                    source={require('../images/laptop1.png')}
-                    resizeMode="center" />
             </View>
             <View style={styles.view2}>
                 <Text style={styles.stock}>Remaining Stock - </Text>
-                <Text style={styles.title}>ASUS Vivobook S15 S530</Text>
+                <Text style={styles.title}>{productDesc}</Text>
             </View>
         </View>
     );

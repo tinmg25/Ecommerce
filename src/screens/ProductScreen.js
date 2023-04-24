@@ -7,81 +7,91 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
-    ToastAndroid
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const data = [
-    {
-        id: 1, name: 'Laptop',
-        items: [
-            { id: 1, source: require('../images/laptop1.png') },
-            { id: 2, source: require('../images/laptop2.png') },
-            { id: 3, source: require('../images/laptop3.png') },
-        ]
-    },
-    {
-        id: 2, name: 'Phone',
-        items: [
-            { id: 1, source: require('../images/phone1.png') },
-            { id: 2, source: require('../images/phone2.png') },
-        ]
-    },
-    {
-        id: 3, name: 'Backpack',
-        items: [
-            { id: 1, source: require('../images/bp1.png') },
-            { id: 2, source: require('../images/bp2.png') },
-        ]
-    },
-]
+// const data = [
+//     {
+//         id: 1, name: 'Laptop',
+//         items: [
+//             { id: 1, name: 'asus', source: require('../images/laptop1.png') },
+//             { id: 2, name: 'dell', source: require('../images/laptop2.png') },
+//             { id: 3, name: 'hp', source: require('../images/laptop3.png') },
+//         ]
+//     },
+//     {
+//         id: 2, name: 'Phone',
+//         items: [
+//             { id: 1, source: require('../images/phone1.png') },
+//             { id: 2, source: require('../images/phone2.png') },
+//         ]
+//     },
+//     {
+//         id: 3, name: 'Backpack',
+//         items: [
+//             { id: 1, source: require('../images/bp1.png') },
+//             { id: 2, source: require('../images/bp2.png') },
+//         ]
+//     },
+// ]
 
 const ProductScreen = ({ navigation }) => {
+
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        fetch('http://192.168.64.60:8087/api/product')
+            .then(response => response.json())
+            .then(data => setData(data))
+            .catch(error => console.log(error));
+
+    }, []);
+
+    const renderItem = ({ item }) => (
+        <View>
+            <Text style={styles.product_title}>{item.name}</Text>
+            <FlatList
+                data={data}
+                renderItem={({ item }) => (
+                    <View style={styles.image_view}>
+                        <TouchableOpacity 
+                        onPress={() => navigation.navigate('ProductDetail',
+                        {
+                            productId: item.product_id,
+                            productName: item.product_name,
+                            productPrice: item.price,
+                            productDesc: item.description,
+                        })}>
+                            <Image
+                                source={item.source}
+                                style={styles.image}
+                                resizeMode="center" />
+                        </TouchableOpacity>
+                        <Text>Name - {item.product_name}</Text>
+                        <Text>Price - {item.price}</Text>
+                    </View>
+                )}
+                keyExtractor={(item) => item.product_id}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            />
+        </View>
+    );
 
     const [category, setCategory] = useState(false);
     const [categoryValue, setCategoryValue] = useState(null);
     const [categoryItems, setCategoryItems] = useState([]);
 
     useEffect(() => {
-        fetch('http://192.168.64.81:8087/api/category')
-            .then((response) => response.json())
-            .then((data) => setCategoryItems(data))
-            .catch((error) => console.error(error));
+        const fetchData = async () => {
+            const response = await fetch('http://192.168.64.60:8087/api/category');
+            const result = await response.json();
+            setCategoryItems(result);
+        }
+
+        fetchData();
     }, []);
-
-    const [brand, setBrand] = useState(false);
-    const [brandValue, setBrandValue] = useState(null);
-    const [brandItems, setBrandItems] = useState([]);
-
-    useEffect(() => {
-        fetch('http://192.168.64.81:8087/api/brand')
-            .then((response) => response.json())
-            .then((data) => setBrandItems(data))
-            .catch((error) => console.error(error));
-    })
-
-    const renderItem = ({ item }) => (
-        <View>
-            <Text style={styles.product_title}>{item.name}</Text>
-            <FlatList
-                data={item.items}
-                renderItem={({ item }) => (
-                    <View style={styles.image_view}>
-                        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail')}>
-                            <Image
-                                source={item.source}
-                                style={styles.image}
-                                resizeMode="center" />
-                        </TouchableOpacity>
-                    </View>
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-            />
-        </View>
-    );
 
     const categoryItem = [
         { label: '', value: null },
@@ -90,6 +100,20 @@ const ProductScreen = ({ navigation }) => {
             value: catItem.category_id,
         })),
     ];
+
+    const [brand, setBrand] = useState(false);
+    const [brandValue, setBrandValue] = useState(null);
+    const [brandItems, setBrandItems] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('http://192.168.64.60:8087/api/brand');
+            const result = await response.json();
+            setBrandItems(result);
+        }
+
+        fetchData();
+    }, []);
 
     const brandItem = [
         { label: '', value: null },
@@ -139,7 +163,7 @@ const ProductScreen = ({ navigation }) => {
                 <FlatList
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.id}
                     onRefresh={() => { }}
                     refreshing={false}
                     showsVerticalScrollIndicator={false}
