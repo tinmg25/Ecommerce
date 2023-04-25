@@ -23,6 +23,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         name='cart'
                         size={30} />
                 </TouchableOpacity>
+                <Text style={{fontSize:50}}>Image</Text>
             </View>
             <View style={styles.view2}>
                 <Text style={styles.stock}>Remaining Stock - </Text>

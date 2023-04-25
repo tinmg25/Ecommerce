@@ -76,7 +76,7 @@ const CheckoutScreen = ({ navigation }) => {
         if (phoneInput.trim() === '') {
             setPhoneError('Please Enter Phone Number');
         } else if (!handlePhone(phoneInput)) {
-            setPhoneError('Please Enter Only Numbers for Phone Number');
+            setPhoneError('Please Enter Only Numbers in Phone Number');
         } else {
             setPhoneError('');
         }

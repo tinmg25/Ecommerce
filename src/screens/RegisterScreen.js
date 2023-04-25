@@ -9,23 +9,107 @@ import {
 
 const RegisterScreen = ({ navigation }) => {
 
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [conPassword, setConPassword] = useState('');
+
+    const [nameError, setNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [conPasswordError, setConPasswordError] = useState('');
+
+    const handleUserName = (name) => {
+        const nameRegex = /^[a-zA-Z\s]*$/;
+        return nameRegex.test(name);
+    };
+
+    const handleEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handlePhone = (phone) => {
+        const phoneRegex = /^[0-9]{11}$/;
+        return phoneRegex.test(phone);
+    }
+
+    const handlePassword = (password) => {
+        const passwordRegex = /^.{8,}$/;
+        return passwordRegex.test(password);
+
+    }
+
+    const handleConPassword = (conPassword) => {
+        return conPassword === password;
+    }
+
+    const validateForm = () => {
+        if (name.trim() === '') {
+            setNameError('Please Enter Username');
+        } else if (!handleUserName(name)) {
+            setNameError('Please Enter Only Characters in Name');
+        } else {
+            setNameError('');
+        }
+
+        if (email.trim() === '') {
+            setEmailError('Please Enter Email');
+        } else if (!handleEmail(email)) {
+            setEmailError('Please Enter Correct Format in Email');
+        } else {
+            setEmailError('');
+        }
+
+        if (phone.trim() === '') {
+            setPhoneError('Please Enter Phone No.');
+        } else if (!handlePhone(phone)) {
+            setPhoneError('Please Enter Only Numbers in Phone Number');
+        } else {
+            setPhoneError('');
+        }
+
+        if (password.trim() === '') {
+            setPasswordError('Please Enter Password');
+        } else if (!handlePassword(password)) {
+            setPasswordError('Password must be at leaset 8 characters');
+        } else {
+            setPasswordError('');
+        }
+
+        if (conPassword.trim() === '') {
+            setConPasswordError('Please Enter Confirm Password');
+        } else if (!handleConPassword(conPassword)) {
+            setConPasswordError('Password do not match');
+        } else {
+            setConPasswordError('');
+        }
+
+        if (handleUserName(name) && handleEmail(email) && handlePhone(phone) &&
+            handlePassword(password) && handleConPassword(conPassword)) {
+            handleRegister();
+        }
+    }
+
 
     const handleRegister = async () => {
         try {
-            const response = await fetch('http://192.168.64.60:8087/api/register', {
+            const response = await fetch('http://192.168.64.77:8087/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    name,
                     email,
+                    phone,
                     password
                 })
             });
             const data = await response.json();
-            console.log("User Regisered", data);
+            navigation.navigate('Login');
         } catch (error) {
             console.error("Registration Failed", error);
         }
@@ -35,24 +119,41 @@ const RegisterScreen = ({ navigation }) => {
         <View>
             <Text style={styles.reg}>Register</Text>
             <View style={styles.view2}>
-                <Text style={styles.email_text}>Email Address</Text>
+                <Text style={styles.label}>Username</Text>
                 <TextInput
-                    style={styles.email_input}
+                    style={styles.text_input}
+                    value={name}
+                    onChangeText={setName} />
+                {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
+                <Text style={styles.label}>Email Address</Text>
+                <TextInput
+                    style={styles.text_input}
                     value={email}
                     onChangeText={setEmail} />
-                <Text style={styles.pwd_text}>Password</Text>
+                {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+                <Text style={styles.label}>Phone No.</Text>
+                <TextInput
+                    style={styles.text_input}
+                    value={phone}
+                    onChangeText={setPhone} />
+                {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
+                <Text style={styles.label}>Password</Text>
                 <TextInput
                     secureTextEntry
-                    style={styles.pwd_input}
+                    style={styles.text_input}
                     value={password}
                     onChangeText={setPassword} />
-                <Text style={styles.con_pwd_text}>Confirm Password</Text>
+                {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
+                <Text style={styles.label}>Confirm Password</Text>
                 <TextInput
                     secureTextEntry
-                    style={styles.con_pwd_input} />
+                    style={styles.text_input}
+                    value={conPassword}
+                    onChangeText={setConPassword} />
+                {conPasswordError ? <Text style={styles.errorMessage}>{conPasswordError}</Text> : null}
             </View>
             <View style={styles.view3}>
-                <TouchableOpacity onPress={handleRegister}>
+                <TouchableOpacity onPress={() => validateForm()}>
                     <Text style={styles.reg_btn}>Register</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
@@ -69,53 +170,24 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#000000",
         alignSelf: 'center',
-        paddingTop: 50,
-        marginBottom: 20,
+        marginVertical: 20,
     },
     view2: {
         alignSelf: 'center',
     },
-    email_text: {
+    label: {
         fontSize: 15,
         color: "#000000",
-        marginBottom: 10,
+        marginBottom: 5,
     },
-    email_input: {
+    text_input: {
         width: 300,
         height: 50,
         borderColor: "#000000",
         borderWidth: 2,
         borderRadius: 10,
-        marginBottom: 10,
-        fontSize:20,
-    },
-    pwd_text: {
-        fontSize: 15,
-        color: "#000000",
-        marginBottom: 10,
-    },
-    pwd_input: {
-        width: 300,
-        height: 50,
-        borderColor: "#000000",
-        borderWidth: 2,
-        borderRadius: 10,
-        marginBottom: 10,
-        fontSize:20,
-    },
-    con_pwd_text: {
-        fontSize: 15,
-        color: "#000000",
-        marginBottom: 10,
-    },
-    con_pwd_input: {
-        width: 300,
-        height: 50,
-        borderColor: "#000000",
-        borderWidth: 2,
-        borderRadius: 10,
-        marginBottom: 20,
-        fontSize:20,
+        fontSize: 20,
+        marginBottom: 5,
     },
     view3: {
         alignSelf: 'center',
@@ -128,7 +200,7 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         borderRadius: 50,
-        marginBottom: 20,
+        marginVertical: 20,
     },
     login_btn: {
         width: 250,
@@ -138,6 +210,10 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         borderRadius: 50,
+    },
+    errorMessage: {
+        color: 'red',
+        marginBottom:5,
     },
 });
 

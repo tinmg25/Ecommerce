@@ -2,7 +2,8 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Splash from "./src/screens/Splash"
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import Splash from "./src/screens/Splash";
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import PasswordResetScreen from "./src/screens/PasswordResetScreen";
@@ -12,13 +13,14 @@ import ViewCartScreen from "./src/screens/ViewCartScreen";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckoutScreen from "./src/screens/CheckoutScreen";
 import PaymentScreen from "./src/screens/PaymentScreen";
+import OrderListScreen from "./src/screens/OrderListScreen";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-const App = () => {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Splash">
+const MainStackNavigator = () => {
+    return(
+        <Stack.Navigator initialRouteName="Splash">
                 <Stack.Screen
                     name="Splash"
                     component={Splash}
@@ -78,6 +80,23 @@ const App = () => {
                         title: "Payment",
                     }} />
             </Stack.Navigator>
+    )
+}
+
+const DrawerNavigator = () => {
+    return(
+        <Drawer.Navigator initialRouteName="Home">
+            <Drawer.Screen name="Home" component={MainStackNavigator}/>
+            <Drawer.Screen name="Cart" component={ViewCartScreen}/>
+            <Drawer.Screen name="Order" component={OrderListScreen}/>
+        </Drawer.Navigator>
+    )
+}
+
+const App = () => {
+    return (
+        <NavigationContainer>
+            <DrawerNavigator/>
         </NavigationContainer>
     );
 }

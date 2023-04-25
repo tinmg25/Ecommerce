@@ -14,11 +14,10 @@ const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.60:8087/api/login', {
+            const response = await fetch('http://192.168.64.77:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

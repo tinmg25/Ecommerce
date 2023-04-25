@@ -41,7 +41,7 @@ const ProductScreen = ({ navigation }) => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch('http://192.168.64.60:8087/api/product')
+        fetch('http://192.168.64.77:8087/api/product')
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.log(error));
@@ -54,7 +54,7 @@ const ProductScreen = ({ navigation }) => {
             <FlatList
                 data={data}
                 renderItem={({ item }) => (
-                    <View style={styles.image_view}>
+                    <View style={styles.image_view} key={item.product_id}>
                         <TouchableOpacity 
                         onPress={() => navigation.navigate('ProductDetail',
                         {
@@ -63,10 +63,7 @@ const ProductScreen = ({ navigation }) => {
                             productPrice: item.price,
                             productDesc: item.description,
                         })}>
-                            <Image
-                                source={item.source}
-                                style={styles.image}
-                                resizeMode="center" />
+                            <Text style={{fontSize:50}}>Image</Text>
                         </TouchableOpacity>
                         <Text>Name - {item.product_name}</Text>
                         <Text>Price - {item.price}</Text>
@@ -85,7 +82,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.60:8087/api/category');
+            const response = await fetch('http://192.168.64.77:8087/api/category');
             const result = await response.json();
             setCategoryItems(result);
         }
@@ -107,7 +104,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.60:8087/api/brand');
+            const response = await fetch('http://192.168.64.77:8087/api/brand');
             const result = await response.json();
             setBrandItems(result);
         }
@@ -163,7 +160,7 @@ const ProductScreen = ({ navigation }) => {
                 <FlatList
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.product_id}
                     onRefresh={() => { }}
                     refreshing={false}
                     showsVerticalScrollIndicator={false}
