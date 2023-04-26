@@ -33,7 +33,7 @@ const PaymentScreen = ({ navigation }) => {
                 </View>
             </View>
             <TouchableOpacity>
-                <Image style={styles.paypal} source={require('../images/paypal.png')} />
+                <Text>Image</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Product')}>
                 <Text style={styles.payment}>Pay Now</Text>

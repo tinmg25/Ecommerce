@@ -30,10 +30,7 @@ const ViewCartScreen = ({ route,navigation }) => {
         <View>
             <View style={styles.main_view}>
                 <View>
-                    <Image
-                        style={styles.image}
-                        source={require('../images/laptop1.png')}
-                        resizeMode="center" />
+                    <Text>Image</Text>
                     <Text style={styles.title}>{productDesc}</Text>
                     <Text style={styles.price}>Price : $ {productPrice}</Text>
                 </View>

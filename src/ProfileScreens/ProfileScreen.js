@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const OrderListScreen = () => {
+const ProfileScreen = () => {
     return(
         <View>
-            <Text>Order List</Text>
+            <Text>Profile Screen</Text>
         </View>
     )
 }
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
 
-});
+})
 
-export default OrderListScreen;
+export default ProfileScreen;
