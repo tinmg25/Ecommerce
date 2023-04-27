@@ -7,7 +7,6 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
-    DrawerLayoutAndroid,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -42,7 +41,7 @@ const ProductScreen = ({ navigation }) => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch('http://192.168.64.77:8087/api/product')
+        fetch('http://192.168.64.51:8087/api/product')
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.log(error));
@@ -83,7 +82,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.77:8087/api/category');
+            const response = await fetch('http://192.168.64.51:8087/api/category');
             const result = await response.json();
             setCategoryItems(result);
         }
@@ -105,7 +104,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.77:8087/api/brand');
+            const response = await fetch('http://192.168.64.51:8087/api/brand');
             const result = await response.json();
             setBrandItems(result);
         }
@@ -121,44 +120,8 @@ const ProductScreen = ({ navigation }) => {
         })),
     ];
 
-    // const drawer = useRef(null);
-
-    // const navigationView = () => (
-    //     <View style={[styles.container, styles.navigationContainer]}>
-    //         <Text style={styles.menuHead}>HL</Text>
-    //         <TouchableOpacity onPress={() => navigation.navigate('Product')}>
-    //             <View style={styles.menuView}>
-    //                 <MaterialCommunityIcons style={styles.menuIcon} name="home" size={30} />
-    //                 <Text style={styles.menuItem}>Home</Text>
-    //             </View>
-    //         </TouchableOpacity>
-    //         <TouchableOpacity>
-    //             <View style={styles.menuView}>
-    //                 <MaterialCommunityIcons style={styles.menuIcon} name="view-list" size={30} />
-    //                 <Text style={styles.menuItem}>Order List</Text>
-    //             </View>
-    //         </TouchableOpacity>
-    //         <View style={styles.menuView}>
-    //             <MaterialCommunityIcons style={styles.menuIcon} name="account" size={30} />
-    //             <Text style={styles.menuItem}>Profile</Text>
-    //         </View>
-    //         <View style={styles.menuView}>
-    //             <MaterialCommunityIcons style={styles.menuIcon} name="cog" size={30} />
-    //             <Text style={styles.menuItem}>Setting</Text>
-    //         </View>
-    //     </View>
-    // );
-
     return (
-        // <DrawerLayoutAndroid
-        //     ref={drawer}
-        //     drawerPosition='left'
-        //     drawerWidth={300}
-        //     renderNavigationView={navigationView}>
             <View style={styles.container}>
-                {/* <TouchableOpacity onPress={() => drawer.current.openDrawer()}>
-                    <MaterialCommunityIcons style={styles.drawerIcon} name="menu" size={30} />
-                </TouchableOpacity> */}
                 <View style={styles.searchBar}>
                     <MaterialCommunityIcons style={styles.iconStyle} name="magnify" size={30} />
                     <TextInput

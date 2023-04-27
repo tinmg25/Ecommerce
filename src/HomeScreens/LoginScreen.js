@@ -17,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.77:8087/api/login', {
+            const response = await fetch('http://192.168.64.51:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ const LoginScreen = ({ navigation }) => {
             });
 
             if (response.ok) {
-                navigation.navigate('Product');
+                navigation.navigate('Main');
             } else {
                 ToastAndroid.show('Invalid Email or Password, Try Again!', ToastAndroid.SHORT)
             }
@@ -76,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <Text style={styles.reg_btn}>Register</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Product')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
                     <Text style={styles.reg_btn}>Test Login</Text>
                 </TouchableOpacity>
             </View>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     email_input: {
-        width:300,
+        width:250,
         fontSize:20,
     },
     pwd_view: {
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     pwd_input: {
-        width:300,
+        width:250,
         fontSize:20,
     },
     view3: {

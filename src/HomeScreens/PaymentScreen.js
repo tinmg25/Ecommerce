@@ -35,7 +35,7 @@ const PaymentScreen = ({ navigation }) => {
             <TouchableOpacity>
                 <Text>Image</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Product')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Main')}>
                 <Text style={styles.payment}>Pay Now</Text>
             </TouchableOpacity>
         </View>

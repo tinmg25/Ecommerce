@@ -100,7 +100,7 @@ const CheckoutScreen = ({ navigation }) => {
         if(handleName(nameInput) && handleEmail(emailInput) && 
         handleAddress(addressInput) && handlePhone(phoneInput) && 
         handleTownship(townshipInput) && handlePostal(postalInput)){
-            navigation.navigate('Payment');
+            navigation.navigate('OrderList');
         }
     };
 
