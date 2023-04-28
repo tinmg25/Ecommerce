@@ -16,6 +16,7 @@ import PaymentScreen from "./src/HomeScreens/PaymentScreen";
 import OrderListScreen from "./src/OrderScreens/OrderListScreen";
 import OrderDetailScreen from "./src/OrderScreens/OrderDetailScreen";
 import ProfileScreen from "./src/ProfileScreens/ProfileScreen";
+import EditProfileScreen from "./src/ProfileScreens/EditProfileScreen";
 import SettingScreen from "./src/SettingScreens/SettingScreen";
 
 import { EventRegister } from "react-native-event-listeners";
@@ -32,14 +33,14 @@ const MainTabNavigator = () => {
                 name="Product"
                 component={ProductScreen}
                 options={({ navigation }) => ({
-                    headerRight: () => (
-                        <TouchableOpacity
-                            title="Logout"
-                            onPress={() => navigation.navigate('Login')}
-                        >
-                            <MaterialCommunityIcons name="logout" size={30} color="black" />
-                        </TouchableOpacity>
-                    ),
+                    // headerRight: () => (
+                    //     <TouchableOpacity
+                    //         title="Logout"
+                    //         onPress={() => navigation.navigate('Login')}
+                    //     >
+                    //         <MaterialCommunityIcons name="logout" size={30} color="black" />
+                    //     </TouchableOpacity>
+                    // ),
                     tabBarLabel: 'Products',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name='shopping' color={color} size={size} />
@@ -47,8 +48,9 @@ const MainTabNavigator = () => {
                 })} />
             <Tab.Screen
                 name="OrderList"
-                component={OrderListScreen}
+                component={OrderStackNavigator}
                 options={{
+                    headerShown: false,
                     tabBarLabel: 'Order List',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name='cart' color={color} size={size} />
@@ -56,9 +58,10 @@ const MainTabNavigator = () => {
                 }} />
             <Tab.Screen
                 name="Profile"
-                component={ProfileScreen}
+                component={ProfileStackNavigator}
                 options={{
-                    tabBarLabel: 'Profile',
+                    headerShown: false,
+                    tabBarLabel: 'User Profile',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name='account' color={color} size={size} />
                     )
@@ -102,14 +105,14 @@ const MainStackNavigator = () => {
                     title: 'Home',
                     headerShown: false,
                     headerBackVisible: false,
-                    headerRight: () => (
-                        <TouchableOpacity
-                            title="Logout"
-                            onPress={() => navigation.navigate('Login')}
-                        >
-                            <MaterialCommunityIcons name="logout" size={30} color="black" />
-                        </TouchableOpacity>
-                    ),
+                    // headerRight: () => (
+                    //     <TouchableOpacity
+                    //         title="Logout"
+                    //         onPress={() => navigation.navigate('Login')}
+                    //     >
+                    //         <MaterialCommunityIcons name="logout" size={30} color="black" />
+                    //     </TouchableOpacity>
+                    // ),
                 })}
             />
             <Stack.Screen
@@ -142,18 +145,61 @@ const MainStackNavigator = () => {
     )
 }
 
+const OrderStackNavigator = () => {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen
+                name="OrderLists"
+                component={OrderListScreen}
+                options={{
+                    title: "Order List",
+                }} />
+            <Stack.Screen
+                name="OrderDetails"
+                component={OrderDetailScreen}
+                options={{
+                    title: "Details",
+                }} />
+        </Stack.Navigator>
+    )
+}
+
+const ProfileStackNavigator = () => {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen
+                name="UserProfile"
+                component={ProfileScreen}
+                options={{
+                    title: "Profile",
+                }} />
+            <Stack.Screen
+                name="EditProfile"
+                component={EditProfileScreen}
+                options={{
+                    title: "Edit Profile",
+                }} />
+        </Stack.Navigator>
+    )
+}
+
 const App = () => {
 
     const [mode, setMode] = useState(false);
 
     useEffect(() => {
         let eventListenter = EventRegister.addEventListener(
-            "changeTheme",
+            "ChangeTheme",
             (data) => {
                 setMode(data);
+                console.log(data);
             }
         )
-    })
+        return() => {
+            EventRegister.removeAllListeners(eventListenter);
+        }
+    },[mode])
+
     return (
         <themeContext.Provider value={mode === true ? theme.dark : theme.light}>
             <NavigationContainer>

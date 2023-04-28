@@ -1,9 +1,8 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
     View,
     Text,
     StyleSheet,
-    DrawerLayoutAndroid,
     TouchableOpacity
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,46 +11,23 @@ const OrderListScreen = ({ navigation }) => {
 
 
     return (
+        <View>
             <View>
-                <View>
-                    <Text>Ordre List Screen</Text>
-                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('OrderDetails')}>
+                    <Text style={styles.label}>Order Details</Text>
+                </TouchableOpacity>
             </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    drawerIcon: {
-        alignSelf: 'flex-start',
-        color: '#000000',
-        padding: 10,
-    },
-    menuHead: {
-        fontSize: 70,
-        color: "#FFF",
-        fontStyle: "italic",
-        fontWeight: "bold",
-        marginVertical: 20,
-        backgroundColor: '#04144F',
-        alignSelf: 'center',
-        borderRadius: 20,
-        padding: 10,
-    },
-    menuView: {
-        flexDirection: 'row',
-        backgroundColor: '#04144F',
-        borderBottomWidth: 2,
-        borderBottomColor: '#FFF',
-    },
-    menuIcon: {
-        color: '#FFF',
-        alignSelf: 'center',
-    },
-    menuItem: {
-        fontSize: 20,
-        color: '#FFF',
-        padding: 10,
-    },
+    label: {
+        alignSelf:'center',
+        justifyContent:'center',
+        fontSize:50,
+        color:'#000',
+    }
 });
 
 export default OrderListScreen;

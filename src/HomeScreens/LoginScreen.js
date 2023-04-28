@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,24 +7,42 @@ import {
     TextInput,
     TouchableOpacity,
     ToastAndroid,
+    BackHandler,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
+
+    const disableBackButton = () => {
+        BackHandler.exitApp();
+        return true;
+    }
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            disableBackButton
+        );
+        return () => backHandler.remove();
+    },[]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.51:8087/api/login', {
+            const response = await fetch('http://192.168.64.56:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({
+                    email,
+                    password
+                }),
             });
-
+            await AsyncStorage.setItem('EMAIL', email);
             if (response.ok) {
                 navigation.navigate('Main');
             } else {
@@ -47,11 +65,12 @@ const LoginScreen = ({ navigation }) => {
                 <Text style={styles.email_text}>Email Address</Text>
                 <View style={styles.email_view}>
                     <MaterialCommunityIcons
-                        style={{ alignSelf: 'center', paddingLeft: 10, color:'#000' }}
+                        style={{ alignSelf: 'center', paddingLeft: 10, color: '#000' }}
                         name="email-outline"
                         size={25} />
                     <TextInput
                         style={styles.email_input}
+                        keyboardType='email-address'
                         value={email}
                         onChangeText={(text) => setEmail(text)}
                         inlineImageLeft='' />
@@ -59,11 +78,12 @@ const LoginScreen = ({ navigation }) => {
                 <Text style={styles.pwd_text}>Password</Text>
                 <View style={styles.pwd_view}>
                     <MaterialCommunityIcons
-                        style={{ alignSelf: 'center', paddingLeft: 10, color:'#000', }}
+                        style={{ alignSelf: 'center', paddingLeft: 10, color: '#000', }}
                         name="lock-outline"
                         size={25} />
                     <TextInput
                         style={styles.pwd_input}
+                        keyboardType='default'
                         secureTextEntry
                         value={password}
                         onChangeText={(text) => setPassword(text)} />
@@ -137,11 +157,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     email_input: {
-        width:250,
-        fontSize:20,
+        width: 250,
+        fontSize: 20,
     },
     pwd_view: {
-        flexDirection:'row',
+        flexDirection: 'row',
         width: 300,
         height: 50,
         borderColor: "#000000",
@@ -154,8 +174,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     pwd_input: {
-        width:250,
-        fontSize:20,
+        width: 250,
+        fontSize: 20,
     },
     view3: {
         marginTop: 20,

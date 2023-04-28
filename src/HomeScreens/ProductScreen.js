@@ -7,6 +7,7 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
+    BackHandler,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -38,10 +39,23 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 const ProductScreen = ({ navigation }) => {
 
+    const disableBackButton = () => {
+        BackHandler.exitApp();
+        return true;
+    }
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            disableBackButton
+        );
+        return () => backHandler.remove();
+    },[]);
+
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch('http://192.168.64.51:8087/api/product')
+        fetch('http://192.168.64.56:8087/api/product')
             .then(response => response.json())
             .then(data => setData(data))
             .catch(error => console.log(error));
@@ -82,7 +96,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.51:8087/api/category');
+            const response = await fetch('http://192.168.64.56:8087/api/category');
             const result = await response.json();
             setCategoryItems(result);
         }
@@ -104,7 +118,7 @@ const ProductScreen = ({ navigation }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.51:8087/api/brand');
+            const response = await fetch('http://192.168.64.56:8087/api/brand');
             const result = await response.json();
             setBrandItems(result);
         }

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import {
     View,
@@ -96,7 +97,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleRegister = async () => {
         try {
-            const response = await fetch('http://192.168.64.51:8087/api/register', {
+            const response = await fetch('http://192.168.64.56:8087/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -109,7 +110,7 @@ const RegisterScreen = ({ navigation }) => {
                 })
             });
             const data = await response.json();
-            navigation.navigate('Login');
+            navigation.goBack();
         } catch (error) {
             console.error("Registration Failed", error);
         }
@@ -122,18 +123,21 @@ const RegisterScreen = ({ navigation }) => {
                 <Text style={styles.label}>Username</Text>
                 <TextInput
                     style={styles.text_input}
+                    keyboardType='default'
                     value={name}
                     onChangeText={setName} />
                 {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
                 <Text style={styles.label}>Email Address</Text>
                 <TextInput
                     style={styles.text_input}
+                    keyboardType='email-address'
                     value={email}
                     onChangeText={setEmail} />
                 {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
                 <Text style={styles.label}>Phone No.</Text>
                 <TextInput
                     style={styles.text_input}
+                    keyboardType='number-pad'
                     value={phone}
                     onChangeText={setPhone} />
                 {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
@@ -141,6 +145,7 @@ const RegisterScreen = ({ navigation }) => {
                 <TextInput
                     secureTextEntry
                     style={styles.text_input}
+                    keyboardType='default'
                     value={password}
                     onChangeText={setPassword} />
                 {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
@@ -148,6 +153,7 @@ const RegisterScreen = ({ navigation }) => {
                 <TextInput
                     secureTextEntry
                     style={styles.text_input}
+                    keyboardType='default'
                     value={conPassword}
                     onChangeText={setConPassword} />
                 {conPasswordError ? <Text style={styles.errorMessage}>{conPasswordError}</Text> : null}
