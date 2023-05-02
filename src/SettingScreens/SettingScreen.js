@@ -15,14 +15,22 @@ const SettingScreen = ({ navigation }) => {
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Dark Mode</Text>
-                <Switch
-                    value={mode}
-                    onValueChange={(value) => {
-                        setMode(value);
-                        EventRegister.emit("ChangeTheme", value);
-                    }}
-                />
+                <Text style={[styles.label, { color: theme.color }]}>Profile Setting</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                    <MaterialCommunityIcons name='account' size={30} style={{ color: theme.color }} />
+                </TouchableOpacity>
+            </View>
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>Account Setting</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('Account')}>
+                    <MaterialCommunityIcons name='account' size={30} style={{ color: theme.color }} />
+                </TouchableOpacity>
+            </View>
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>Notification</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+                    <MaterialCommunityIcons name='bell' size={30} style={{ color: theme.color }} />
+                </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Logout</Text>
@@ -36,21 +44,21 @@ const SettingScreen = ({ navigation }) => {
             <AwesomeAlert
                 show={showAlert}
                 title="Logout"
-                titleStyle={{color:'#04144F',fontSize:20}}
+                titleStyle={{ color: '#04144F', fontSize: 20 }}
                 message="Are you sure want to logout?"
-                messageStyle={{color:'red'}}
+                messageStyle={{ color: 'red' }}
                 closeOnTouchOutside={false}
                 closeOnHardwareBackPress={false}
 
                 showCancelButton={true}
-                cancelButtonStyle={{backgroundColor:'gray'}}
+                cancelButtonStyle={{ backgroundColor: 'gray' }}
                 cancelText="No"
                 onCancelPressed={() => setShowAlert(false)}
 
                 showConfirmButton={true}
                 confirmButtonColor="#04144F"
                 confirmText="Yes"
-                onConfirmPressed={()=> navigation.navigate('Login')}
+                onConfirmPressed={() => navigation.navigate('Login')}
             />
         </View>
     )

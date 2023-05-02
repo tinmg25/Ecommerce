@@ -54,7 +54,7 @@ const PasswordResetScreen = ({ navigation }) => {
                     <Text style={styles.reg_btn}>Get Password</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.login_btn}>Back to Login</Text>
+                    <Text style={styles.login_btn}>Already have account?</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -100,13 +100,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     login_btn: {
-        width: 250,
-        fontSize: 20,
-        padding: 15,
-        backgroundColor: '#618CFB',
-        color: 'white',
-        textAlign: 'center',
-        borderRadius: 50,
+        textDecorationLine:'underline',
+        textDecorationColor:'#000',
+        alignSelf:'center',
+        fontSize:15,
+        color:'#000',
     },
 });
 

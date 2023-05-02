@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TextInput,
-    Image,
-    TouchableOpacity,
-    BackHandler,
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useDispatch } from 'react-redux';
 
 // const data = [
 //     {
@@ -37,235 +38,242 @@ import DropDownPicker from 'react-native-dropdown-picker';
 //     },
 // ]
 
-const ProductScreen = ({ navigation }) => {
+const ProductScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+  const disableBackButton = () => {
+    BackHandler.exitApp();
+    return true;
+  };
 
-    const disableBackButton = () => {
-        BackHandler.exitApp();
-        return true;
-    }
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      disableBackButton,
+    );
+    return () => backHandler.remove();
+  }, []);
 
-    useEffect(() => {
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            disableBackButton
-        );
-        return () => backHandler.remove();
-    },[]);
+  const [data, setData] = useState([]);
 
-    const [data, setData] = useState([]);
+  useEffect(() => {
+    fetch('http://192.168.64.56:8087/api/product')
+      .then(response => response.json())
+      .then(data => setData(data))
+      .catch(error => console.log(error));
+  }, []);
 
-    useEffect(() => {
-        fetch('http://192.168.64.56:8087/api/product')
-            .then(response => response.json())
-            .then(data => setData(data))
-            .catch(error => console.log(error));
-
-    }, []);
-
-    const renderItem = ({ item }) => (
-        <View>
-            <Text style={styles.product_title}>{item.name}</Text>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => (
-                    <View style={styles.image_view} key={item.product_id}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('ProductDetail',
-                                {
-                                    productId: item.product_id,
-                                    productName: item.product_name,
-                                    productPrice: item.price,
-                                    productDesc: item.description,
-                                })}>
-                            <Text style={{ fontSize: 50 }}>Image</Text>
-                        </TouchableOpacity>
-                        <Text>Name - {item.product_name}</Text>
-                        <Text>Price - {item.price}</Text>
-                    </View>
-                )}
-                keyExtractor={(item) => item.product_id}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
+  const renderItem = ({item, onAddToCart}) => (
+    <View>
+      <Text style={styles.product_title}>{item.name}</Text>
+      <FlatList
+        data={data}
+        renderItem={({item}) => (
+          <View style={styles.image_view} key={item.product_id}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ProductDetail', {
+                  productId: item.product_id,
+                  productName: item.product_name,
+                  productPrice: item.price,
+                  productDesc: item.description,
+                })
+              }>
+              <Text style={{fontSize: 50}}>Image</Text>
+            </TouchableOpacity>
+            <Text>{item.product_name}</Text>
+            <Text>${item.price}</Text>
+            <TouchableOpacity onPress={() => onAddToCart(item)}>
+              <Text style={styles.cart}>Add to Cart</Text>
+            </TouchableOpacity>
+            <MaterialCommunityIcons
+              style={styles.icon}
+              name="heart"
+              size={30}
             />
+          </View>
+        )}
+        keyExtractor={item => item.product_id}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+
+  const [category, setCategory] = useState(false);
+  const [categoryValue, setCategoryValue] = useState(null);
+  const [categoryItems, setCategoryItems] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('http://192.168.64.56:8087/api/category');
+      const result = await response.json();
+      setCategoryItems(result);
+    };
+
+    fetchData();
+  }, []);
+
+  const categoryItem = [
+    {label: '', value: null},
+    ...categoryItems.map(catItem => ({
+      label: catItem.category_name,
+      value: catItem.category_id,
+    })),
+  ];
+
+  const [brand, setBrand] = useState(false);
+  const [brandValue, setBrandValue] = useState(null);
+  const [brandItems, setBrandItems] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('http://192.168.64.56:8087/api/brand');
+      const result = await response.json();
+      setBrandItems(result);
+    };
+
+    fetchData();
+  }, []);
+
+  const brandItem = [
+    {label: '', value: null},
+    ...brandItems.map(bItem => ({
+      label: bItem.brand_name,
+      value: bItem.brand_id,
+    })),
+  ];
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchBar}>
+        <MaterialCommunityIcons
+          style={styles.iconStyle}
+          name="magnify"
+          size={30}
+        />
+        <TextInput
+          style={styles.inputStyle}
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="Search"
+        />
+      </View>
+      <View style={styles.view2}>
+        <View
+          style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+          <DropDownPicker
+            style={{zIndex: 2, elevation: 2}}
+            open={category}
+            value={categoryValue}
+            items={categoryItem}
+            setOpen={setCategory}
+            setValue={setCategoryValue}
+            setItems={setCategoryItems}
+            placeholder="Category"
+          />
         </View>
-    );
-
-    const [category, setCategory] = useState(false);
-    const [categoryValue, setCategoryValue] = useState(null);
-    const [categoryItems, setCategoryItems] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('http://192.168.64.56:8087/api/category');
-            const result = await response.json();
-            setCategoryItems(result);
-        }
-
-        fetchData();
-    }, []);
-
-    const categoryItem = [
-        { label: '', value: null },
-        ...categoryItems.map((catItem) => ({
-            label: catItem.category_name,
-            value: catItem.category_id,
-        })),
-    ];
-
-    const [brand, setBrand] = useState(false);
-    const [brandValue, setBrandValue] = useState(null);
-    const [brandItems, setBrandItems] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('http://192.168.64.56:8087/api/brand');
-            const result = await response.json();
-            setBrandItems(result);
-        }
-
-        fetchData();
-    }, []);
-
-    const brandItem = [
-        { label: '', value: null },
-        ...brandItems.map((bItem) => ({
-            label: bItem.brand_name,
-            value: bItem.brand_id,
-        })),
-    ];
-
-    return (
-            <View style={styles.container}>
-                <View style={styles.searchBar}>
-                    <MaterialCommunityIcons style={styles.iconStyle} name="magnify" size={30} />
-                    <TextInput
-                        style={styles.inputStyle}
-                        autoCapitalize='none'
-                        autoCorrect={false}
-                        placeholder='Search' />
-                </View>
-                <View style={styles.view2}>
-                    <View style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1, }}>
-                        <DropDownPicker
-                            style={{ zIndex: 2, elevation: 2 }}
-                            open={category}
-                            value={categoryValue}
-                            items={categoryItem}
-                            setOpen={setCategory}
-                            setValue={setCategoryValue}
-                            setItems={setCategoryItems}
-                            placeholder='Category'
-                        />
-                    </View>
-                    <View style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1, }}>
-                        <DropDownPicker
-                            style={{ zIndex: 2, elevation: 2 }}
-                            open={brand}
-                            value={brandValue}
-                            items={brandItem}
-                            setOpen={setBrand}
-                            setValue={setBrandValue}
-                            setItems={setBrandItems}
-                            placeholder='Brand'
-                        />
-                    </View>
-                </View>
-                <View style={styles.view3}>
-                    <FlatList
-                        data={data}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.product_id}
-                        onRefresh={() => { }}
-                        refreshing={false}
-                        showsVerticalScrollIndicator={false}
-                    />
-                </View>
-            </View>
-        // </DrawerLayoutAndroid>
-    );
-}
+        <View
+          style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+          <DropDownPicker
+            style={{zIndex: 2, elevation: 2}}
+            open={brand}
+            value={brandValue}
+            items={brandItem}
+            setOpen={setBrand}
+            setValue={setBrandValue}
+            setItems={setBrandItems}
+            placeholder="Brand"
+          />
+        </View>
+      </View>
+      <View style={styles.view3}>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item.product_id}
+          onRefresh={() => {}}
+          refreshing={false}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </View>
+    // </DrawerLayoutAndroid>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '',
-    },
-    // drawerIcon: {
-    //     alignSelf: 'flex-start',
-    //     color: '#000000',
-    //     padding: 10,
-    // },
-    // menuHead: {
-    //     fontSize: 70,
-    //     color: "#FFF",
-    //     fontStyle: "italic",
-    //     fontWeight: "bold",
-    //     marginVertical: 20,
-    //     backgroundColor: '#04144F',
-    //     alignSelf: 'center',
-    //     borderRadius: 20,
-    //     padding: 10,
-    // },
-    // menuView: {
-    //     flexDirection: 'row',
-    //     backgroundColor: '#04144F',
-    //     borderBottomWidth: 2,
-    //     borderBottomColor: '#FFF',
-    // },
-    // menuIcon: {
-    //     color: '#FFF',
-    //     alignSelf: 'center',
-    // },
-    // menuItem: {
-    //     fontSize: 20,
-    //     color: '#FFF',
-    //     padding: 10,
-    // },
-    searchBar: {
-        marginTop: 10,
-        backgroundColor: '#F0EEEE',
-        height: 50,
-        borderRadius: 50,
-        marginHorizontal: 15,
-        flexDirection: 'row',
-        marginBottom: 10,
-        borderColor: 'black',
-        borderWidth: 1,
-    },
-    inputStyle: {
-        flex: 1,
-        fontSize: 18
-    },
-    iconStyle: {
-        fontSize: 35,
-        alignSelf: 'center',
-        marginHorizontal: 15
-    },
-    view2: {
-        flexDirection: 'row',
-        marginHorizontal: 15,
-        justifyContent: 'space-around',
-        position: 'relative',
-        zIndex: 1,
-        elevation: 1,
-    },
-    view3: {
-        height: 500,
-        marginHorizontal: 15,
-        marginTop: 10,
-    },
-    product_title: {
-        fontSize: 30,
-        color: 'black',
-        fontWeight: 'bold',
-    },
-    image_view: {
-        padding: 15,
-    },
-    image: {
-        width: 150,
-        height: 150,
-        borderRadius: 10,
-    },
+  container: {
+    backgroundColor: '',
+  },
+  searchBar: {
+    marginTop: 10,
+    backgroundColor: '#F0EEEE',
+    height: 50,
+    borderRadius: 50,
+    marginHorizontal: 15,
+    flexDirection: 'row',
+    marginBottom: 10,
+    borderColor: 'black',
+    borderWidth: 1,
+  },
+  inputStyle: {
+    flex: 1,
+    fontSize: 18,
+  },
+  iconStyle: {
+    fontSize: 35,
+    alignSelf: 'center',
+    marginHorizontal: 15,
+  },
+  view2: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    justifyContent: 'space-around',
+    position: 'relative',
+    zIndex: 1,
+    elevation: 1,
+  },
+  view3: {
+    height: 500,
+    marginHorizontal: 15,
+    marginTop: 10,
+  },
+  product_title: {
+    fontSize: 30,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  image_view: {
+    backgroundColor:'#ffffff',
+    padding: 15,
+    width: 200,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+  },
+  cart: {
+    alignSelf: 'flex-end',
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 10,
+    textAlign: 'center',
+    width: 100,
+    backgroundColor: '#04144F',
+    color: '#fff',
+  },
+  icon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
 });
 
 export default ProductScreen;

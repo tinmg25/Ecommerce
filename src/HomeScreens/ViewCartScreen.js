@@ -8,9 +8,9 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ViewCartScreen = ({ route,navigation }) => {
+const ViewCartScreen = ({ navigation }) => {
 
-    const { productId,productName,productPrice,productDesc} = route.params;
+    // const { productId,productName,productPrice,productDesc} = route.params;
 
     const [count, setCount] = useState(1);
 
@@ -31,8 +31,8 @@ const ViewCartScreen = ({ route,navigation }) => {
             <View style={styles.main_view}>
                 <View>
                     <Text>Image</Text>
-                    <Text style={styles.title}>{productDesc}</Text>
-                    <Text style={styles.price}>Price : $ {productPrice}</Text>
+                    <Text style={styles.title}></Text>
+                    <Text style={styles.price}>Price : $</Text>
                 </View>
                 <View style={styles.view2}>
                     <TouchableOpacity onPress={()=>decrement()}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import themeContext from '../config/themeContext';
+import themeContext from '../../config/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = ({ navigation }) => {
@@ -44,9 +44,6 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
                 <Text style={styles.edit_btn}>Edit Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-                <Text style={styles.change_pwd_btn}>Change Password</Text>
             </TouchableOpacity>
         </View>
     )

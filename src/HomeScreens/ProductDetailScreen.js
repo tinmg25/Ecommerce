@@ -1,23 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch } from "react-redux";
 
 const ProductDetailScreen = ({ route, navigation }) => {
 
     const { productId,productName,productPrice,productDesc } = route.params;
+    const dispatch = useDispatch();
 
     return (
         <View>
             <View style={styles.view1}>
                 <TouchableOpacity 
-                    style={{alignSelf:'flex-end',marginRight:10,marginTop:5}}
-                    onPress={()=>navigation.navigate('ViewCart',
-                    {
-                        productId,
-                        productName,
-                        productPrice,
-                        productDesc
-                    })}>
+                    style={{alignSelf:'flex-end',marginRight:10,marginTop:5}}>
                     <MaterialCommunityIcons
                         style={styles.cart}
                         name='cart'

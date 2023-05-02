@@ -163,7 +163,7 @@ const RegisterScreen = ({ navigation }) => {
                     <Text style={styles.reg_btn}>Register</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.login_btn}>Back to Login</Text>
+                    <Text style={styles.login_btn}>Already have account?</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -209,13 +209,11 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     login_btn: {
-        width: 250,
-        fontSize: 20,
-        padding: 15,
-        backgroundColor: '#618CFB',
-        color: 'white',
-        textAlign: 'center',
-        borderRadius: 50,
+        textDecorationLine:'underline',
+        textDecorationColor:'#000',
+        alignSelf:'center',
+        fontSize:15,
+        color:'#000',
     },
     errorMessage: {
         color: 'red',
