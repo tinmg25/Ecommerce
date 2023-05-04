@@ -8,10 +8,14 @@ import {
   Image,
   TouchableOpacity,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {products} from '../common/Products';
+import ProductItemCard from '../common/ProductItemCard';
+import {addItemToCart, addItemToWishlist} from '../redux/actions/Actions';
 
 // const data = [
 //     {
@@ -40,78 +44,86 @@ import { useDispatch } from 'react-redux';
 
 const ProductScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const disableBackButton = () => {
-    BackHandler.exitApp();
-    return true;
-  };
+  const [categoryList, setCategoryList] = useState([]);
+  const [laptopList, setLaptopList] = useState([]);
+  const [phoneList, setPhoneList] = useState([]);
+  const [backpackList, setBackpackList] = useState([]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      disableBackButton,
-    );
-    return () => backHandler.remove();
+    console.log(products);
+    let categories = [];
+    products.category.map(item => {
+      categories.push(item.category);
+    });
+    setLaptopList(products.category[0].data);
+    setPhoneList(products.category[1].data);
+    setBackpackList(products.category[2].data);
+    setCategoryList(categories);
+    console.log(JSON.stringify(products.category[0]));
   }, []);
+
+  const items = useSelector(state => state);
+  console.log(items);
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    fetch('http://192.168.64.56:8087/api/product')
-      .then(response => response.json())
-      .then(data => setData(data))
-      .catch(error => console.log(error));
-  }, []);
+  // useEffect(() => {
+  //   fetch('http://192.168.64.53:8087/api/product')
+  //     .then(response => response.json())
+  //     .then(data => setData(data))
+  //     .catch(error => console.log(error));
+  // }, []);
 
-  const renderItem = ({item, onAddToCart}) => (
-    <View>
-      <Text style={styles.product_title}>{item.name}</Text>
-      <FlatList
-        data={data}
-        renderItem={({item}) => (
-          <View style={styles.image_view} key={item.product_id}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ProductDetail', {
-                  productId: item.product_id,
-                  productName: item.product_name,
-                  productPrice: item.price,
-                  productDesc: item.description,
-                })
-              }>
-              <Text style={{fontSize: 50}}>Image</Text>
-            </TouchableOpacity>
-            <Text>{item.product_name}</Text>
-            <Text>${item.price}</Text>
-            <TouchableOpacity onPress={() => onAddToCart(item)}>
-              <Text style={styles.cart}>Add to Cart</Text>
-            </TouchableOpacity>
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="heart"
-              size={30}
-            />
-          </View>
-        )}
-        keyExtractor={item => item.product_id}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
-  );
+  // const renderItem = ({item, onAddToCart}) => (
+  //   <View>
+  //     <Text style={styles.product_title}>{item.name}</Text>
+  //     <FlatList
+  //       data={data}
+  //       renderItem={({item}) => (
+  //         <View style={styles.image_view} key={item.product_id}>
+  //           <TouchableOpacity
+  //             onPress={() =>
+  //               navigation.navigate('ProductDetail', {
+  //                 productId: item.product_id,
+  //                 productName: item.product_name,
+  //                 productPrice: item.price,
+  //                 productDesc: item.description,
+  //               })
+  //             }>
+  //             <Text style={{fontSize: 50}}>Image</Text>
+  //           </TouchableOpacity>
+  //           <Text>{item.product_name}</Text>
+  //           <Text>${item.price}</Text>
+  //           <TouchableOpacity onPress={() => onAddToCart(item)}>
+  //             <Text style={styles.cart}>Add to Cart</Text>
+  //           </TouchableOpacity>
+  //           <MaterialCommunityIcons
+  //             style={styles.icon}
+  //             name="heart"
+  //             size={30}
+  //           />
+  //         </View>
+  //       )}
+  //       keyExtractor={item => item.product_id}
+  //       horizontal={true}
+  //       showsHorizontalScrollIndicator={false}
+  //     />
+  //   </View>
+  // );
 
   const [category, setCategory] = useState(false);
   const [categoryValue, setCategoryValue] = useState(null);
   const [categoryItems, setCategoryItems] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('http://192.168.64.56:8087/api/category');
-      const result = await response.json();
-      setCategoryItems(result);
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await fetch('http://192.168.64.53:8087/api/category');
+  //     const result = await response.json();
+  //     setCategoryItems(result);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const categoryItem = [
     {label: '', value: null},
@@ -125,15 +137,15 @@ const ProductScreen = ({navigation}) => {
   const [brandValue, setBrandValue] = useState(null);
   const [brandItems, setBrandItems] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('http://192.168.64.56:8087/api/brand');
-      const result = await response.json();
-      setBrandItems(result);
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await fetch('http://192.168.64.53:8087/api/brand');
+  //     const result = await response.json();
+  //     setBrandItems(result);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const brandItem = [
     {label: '', value: null},
@@ -144,66 +156,125 @@ const ProductScreen = ({navigation}) => {
   ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchBar}>
-        <MaterialCommunityIcons
-          style={styles.iconStyle}
-          name="magnify"
-          size={30}
-        />
-        <TextInput
-          style={styles.inputStyle}
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder="Search"
-        />
-      </View>
-      <View style={styles.view2}>
-        <View
-          style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
-          <DropDownPicker
-            style={{zIndex: 2, elevation: 2}}
-            open={category}
-            value={categoryValue}
-            items={categoryItem}
-            setOpen={setCategory}
-            setValue={setCategoryValue}
-            setItems={setCategoryItems}
-            placeholder="Category"
+    <ScrollView style={styles.scroll}>
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+        <Image source={require('../images/search.png')} style={styles.logo_img} />
+          <TextInput
+            style={styles.inputStyle}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder="Search"
           />
         </View>
-        <View
-          style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
-          <DropDownPicker
-            style={{zIndex: 2, elevation: 2}}
-            open={brand}
-            value={brandValue}
-            items={brandItem}
-            setOpen={setBrand}
-            setValue={setBrandValue}
-            setItems={setBrandItems}
-            placeholder="Brand"
+        <View style={styles.view2}>
+          <View
+            style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+            <DropDownPicker
+              style={{zIndex: 2, elevation: 2}}
+              open={category}
+              value={categoryValue}
+              items={categoryItem}
+              setOpen={setCategory}
+              setValue={setCategoryValue}
+              setItems={setCategoryItems}
+              placeholder="Category"
+            />
+          </View>
+          <View
+            style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+            <DropDownPicker
+              style={{zIndex: 2, elevation: 2}}
+              open={brand}
+              value={brandValue}
+              items={brandItem}
+              setOpen={setBrand}
+              setValue={setBrandValue}
+              setItems={setBrandItems}
+              placeholder="Brand"
+            />
+          </View>
+        </View>
+        <Text style={styles.product_title}>
+          {products.category[0].category}
+        </Text>
+        <View style={styles.view3}>
+          <FlatList
+            data={laptopList}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => {
+              return (
+                <ProductItemCard
+                  item={item}
+                  onAddToWishlist={(x) => {
+                    dispatch(addItemToWishlist(x))
+                  }}
+                  onAddToCart={(x) => {
+                    dispatch(addItemToCart(x));
+                  }}
+                />
+              );
+            }}
+          />
+        </View>
+        <Text style={styles.product_title}>
+          {products.category[1].category}
+        </Text>
+        <View style={styles.view3}>
+          <FlatList
+            data={phoneList}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => {
+              return (
+                <ProductItemCard
+                  item={item}
+                  onAddToWishlist={(x) => {
+                    dispatch(addItemToWishlist(x))
+                  }}
+                  onAddToCart={(x) => {
+                    dispatch(addItemToCart(x));
+                  }}
+                />
+              );
+            }}
+          />
+        </View>
+        <Text style={styles.product_title}>
+          {products.category[2].category}
+        </Text>
+        <View style={styles.view3}>
+          <FlatList
+            data={backpackList}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => {
+              return (
+                <ProductItemCard
+                  item={item}
+                  onAddToWishlist={(x) => {
+                    dispatch(addItemToWishlist(x))
+                  }}
+                  onAddToCart={(x) => {
+                    dispatch(addItemToCart(x));
+                  }}
+                />
+              );
+            }}
           />
         </View>
       </View>
-      <View style={styles.view3}>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={item => item.product_id}
-          onRefresh={() => {}}
-          refreshing={false}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </View>
-    // </DrawerLayoutAndroid>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scroll: {
+    flex: 1,
+  },
   container: {
-    backgroundColor: '',
+    flex: 1,
   },
   searchBar: {
     marginTop: 10,
@@ -234,17 +305,17 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   view3: {
-    height: 500,
-    marginHorizontal: 15,
-    marginTop: 10,
+    marginTop: 20,
   },
   product_title: {
-    fontSize: 30,
-    color: 'black',
-    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '600',
+    marginTop: 20,
+    marginLeft: 20,
   },
   image_view: {
-    backgroundColor:'#ffffff',
+    backgroundColor: '#ffffff',
     padding: 15,
     width: 200,
     borderRadius: 10,
@@ -273,6 +344,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 10,
+  },
+  logo_img: {
+    width: 30,
+    height: 30,
+    alignSelf:'center',
+    marginHorizontal:15,
   },
 });
 

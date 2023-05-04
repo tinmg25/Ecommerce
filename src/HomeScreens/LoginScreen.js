@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.56:8087/api/login', {
+            const response = await fetch('http://192.168.64.53:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

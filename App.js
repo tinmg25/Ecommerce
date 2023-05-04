@@ -18,12 +18,12 @@ import OrderDetailScreen from './src/OrderScreens/OrderDetailScreen';
 import ProfileScreen from './src/SettingScreens/ProfileScreens/ProfileScreen';
 import EditProfileScreen from './src/SettingScreens/ProfileScreens/EditProfileScreen';
 import SettingScreen from './src/SettingScreens/SettingScreen';
-import WishListScreen from './src/Wishlist/Wishlist';
+import WishListScreen from './src/WishlistScreen/Wishlist';
 import AccountSettingScreen from './src/SettingScreens/AccountScreens/AccountSetting';
 
 import {EventRegister} from 'react-native-event-listeners';
-import themeContext from './src/config/themeContext';
 import theme from './src/config/theme';
+import themeContext from './src/config/themeContext';
 import {Provider} from 'react-redux';
 import store from './src/redux/store/Store';
 
@@ -63,10 +63,9 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="ViewCart"
+        name="Cart"
         component={ViewCartScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Cart',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="cart" color={color} size={size} />
@@ -74,10 +73,9 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="WishList"
+        name="Wishlist"
         component={WishListScreen}
         options={{
-          headerShown: false,
           tabBarLabel: 'Wishlist',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="heart" color={color} size={size} />
@@ -172,7 +170,6 @@ const MainStackNavigator = () => {
         name="Account"
         component={AccountSettingScreen}
         options={{
-          headerShown: false,
           title: 'Account Setting',
         }}
       />

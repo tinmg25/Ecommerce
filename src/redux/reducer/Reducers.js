@@ -1,18 +1,23 @@
-import {ADD_TO_CART, REMOVE_FROM_CART} from '../ActionTypes';
+import {
+  ADD_TO_CART,
+  REMOVE_FROM_CART,
 
-const reducers = (initialState = [], actions) => {
-  switch (actions) {
+} from '../ActionTypes';
+
+const reducers = (state = [], action) => {
+  switch (action.type) {
     case ADD_TO_CART:
-      return {...initialState, ...actions.payload};
+      return [...state, action.payload];
+
     case REMOVE_FROM_CART:
-      const deletedAray = initialState.filter((item, index) => {
-        return index !== actions.payload;
+      const deletedAray1 = state.filter((item, index) => {
+        return index !== action.payload;
       });
 
-      return deletedAray;
+      return deletedAray1;
 
     default:
-      return initialState;
+      return state;
   }
 };
 

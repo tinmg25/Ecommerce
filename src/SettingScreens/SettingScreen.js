@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { EventRegister } from "react-native-event-listeners";
 import themeContext from "../config/themeContext";
 import AwesomeAlert from "react-native-awesome-alerts";
 
@@ -17,19 +16,19 @@ const SettingScreen = ({ navigation }) => {
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Profile Setting</Text>
                 <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
-                    <MaterialCommunityIcons name='account' size={30} style={{ color: theme.color }} />
+                <Image source={require('../images/profile.png')} style={styles.logo_img}/>
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Account Setting</Text>
                 <TouchableOpacity onPress={()=>navigation.navigate('Account')}>
-                    <MaterialCommunityIcons name='account' size={30} style={{ color: theme.color }} />
+                    <Image source={require('../images/user.png')} style={styles.logo_img}/>
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Notification</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
-                    <MaterialCommunityIcons name='bell' size={30} style={{ color: theme.color }} />
+                <TouchableOpacity>
+                <Image source={require('../images/noti.png')} style={styles.logo_img}/>
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
@@ -38,7 +37,7 @@ const SettingScreen = ({ navigation }) => {
                     title="Logout"
                     onPress={() => setShowAlert(!showAlert)}
                 >
-                    <MaterialCommunityIcons name="logout" size={30} style={{ color: theme.color }} />
+                    <Image source={require('../images/exit.png')} style={styles.logo_img}/>
                 </TouchableOpacity>
             </View>
             <AwesomeAlert
@@ -60,6 +59,18 @@ const SettingScreen = ({ navigation }) => {
                 confirmText="Yes"
                 onConfirmPressed={() => navigation.navigate('Login')}
             />
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
+                <TouchableOpacity>
+                <Image source={require('../images/question.png')} style={styles.logo_img}/>
+                </TouchableOpacity>
+            </View>
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>About</Text>
+                <TouchableOpacity>
+                <Image source={require('../images/info.png')} style={styles.logo_img}/>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -76,6 +87,10 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 20,
+    },
+    logo_img: {
+        width:30,
+        height:30,
     }
 });
 

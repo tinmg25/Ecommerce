@@ -10,7 +10,7 @@ const AccountSettingScreen = () => {
     const [mode, setMode] = useState(false);
 
   return (
-    <View>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={[styles.sub_view, {borderBottomColor: theme.color}]}>
         <Text style={[styles.label, {color: theme.color}]}>Dark Mode</Text>
         <Switch
