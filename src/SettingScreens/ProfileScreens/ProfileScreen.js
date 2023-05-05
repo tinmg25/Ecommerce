@@ -14,7 +14,7 @@ const ProfileScreen = ({ navigation }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.53:8087/api/${mEmail}`, {
+                    const response = await fetch(`http://192.168.64.54:8087/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -27,11 +27,10 @@ const ProfileScreen = ({ navigation }) => {
                 }
             }
             catch (e) {
-                
             }
         };
         getData();
-    }, [])
+    }, []);
 
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>

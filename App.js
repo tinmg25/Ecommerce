@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -20,6 +19,7 @@ import EditProfileScreen from './src/SettingScreens/ProfileScreens/EditProfileSc
 import SettingScreen from './src/SettingScreens/SettingScreen';
 import WishListScreen from './src/WishlistScreen/Wishlist';
 import AccountSettingScreen from './src/SettingScreens/AccountScreens/AccountSetting';
+import AboutScreen from './src/SettingScreens/AboutScreen';
 
 import {EventRegister} from 'react-native-event-listeners';
 import theme from './src/config/theme';
@@ -171,6 +171,13 @@ const MainStackNavigator = () => {
         component={AccountSettingScreen}
         options={{
           title: 'Account Setting',
+        }}
+      />
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          title: 'About',
         }}
       />
     </Stack.Navigator>

@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
     ToastAndroid,
     BackHandler,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.53:8087/api/login', {
+            const response = await fetch('http://192.168.64.54:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +57,8 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <View>
+        <KeyboardAvoidingView>
+            <View>
             <View style={styles.view1}>
                 <Text style={styles.logo}>HL</Text>
                 <Image style={styles.img} source={require('../images/square.png')} />
@@ -106,10 +109,15 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
         </View>
+        </KeyboardAvoidingView>
+        
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex:1,
+    },
     view1: {
         height: 250,
         backgroundColor: "#04144F",

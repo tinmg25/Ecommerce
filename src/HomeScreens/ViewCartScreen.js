@@ -71,7 +71,7 @@ const ViewCartScreen = ({ navigation }) => {
         </View>
       )}
       {cartData.length > 0 ? (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate('Checkout',{cartData})}>
           <Text style={styles.button}>Checkout</Text>
         </TouchableOpacity>
       ) : null}

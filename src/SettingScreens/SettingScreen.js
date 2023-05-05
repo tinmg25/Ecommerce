@@ -67,7 +67,7 @@ const SettingScreen = ({ navigation }) => {
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>About</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigation.navigate('About')}>
                 <Image source={require('../images/info.png')} style={styles.logo_img}/>
                 </TouchableOpacity>
             </View>

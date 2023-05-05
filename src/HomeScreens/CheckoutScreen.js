@@ -1,13 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CheckoutScreen = ({ navigation }) => {
+const CheckoutScreen = ({ route }) => {
+    const navigation = useNavigation();
 
-    const [nameInput, setNameInput] = useState('');
-    const [emailInput, setEmailInput] = useState('');
+    const cartData = route.params;
+
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const mEmail = await AsyncStorage.getItem('EMAIL');
+                if (mEmail !== null) {
+                    const response = await fetch(`http://192.168.64.54:8087/api/${mEmail}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ mEmail })
+                    });
+                    const data = await response.json();
+                    setUserData(data);
+                    setNameInput(data.name || '');
+                    setEmailInput(data.email || '');
+                    setPhoneInput(data.phone_number || '');
+                }
+            }
+            catch (e) {
+            }
+        };
+        getData();
+    }, []);
+
+    const [nameInput, setNameInput] = useState(userData.name || '');
+    const [emailInput, setEmailInput] = useState(userData.email || '');
     const [addressInput, setAddressInput] = useState('');
-    const [phoneInput, setPhoneInput] = useState('');
+    const [phoneInput, setPhoneInput] = useState(userData.phone || '');
     const [townshipInput, setTownshipInput] = useState('');
     const [postalInput, setPostalInput] = useState('');
 
@@ -97,12 +128,41 @@ const CheckoutScreen = ({ navigation }) => {
             setPostalError('');
         }
 
-        if(handleName(nameInput) && handleEmail(emailInput) && 
-        handleAddress(addressInput) && handlePhone(phoneInput) && 
-        handleTownship(townshipInput) && handlePostal(postalInput)){
-            navigation.navigate('OrderList');
+        if (handleName(nameInput) && handleEmail(emailInput) &&
+            handleAddress(addressInput) && handlePhone(phoneInput) &&
+            handleTownship(townshipInput) && handlePostal(postalInput)) {
+            handleOrder();
         }
     };
+
+    const handleOrder = async () => {
+        try {
+            const response = await fetch('http://192.168.64.54:8087/api/order/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nameInput,
+                    emailInput,
+                    addressInput,
+                    phoneInput,
+                    townshipInput,
+                    postalInput
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                navigation.navigate('OrderList');
+            }
+            else {
+                ToastAndroid.show('Something was wrong!', ToastAndroid.SHORT);
+            }
+        }
+        catch (error) {
+            console.error('Something was wrong!', error)
+        }
+    }
 
     return (
         <View>
@@ -146,7 +206,7 @@ const CheckoutScreen = ({ navigation }) => {
                 {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
             </View>
             <TouchableOpacity onPress={() => handleCheckout()}>
-                <Text style={styles.payment}>Go To Payment</Text>
+                <Text style={styles.payment}>Order now</Text>
             </TouchableOpacity>
         </View>
     );
@@ -179,7 +239,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     errorMessage: {
-        color:'red',
+        color: 'red',
     },
 });
 
