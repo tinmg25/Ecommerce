@@ -32,6 +32,18 @@ const SettingScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('Help')}>
+                <Image source={require('../images/question.png')} style={styles.logo_img}/>
+                </TouchableOpacity>
+            </View>
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
+                <Text style={[styles.label, { color: theme.color }]}>About</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate('About')}>
+                <Image source={require('../images/info.png')} style={styles.logo_img}/>
+                </TouchableOpacity>
+            </View>
+            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Logout</Text>
                 <TouchableOpacity
                     title="Logout"
@@ -59,18 +71,6 @@ const SettingScreen = ({ navigation }) => {
                 confirmText="Yes"
                 onConfirmPressed={() => navigation.navigate('Login')}
             />
-            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
-                <TouchableOpacity>
-                <Image source={require('../images/question.png')} style={styles.logo_img}/>
-                </TouchableOpacity>
-            </View>
-            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>About</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('About')}>
-                <Image source={require('../images/info.png')} style={styles.logo_img}/>
-                </TouchableOpacity>
-            </View>
         </View>
     )
 }

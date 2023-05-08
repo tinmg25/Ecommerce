@@ -50,7 +50,6 @@ const ProductScreen = ({navigation}) => {
   const [backpackList, setBackpackList] = useState([]);
 
   useEffect(() => {
-    console.log(products);
     let categories = [];
     products.category.map(item => {
       categories.push(item.category);
@@ -63,12 +62,11 @@ const ProductScreen = ({navigation}) => {
   }, []);
 
   const items = useSelector(state => state);
-  console.log(items);
 
   const [data, setData] = useState([]);
 
   // useEffect(() => {
-  //   fetch('http://192.168.64.54:8087/api/product')
+  //   fetch('http://192.168.64.60:8087/api/product')
   //     .then(response => response.json())
   //     .then(data => setData(data))
   //     .catch(error => console.log(error));
@@ -117,7 +115,7 @@ const ProductScreen = ({navigation}) => {
 
   // useEffect(() => {
   //   const fetchData = async () => {
-  //     const response = await fetch('http://192.168.64.54:8087/api/category');
+  //     const response = await fetch('http://192.168.64.60:8087/api/category');
   //     const result = await response.json();
   //     setCategoryItems(result);
   //   };
@@ -139,7 +137,7 @@ const ProductScreen = ({navigation}) => {
 
   // useEffect(() => {
   //   const fetchData = async () => {
-  //     const response = await fetch('http://192.168.64.54:8087/api/brand');
+  //     const response = await fetch('http://192.168.64.60:8087/api/brand');
   //     const result = await response.json();
   //     setBrandItems(result);
   //   };

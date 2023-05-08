@@ -1,32 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
-    Text,
     StyleSheet,
-    TouchableOpacity
+    FlatList
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import OrderItemCard from '../common/OrderItemCard';
 
 const OrderListScreen = ({ navigation }) => {
 
+    const [orderList, setOrderList] = useState({});
 
+    useEffect(() => {
+
+        const getOrder = async () => {
+            try {
+                const response = await fetch('http://192.168.64.60:8087/api/order', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify()
+                });
+                const data = await response.json();
+                setOrderList(data);
+            }
+            catch (e) {
+                console.error('Something went wrong!', e)
+            }
+        };
+        getOrder();
+    }, []);
     return (
-        <View>
-            <View>
-                <TouchableOpacity onPress={() => navigation.navigate('OrderDetails')}>
-                    <Text style={styles.label}>Order Details</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={styles.container}>
+            <FlatList
+                data={orderList}
+                renderItem={({ item, index }) => {
+                    return (
+                        <OrderItemCard
+                            item={item}
+                        />
+                    );
+                }}
+            />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    label: {
-        alignSelf:'center',
-        justifyContent:'center',
-        fontSize:50,
-        color:'#000',
+    container: {
+        flex:1,
     }
 });
 

@@ -13,12 +13,10 @@ const Splash = ({ navigation }) => {
 
     return(
         <View style={styles.main_view}>
-                <Text style={styles.logo}>HL      </Text>
-                <Image style={styles.img} source={require('../images/square.png')}/>
-                <View style={styles.sub_view}>
-                    <Text style={styles.text1}>Eco</Text>
-                    <Text style={styles.text2}>mmerce</Text>
-                </View>
+            <Image 
+            style={styles.img} 
+            source={require('../images/splash.png')}
+            resizeMode="contain"/>
         </View>
     );
 }
@@ -26,44 +24,45 @@ const Splash = ({ navigation }) => {
 const styles = StyleSheet.create({
     main_view: {
         flex: 1,
-        justifyContent: "center",
-        padding:50,
-        alignItems: "flex-start",
-        backgroundColor: "#04144F"
+        
         
     },
-    sub_view: {
-        flexDirection: "row",
-        marginTop:-20,
+    img:{
+        width:'100%',
+        height:'100%'
     },
-    logo: {
-        fontSize: 120,
-        color: "#FFFFFF",
-        fontStyle: "italic",
-        fontWeight: "bold",
-        textDecorationLine: "underline",
-        position:"relative",
-    },
-    img: {
-        height:30,
-        width:30,
-        transform: [{rotate: '45deg'}],
-        position: "absolute",
-        left: 75,
-        top: 300,
-    },
-    text1: {
-        fontSize: 50,
-        color: "#618CFB",
-        fontStyle: "italic",
-        fontWeight: "bold",
-    },
-    text2: {
-        fontSize: 50,
-        color: "#FFFFFF",
-        fontStyle: "italic",
-        fontWeight: "bold",
-    }
+    // sub_view: {
+    //     flexDirection: "row",
+    //     marginTop:-20,
+    // },
+    // logo: {
+    //     fontSize: 120,
+    //     color: "#FFFFFF",
+    //     fontStyle: "italic",
+    //     fontWeight: "bold",
+    //     textDecorationLine: "underline",
+    //     position:"relative",
+    // },
+    // img: {
+    //     height:30,
+    //     width:30,
+    //     transform: [{rotate: '45deg'}],
+    //     position: "absolute",
+    //     left: 75,
+    //     top: 300,
+    // },
+    // text1: {
+    //     fontSize: 50,
+    //     color: "#618CFB",
+    //     fontStyle: "italic",
+    //     fontWeight: "bold",
+    // },
+    // text2: {
+    //     fontSize: 50,
+    //     color: "#FFFFFF",
+    //     fontStyle: "italic",
+    //     fontWeight: "bold",
+    // }
 });
 
 export default Splash;

@@ -9,7 +9,7 @@ import {
     ToastAndroid,
     BackHandler,
     KeyboardAvoidingView,
-    TouchableWithoutFeedback
+    Platform
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.54:8087/api/login', {
+            const response = await fetch('http://192.168.64.60:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,7 +57,8 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView 
+        behavior='position' style={styles.container}>
             <View>
             <View style={styles.view1}>
                 <Text style={styles.logo}>HL</Text>

@@ -5,7 +5,8 @@ import {
     Text,
     StyleSheet,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    KeyboardAvoidingView
 } from 'react-native';
 
 const RegisterScreen = ({ navigation }) => {
@@ -97,7 +98,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleRegister = async () => {
         try {
-            const response = await fetch('http://192.168.64.54:8087/api/register', {
+            const response = await fetch('http://192.168.64.60:8087/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -117,60 +118,66 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     return (
-        <View>
-            <Text style={styles.reg}>Register</Text>
-            <View style={styles.view2}>
-                <Text style={styles.label}>Username</Text>
-                <TextInput
-                    style={styles.text_input}
-                    keyboardType='default'
-                    value={name}
-                    onChangeText={setName} />
-                {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
-                <Text style={styles.label}>Email Address</Text>
-                <TextInput
-                    style={styles.text_input}
-                    keyboardType='email-address'
-                    value={email}
-                    onChangeText={setEmail} />
-                {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
-                <Text style={styles.label}>Phone No.</Text>
-                <TextInput
-                    style={styles.text_input}
-                    keyboardType='number-pad'
-                    value={phone}
-                    onChangeText={setPhone} />
-                {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                    secureTextEntry
-                    style={styles.text_input}
-                    keyboardType='default'
-                    value={password}
-                    onChangeText={setPassword} />
-                {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
-                <Text style={styles.label}>Confirm Password</Text>
-                <TextInput
-                    secureTextEntry
-                    style={styles.text_input}
-                    keyboardType='default'
-                    value={conPassword}
-                    onChangeText={setConPassword} />
-                {conPasswordError ? <Text style={styles.errorMessage}>{conPasswordError}</Text> : null}
+        <KeyboardAvoidingView
+            behavior='padding' style={styles.container}>
+            <View>
+                <Text style={styles.reg}>Register</Text>
+                <View style={styles.view2}>
+                    <Text style={styles.label}>Username</Text>
+                    <TextInput
+                        style={styles.text_input}
+                        keyboardType='default'
+                        value={name}
+                        onChangeText={setName} />
+                    {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
+                    <Text style={styles.label}>Email Address</Text>
+                    <TextInput
+                        style={styles.text_input}
+                        keyboardType='email-address'
+                        value={email}
+                        onChangeText={setEmail} />
+                    {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+                    <Text style={styles.label}>Phone No.</Text>
+                    <TextInput
+                        style={styles.text_input}
+                        keyboardType='number-pad'
+                        value={phone}
+                        onChangeText={setPhone} />
+                    {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
+                    <Text style={styles.label}>Password</Text>
+                    <TextInput
+                        secureTextEntry
+                        style={styles.text_input}
+                        keyboardType='default'
+                        value={password}
+                        onChangeText={setPassword} />
+                    {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
+                    <Text style={styles.label}>Confirm Password</Text>
+                    <TextInput
+                        secureTextEntry
+                        style={styles.text_input}
+                        keyboardType='default'
+                        value={conPassword}
+                        onChangeText={setConPassword} />
+                    {conPasswordError ? <Text style={styles.errorMessage}>{conPasswordError}</Text> : null}
+                </View>
+                <View style={styles.view3}>
+                    <TouchableOpacity onPress={() => validateForm()}>
+                        <Text style={styles.reg_btn}>Register</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.login_btn}>Already have account?</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.view3}>
-                <TouchableOpacity onPress={() => validateForm()}>
-                    <Text style={styles.reg_btn}>Register</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.login_btn}>Already have account?</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
     reg: {
         fontSize: 35,
         fontWeight: "bold",
@@ -209,15 +216,15 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     login_btn: {
-        textDecorationLine:'underline',
-        textDecorationColor:'#000',
-        alignSelf:'center',
-        fontSize:15,
-        color:'#000',
+        textDecorationLine: 'underline',
+        textDecorationColor: '#000',
+        alignSelf: 'center',
+        fontSize: 15,
+        color: '#000',
     },
     errorMessage: {
         color: 'red',
-        marginBottom:5,
+        marginBottom: 5,
     },
 });
 

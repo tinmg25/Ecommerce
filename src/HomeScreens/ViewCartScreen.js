@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
 
 const ViewCartScreen = ({ navigation }) => {
-  const [cartList, setCartList] = useState([]);
   const cartData = useSelector(state => state.reducers);
   const dispatch = useDispatch();
 

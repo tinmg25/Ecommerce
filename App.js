@@ -26,6 +26,7 @@ import theme from './src/config/theme';
 import themeContext from './src/config/themeContext';
 import {Provider} from 'react-redux';
 import store from './src/redux/store/Store';
+import HelpSupportScreen from './src/SettingScreens/Help&SupportScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -178,6 +179,13 @@ const MainStackNavigator = () => {
         component={AboutScreen}
         options={{
           title: 'About',
+        }}
+      />
+      <Stack.Screen
+        name="Help"
+        component={HelpSupportScreen}
+        options={{
+          title: 'Help & Support',
         }}
       />
     </Stack.Navigator>

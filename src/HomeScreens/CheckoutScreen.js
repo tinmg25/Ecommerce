@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CheckoutScreen = ({ route }) => {
     const navigation = useNavigation();
 
-    const cartData = route.params;
+    const { cartData } = route.params;
 
+    const [userId, setUserId] = useState('');
     const [userData, setUserData] = useState({});
+    const [total, setTotal] = useState(0);
 
     useEffect(() => {
+        const totalAmount = cartData.reduce((total, item) => total + item.price, 0);
+        setTotal(totalAmount);
+
         const getData = async () => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.54:8087/api/${mEmail}`, {
+                    const response = await fetch(`http://192.168.64.60:8087/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -23,7 +28,9 @@ const CheckoutScreen = ({ route }) => {
                         body: JSON.stringify({ mEmail })
                     });
                     const data = await response.json();
+                    console.log(data);
                     setUserData(data);
+                    setUserId(data.user_id || '');
                     setNameInput(data.name || '');
                     setEmailInput(data.email || '');
                     setPhoneInput(data.phone_number || '');
@@ -137,18 +144,18 @@ const CheckoutScreen = ({ route }) => {
 
     const handleOrder = async () => {
         try {
-            const response = await fetch('http://192.168.64.54:8087/api/order/save', {
+            const response = await fetch('http://192.168.64.60:8087/api/order/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    nameInput,
-                    emailInput,
+                    userId,
                     addressInput,
                     phoneInput,
                     townshipInput,
-                    postalInput
+                    postalInput,
+                    total
                 })
             });
             const data = await response.json();
@@ -156,7 +163,7 @@ const CheckoutScreen = ({ route }) => {
                 navigation.navigate('OrderList');
             }
             else {
-                ToastAndroid.show('Something was wrong!', ToastAndroid.SHORT);
+                ToastAndroid.show('Order Unsuccessful!', ToastAndroid.SHORT);
             }
         }
         catch (error) {
@@ -165,7 +172,8 @@ const CheckoutScreen = ({ route }) => {
     }
 
     return (
-        <View>
+        <KeyboardAvoidingView behavior='padding'>
+            <View>
             <View style={styles.view1}>
                 <Text style={styles.title}>Add Shipping Address</Text>
                 <TextInput
@@ -205,14 +213,19 @@ const CheckoutScreen = ({ route }) => {
                     onChangeText={setPostalInput} />
                 {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
             </View>
+            <Text>Total Amount - {total}</Text>
             <TouchableOpacity onPress={() => handleCheckout()}>
                 <Text style={styles.payment}>Order now</Text>
             </TouchableOpacity>
         </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex:1,
+    },
     view1: {
         padding: 10,
     },
