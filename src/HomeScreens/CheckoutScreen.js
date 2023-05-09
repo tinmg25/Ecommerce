@@ -20,7 +20,7 @@ const CheckoutScreen = ({ route }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.60:8087/api/${mEmail}`, {
+                    const response = await fetch(`http://192.168.64.91:8087/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ const CheckoutScreen = ({ route }) => {
                         body: JSON.stringify({ mEmail })
                     });
                     const data = await response.json();
-                    console.log(data);
+
                     setUserData(data);
                     setUserId(data.user_id || '');
                     setNameInput(data.name || '');
@@ -144,7 +144,7 @@ const CheckoutScreen = ({ route }) => {
 
     const handleOrder = async () => {
         try {
-            const response = await fetch('http://192.168.64.60:8087/api/order/save', {
+            const response = await fetch('http://192.168.64.91:8087/api/order/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

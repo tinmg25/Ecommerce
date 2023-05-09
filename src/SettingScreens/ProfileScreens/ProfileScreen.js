@@ -14,7 +14,7 @@ const ProfileScreen = ({ navigation }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.60:8087/api/${mEmail}`, {
+                    const response = await fetch(`http://192.168.64.91:8087/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -23,7 +23,6 @@ const ProfileScreen = ({ navigation }) => {
                     });
                     const data = await response.json();
                     setUserData(data);
-                    console.log(data);
                 }
             }
             catch (e) {

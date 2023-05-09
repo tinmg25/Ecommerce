@@ -47,6 +47,14 @@ const MainTabNavigator = () => {
           //     </TouchableOpacity>
           // ),
           tabBarLabel: 'Products',
+          tabBarLabelStyle: {
+            color: '#fff',
+            fontSize: 12,
+          },
+          tabBarStyle: {
+            backgroundColor:'#04144F',
+          },
+          tabBarActiveTintColor:'#fff',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="shopping" color={color} size={size} />
           ),
@@ -58,8 +66,16 @@ const MainTabNavigator = () => {
         options={{
           headerShown: false,
           tabBarLabel: 'Order List',
+          tabBarLabelStyle: {
+            color: '#fff',
+            fontSize: 12,
+          },
+          tabBarStyle: {
+            backgroundColor:'#04144F',
+          },
+          tabBarActiveTintColor:'#fff',
           tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons name="cart" color={color} size={size} />
+            <MaterialCommunityIcons name="view-list" color={color} size={size} />
           ),
         }}
       />
@@ -68,6 +84,14 @@ const MainTabNavigator = () => {
         component={ViewCartScreen}
         options={{
           tabBarLabel: 'Cart',
+          tabBarLabelStyle: {
+            color: '#fff',
+            fontSize: 12,
+          },
+          tabBarStyle: {
+            backgroundColor:'#04144F',
+          },
+          tabBarActiveTintColor:'#fff',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="cart" color={color} size={size} />
           ),
@@ -78,6 +102,14 @@ const MainTabNavigator = () => {
         component={WishListScreen}
         options={{
           tabBarLabel: 'Wishlist',
+          tabBarLabelStyle: {
+            color: '#fff',
+            fontSize: 12,
+          },
+          tabBarStyle: {
+            backgroundColor:'#04144F',
+          },
+          tabBarActiveTintColor:'#fff',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="heart" color={color} size={size} />
           ),
@@ -88,6 +120,14 @@ const MainTabNavigator = () => {
         component={SettingScreen}
         options={{
           tabBarLabel: 'Setting',
+          tabBarLabelStyle: {
+            color: '#fff',
+            fontSize: 12,
+          },
+          tabBarStyle: {
+            backgroundColor:'#04144F',
+          },
+          tabBarActiveTintColor:'#fff',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="cog" color={color} size={size} />
           ),
@@ -240,7 +280,6 @@ const App = () => {
   useEffect(() => {
     let eventListenter = EventRegister.addEventListener('ChangeTheme', data => {
       setMode(data);
-      console.log(data);
     });
     return () => {
       EventRegister.removeAllListeners(eventListenter);

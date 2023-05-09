@@ -14,7 +14,7 @@ const OrderListScreen = ({ navigation }) => {
 
         const getOrder = async () => {
             try {
-                const response = await fetch('http://192.168.64.60:8087/api/order', {
+                const response = await fetch('http://192.168.64.91:8087/api/order', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

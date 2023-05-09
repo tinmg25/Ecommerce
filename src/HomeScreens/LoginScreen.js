@@ -9,7 +9,6 @@ import {
     ToastAndroid,
     BackHandler,
     KeyboardAvoidingView,
-    Platform
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,14 +26,14 @@ const LoginScreen = ({ navigation }) => {
             disableBackButton
         );
         return () => backHandler.remove();
-    },[]);
+    }, []);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.60:8087/api/login', {
+            const response = await fetch('http://192.168.64.91:8087/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,90 +56,78 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <KeyboardAvoidingView 
-        behavior='position' style={styles.container}>
+        <KeyboardAvoidingView
+            behavior='position' style={styles.container}>
             <View>
-            <View style={styles.view1}>
-                <Text style={styles.logo}>HL</Text>
-                <Image style={styles.img} source={require('../images/square.png')} />
-            </View>
-            <Text style={styles.login}>Login</Text>
-            <View style={styles.view2}>
-                <Text style={styles.email_text}>Email Address</Text>
-                <View style={styles.email_view}>
-                    <MaterialCommunityIcons
-                        style={{ alignSelf: 'center', paddingLeft: 10, color: '#000' }}
-                        name="email-outline"
-                        size={25} />
-                    <TextInput
-                        style={styles.email_input}
-                        keyboardType='email-address'
-                        value={email}
-                        onChangeText={(text) => setEmail(text)}
-                        inlineImageLeft='' />
+                <View style={styles.view1}>
+                    <Image 
+                    style={styles.img}
+                    source={require('../images/login_logo.png')} />
                 </View>
-                <Text style={styles.pwd_text}>Password</Text>
-                <View style={styles.pwd_view}>
-                    <MaterialCommunityIcons
-                        style={{ alignSelf: 'center', paddingLeft: 10, color: '#000', }}
-                        name="lock-outline"
-                        size={25} />
-                    <TextInput
-                        style={styles.pwd_input}
-                        keyboardType='default'
-                        secureTextEntry
-                        value={password}
-                        onChangeText={(text) => setPassword(text)} />
+                <Text style={styles.login}>Login</Text>
+                <View style={styles.view2}>
+                    <Text style={styles.email_text}>Email Address</Text>
+                    <View style={styles.email_view}>
+                        <MaterialCommunityIcons
+                            style={{ alignSelf: 'center', paddingLeft: 10, color: '#000' }}
+                            name="email-outline"
+                            size={25} />
+                        <TextInput
+                            style={styles.email_input}
+                            keyboardType='email-address'
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
+                            inlineImageLeft='' />
+                    </View>
+                    <Text style={styles.pwd_text}>Password</Text>
+                    <View style={styles.pwd_view}>
+                        <MaterialCommunityIcons
+                            style={{ alignSelf: 'center', paddingLeft: 10, color: '#000', }}
+                            name="lock-outline"
+                            size={25} />
+                        <TextInput
+                            style={styles.pwd_input}
+                            keyboardType='default'
+                            secureTextEntry
+                            value={password}
+                            onChangeText={(text) => setPassword(text)} />
+                    </View>
+                </View>
+                <View style={styles.view3}>
+                    <TouchableOpacity onPress={() => handleLogin()}>
+                        <Text style={styles.login_btn}>Login</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                        <Text style={styles.reg_btn}>Register</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                        <Text style={styles.reg_btn}>Test Login</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.view4}>
+                    <TouchableOpacity onPress={() => navigation.navigate('PasswordReset')}>
+                        <Text style={styles.forgot_pwd}>forgot password?</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
-            <View style={styles.view3}>
-                <TouchableOpacity onPress={() => handleLogin()}>
-                    <Text style={styles.login_btn}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                    <Text style={styles.reg_btn}>Register</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                    <Text style={styles.reg_btn}>Test Login</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.view4}>
-                <TouchableOpacity onPress={() => navigation.navigate('PasswordReset')}>
-                    <Text style={styles.forgot_pwd}>forgot password?</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
         </KeyboardAvoidingView>
-        
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex: 1,
     },
     view1: {
         height: 250,
-        backgroundColor: "#04144F",
         borderBottomStartRadius: 25,
         borderBottomEndRadius: 25,
         alignItems: 'center',
     },
-    logo: {
-        fontSize: 120,
-        color: "#FFFFFF",
-        fontStyle: "italic",
-        fontWeight: "bold",
-        position: "relative",
-        marginVertical: 30,
-    },
     img: {
-        height: 30,
-        width: 30,
-        transform: [{ rotate: '45deg' }],
-        position: "absolute",
-        top: 100,
-        left: 150,
+        width:'100%',
+        height:'100%',
     },
     view2: {
         alignSelf: 'center',

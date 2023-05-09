@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import themeContext from "../config/themeContext";
 import AwesomeAlert from "react-native-awesome-alerts";
 
@@ -12,35 +11,35 @@ const SettingScreen = ({ navigation }) => {
     const [showAlert, setShowAlert] = useState(false);
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={[styles.container]}>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Profile Setting</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
-                <Image source={require('../images/profile.png')} style={styles.logo_img}/>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                    <Image source={require('../images/profile.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Account Setting</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('Account')}>
-                    <Image source={require('../images/user.png')} style={styles.logo_img}/>
+                <TouchableOpacity onPress={() => navigation.navigate('Account')}>
+                    <Image source={require('../images/user.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Notification</Text>
                 <TouchableOpacity>
-                <Image source={require('../images/noti.png')} style={styles.logo_img}/>
+                    <Image source={require('../images/noti.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('Help')}>
-                <Image source={require('../images/question.png')} style={styles.logo_img}/>
+                <TouchableOpacity onPress={() => navigation.navigate('Help')}>
+                    <Image source={require('../images/question.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>About</Text>
-                <TouchableOpacity onPress={()=>navigation.navigate('About')}>
-                <Image source={require('../images/info.png')} style={styles.logo_img}/>
+                <TouchableOpacity onPress={() => navigation.navigate('About')}>
+                    <Image source={require('../images/info.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
@@ -49,26 +48,32 @@ const SettingScreen = ({ navigation }) => {
                     title="Logout"
                     onPress={() => setShowAlert(!showAlert)}
                 >
-                    <Image source={require('../images/exit.png')} style={styles.logo_img}/>
+                    <Image source={require('../images/exit.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <AwesomeAlert
                 show={showAlert}
                 title="Logout"
-                titleStyle={{ color: '#04144F', fontSize: 20 }}
+                titleStyle={{ color: '#04144F', fontSize: 30, fontWeight: '600', textDecorationLine: 'underline', }}
                 message="Are you sure want to logout?"
-                messageStyle={{ color: 'red' }}
+                messageStyle={{ color: 'red', fontSize: 20, }}
                 closeOnTouchOutside={false}
                 closeOnHardwareBackPress={false}
+                showProgress={true}
+                progressColor="red"
+                progressSize={30}
+                overlayStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
 
                 showCancelButton={true}
-                cancelButtonStyle={{ backgroundColor: 'gray' }}
+                cancelButtonStyle={{ backgroundColor: 'gray', width: 70, }}
                 cancelText="No"
+                cancelButtonTextStyle={{ textAlign: 'center', fontSize: 15, }}
                 onCancelPressed={() => setShowAlert(false)}
 
                 showConfirmButton={true}
-                confirmButtonColor="#04144F"
+                confirmButtonStyle={{ backgroundColor: '#04144F', width: 70, }}
                 confirmText="Yes"
+                confirmButtonTextStyle={{ textAlign: 'center', fontSize: 15, }}
                 onConfirmPressed={() => navigation.navigate('Login')}
             />
         </View>
@@ -89,8 +94,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     logo_img: {
-        width:30,
-        height:30,
+        width: 30,
+        height: 30,
     }
 });
 
