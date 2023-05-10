@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import OrderItemCard from '../common/OrderItemCard';
 
-const OrderListScreen = ({ navigation }) => {
+const OrderListScreen = () => {
 
     const [orderList, setOrderList] = useState({});
 
@@ -28,6 +28,7 @@ const OrderListScreen = ({ navigation }) => {
                 console.error('Something went wrong!', e)
             }
         };
+
         getOrder();
     }, []);
     return (

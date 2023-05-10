@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ToastAndroid, KeyboardAvoidingView } from 'react-native';
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    TouchableOpacity, 
+    TextInput, 
+    ToastAndroid, 
+    KeyboardAvoidingView 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -129,6 +137,8 @@ const CheckoutScreen = ({ route }) => {
 
         if (postalInput.trim() === '') {
             setPostalError('Please Enter Postal Code');
+        } else if (postalInput.length < 6){
+            setPostalError('Postal Code must be at least 6 characters');
         } else if (!handlePostal(postalInput)) {
             setPostalError('Please Enter Only Numbers in Postal Code');
         } else {
@@ -138,7 +148,7 @@ const CheckoutScreen = ({ route }) => {
         if (handleName(nameInput) && handleEmail(emailInput) &&
             handleAddress(addressInput) && handlePhone(phoneInput) &&
             handleTownship(townshipInput) && handlePostal(postalInput)) {
-            handleOrder();
+                handleOrder();
         }
     };
 
@@ -213,7 +223,6 @@ const CheckoutScreen = ({ route }) => {
                     onChangeText={setPostalInput} />
                 {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
             </View>
-            <Text>Total Amount - {total}</Text>
             <TouchableOpacity onPress={() => handleCheckout()}>
                 <Text style={styles.payment}>Order now</Text>
             </TouchableOpacity>

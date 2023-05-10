@@ -100,9 +100,9 @@ const LoginScreen = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                         <Text style={styles.reg_btn}>Register</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                    {/* <TouchableOpacity onPress={() => navigation.navigate('Main')}>
                         <Text style={styles.reg_btn}>Test Login</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <View style={styles.view4}>
                     <TouchableOpacity onPress={() => navigation.navigate('PasswordReset')}>
