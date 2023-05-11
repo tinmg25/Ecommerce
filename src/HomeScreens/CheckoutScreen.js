@@ -10,9 +10,13 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { clearCart } from '../redux/actions/Actions';
+import { useDispatch } from 'react-redux';
 
 const CheckoutScreen = ({ route }) => {
     const navigation = useNavigation();
+
+    const dispatch = useDispatch();
 
     const { cartData } = route.params;
 
@@ -121,6 +125,8 @@ const CheckoutScreen = ({ route }) => {
 
         if (phoneInput.trim() === '') {
             setPhoneError('Please Enter Phone Number');
+        } else if(phoneInput.length < 11){
+            setPhoneError('Phone must be at least 11 number');
         } else if (!handlePhone(phoneInput)) {
             setPhoneError('Please Enter Only Numbers in Phone Number');
         } else {
@@ -170,6 +176,7 @@ const CheckoutScreen = ({ route }) => {
             });
             const data = await response.json();
             if (response.ok) {
+                dispatch(clearCart());  
                 navigation.navigate('OrderList');
             }
             else {
@@ -224,7 +231,7 @@ const CheckoutScreen = ({ route }) => {
                 {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
             </View>
             <TouchableOpacity onPress={() => handleCheckout()}>
-                <Text style={styles.payment}>Order now</Text>
+                <Text style={styles.order}>Order now</Text>
             </TouchableOpacity>
         </View>
         </KeyboardAvoidingView>
@@ -249,7 +256,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         fontSize: 20,
     },
-    payment: {
+    order: {
         alignSelf: 'center',
         width: 250,
         fontSize: 20,

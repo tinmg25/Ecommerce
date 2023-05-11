@@ -40,7 +40,7 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={[styles.label, { color: theme.color }]}>Address : {userData && userData.address}</Text>
                 <Text style={[styles.label, { color: theme.color }]}>Phone No. : {userData && userData.phone_number}</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+            <TouchableOpacity onPress={() => navigation.navigate('EditProfile', { userData })}>
                 <Text style={styles.edit_btn}>Edit Profile</Text>
             </TouchableOpacity>
         </View>

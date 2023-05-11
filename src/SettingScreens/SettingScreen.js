@@ -25,12 +25,6 @@ const SettingScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Notification</Text>
-                <TouchableOpacity>
-                    <Image source={require('../images/noti.png')} style={styles.logo_img} />
-                </TouchableOpacity>
-            </View>
-            <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
                 <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Help')}>
                     <Image source={require('../images/question.png')} style={styles.logo_img} />

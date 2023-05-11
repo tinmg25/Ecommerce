@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     View,
     Text,
@@ -8,8 +8,11 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView
 } from 'react-native';
+import { LanguageContext } from '../LanguageContext';
 
 const RegisterScreen = ({ navigation }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -121,30 +124,30 @@ const RegisterScreen = ({ navigation }) => {
         <KeyboardAvoidingView
             behavior='padding' style={styles.container}>
             <View>
-                <Text style={styles.reg}>Register</Text>
+                <Text style={styles.reg}>{translate('register')}</Text>
                 <View style={styles.view2}>
-                    <Text style={styles.label}>Username</Text>
+                    <Text style={styles.label}>{translate('username')}</Text>
                     <TextInput
                         style={styles.text_input}
                         keyboardType='default'
                         value={name}
                         onChangeText={setName} />
                     {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
-                    <Text style={styles.label}>Email Address</Text>
+                    <Text style={styles.label}>{translate('email')}</Text>
                     <TextInput
                         style={styles.text_input}
                         keyboardType='email-address'
                         value={email}
                         onChangeText={setEmail} />
                     {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
-                    <Text style={styles.label}>Phone No.</Text>
+                    <Text style={styles.label}>{translate('phone')}</Text>
                     <TextInput
                         style={styles.text_input}
                         keyboardType='number-pad'
                         value={phone}
                         onChangeText={setPhone} />
                     {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
-                    <Text style={styles.label}>Password</Text>
+                    <Text style={styles.label}>{translate('password')}</Text>
                     <TextInput
                         secureTextEntry
                         style={styles.text_input}
@@ -152,7 +155,7 @@ const RegisterScreen = ({ navigation }) => {
                         value={password}
                         onChangeText={setPassword} />
                     {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
-                    <Text style={styles.label}>Confirm Password</Text>
+                    <Text style={styles.label}>{translate('password_re')}</Text>
                     <TextInput
                         secureTextEntry
                         style={styles.text_input}
@@ -163,10 +166,10 @@ const RegisterScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.view3}>
                     <TouchableOpacity onPress={() => validateForm()}>
-                        <Text style={styles.reg_btn}>Register</Text>
+                        <Text style={styles.reg_btn}>{translate('register')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.login_btn}>Already have account?</Text>
+                        <Text style={styles.login_btn}>{translate('already')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

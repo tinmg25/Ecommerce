@@ -1,5 +1,6 @@
 import {
   ADD_TO_CART,
+  CLEAR_CART,
   REMOVE_FROM_CART,
 
 } from '../ActionTypes';
@@ -10,11 +11,16 @@ const reducers = (state = [], action) => {
       return [...state, action.payload];
 
     case REMOVE_FROM_CART:
-      const deletedAray1 = state.filter((item, index) => {
+      const deletedArray1 = state.filter((item, index) => {
         return index !== action.payload;
       });
 
-      return deletedAray1;
+      return deletedArray1;
+
+    case CLEAR_CART:
+      return {
+        ...state, cartData: []
+      }
 
     default:
       return state;

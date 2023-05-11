@@ -1,9 +1,17 @@
 import React, { useState, useContext } from 'react';
-import {View, Text, StyleSheet, Switch} from 'react-native';
+import {View, Text, StyleSheet, Switch, Button } from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import themeContext from '../../config/themeContext';
+import { LanguageContext } from '../../LanguageContext';
 
 const AccountSettingScreen = () => {
+
+    const { language, translate, changeLanguage } = useContext(LanguageContext);
+
+    const handleLanguageChange = () => {
+      const newLanguage = language === 'en' ? 'jp' : 'en';
+      changeLanguage(newLanguage);
+    }
 
     const theme = useContext(themeContext);
 
@@ -21,6 +29,10 @@ const AccountSettingScreen = () => {
           }}
         />
       </View>
+      <View style={styles.sub_view}>
+        <Text style={[styles.label, {color: theme.color}]}>{translate('language')}</Text>
+        <Button title={translate('setting')} onPress={handleLanguageChange}/>
+      </View>
     </View>
   );
 };
@@ -34,6 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     borderBottomWidth: 1,
+    alignItems:'center'
   },
   label: {
     fontSize: 20,

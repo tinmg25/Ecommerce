@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     View,
     Text,
@@ -8,8 +8,11 @@ import {
     ToastAndroid
 } from 'react-native';
 import Mailer from 'react-native-mail';
+import { LanguageContext } from '../LanguageContext';
 
 const PasswordResetScreen = ({ navigation }) => {
+    
+    const { translate } = useContext(LanguageContext);
 
     const [email, setEmail] = useState('');
 
@@ -39,9 +42,9 @@ const PasswordResetScreen = ({ navigation }) => {
 
     return (
         <View>
-            <Text style={styles.pwd_recovery}>Password Recovery</Text>
+            <Text style={styles.pwd_recovery}>{translate('recovery')}</Text>
             <View style={styles.view2}>
-                <Text style={styles.email_text}>Email Address</Text>
+                <Text style={styles.email_text}>{translate('email')}</Text>
                 <TextInput
                     style={styles.email_input}
                     value={email}
@@ -51,10 +54,10 @@ const PasswordResetScreen = ({ navigation }) => {
             </View>
             <View style={styles.view3}>
                 <TouchableOpacity onPress={() => handlePassword()}>
-                    <Text style={styles.reg_btn}>Get Password</Text>
+                    <Text style={styles.reg_btn}>{translate('get_pwd')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.login_btn}>Already have account?</Text>
+                    <Text style={styles.login_btn}>{translate('already')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

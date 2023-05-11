@@ -29,15 +29,8 @@ const OrderDetailScreen = ({ route }) => {
             try {
                 const orderId = item.order_id;
 
-                const response = await fetch(`http://192.168.64.91:8087/api/order/detail/${orderId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify()
-                });
+                const response = await fetch(`http://192.168.64.91:8087/api/${orderId}`);
                 const data = await response.json();
-                console.log(data);
                 setOrderDetailList(data);
             }
             catch (e) {
@@ -53,36 +46,24 @@ const OrderDetailScreen = ({ route }) => {
         <View style={styles.container}>
             <View style={styles.sub_view}>
                 <Text style={styles.label_head}>Order Id : </Text>
-                <Text style={styles.label_text}>{item.order_id}</Text>
+                <Text style={styles.label_text}>{orderDetailList.order_id}</Text>
             </View>
             <View style={styles.sub_view}>
                 <Text style={styles.label_head}>Order Detail Id : </Text>
-                <Text style={styles.label_text}>{item.user_id}</Text>
+                <Text style={styles.label_text}>{orderDetailList.order_detail_id}</Text>
             </View>
             <View style={styles.sub_view}>
                 <Text style={styles.label_head}>Product Id : </Text>
-                <Text style={styles.label_text}>{item.shipping_address_id}</Text>
+                <Text style={styles.label_text}>{orderDetailList.product_id}</Text>
             </View>
             <View style={styles.sub_view}>
-                <Text style={styles.label_head}>Quantity : </Text>
-                <Text style={styles.label_text}>{item.phone_number}</Text>
+                <Text style={styles.label_head}>Qty : </Text>
+                <Text style={styles.label_text}>{orderDetailList.quantity}</Text>
             </View>
             <View style={styles.sub_view}>
                 <Text style={styles.label_head}>Price : </Text>
-                <Text style={styles.label_text}>{item.township}</Text>
+                <Text style={styles.label_text}>{orderDetailList.price}</Text>
             </View>
-            {/* <View style={styles.sub_view}>
-                <Text style={styles.label_head}>Postal Code : </Text>
-                <Text style={styles.label_text}>{item.postal_code}</Text>
-            </View>
-            <View style={styles.sub_view}>
-                <Text style={styles.label_head}>Total Amount : </Text>
-                <Text style={styles.label_text}>{item.total_amount}</Text>
-            </View>
-            <View style={styles.sub_view}>
-                <Text style={styles.label_head}>Order Status : </Text>
-                <Text style={styles.label_text}>{statusText}</Text>
-            </View> */}
         </View>
     )
 }

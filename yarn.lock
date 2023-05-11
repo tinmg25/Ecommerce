@@ -4071,6 +4071,16 @@ internal-slot@^1.0.3, internal-slot@^1.0.5:
     has "^1.0.3"
     side-channel "^1.0.4"
 
+intl-pluralrules@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/intl-pluralrules/-/intl-pluralrules-2.0.0.tgz"
+  integrity sha512-YlHi/pve75R2kyvGFyDvmL+zECVrEONSbdeGwXtDXHulvNgcmT1rhwyfMCX/BPzBRuW7b2Uu4oQqnYs7ti8WIA==
+
+intl@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.npmjs.org/intl/-/intl-1.2.5.tgz"
+  integrity sha512-rK0KcPHeBFBcqsErKSpvZnrOmWOj+EmDkyJ57e90YWaQNqbcivcqmKDlHEeNprDWOsKzPsh1BfSpPQdDvclHVw==
+
 invariant@*, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"

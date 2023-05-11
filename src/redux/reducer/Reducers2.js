@@ -10,11 +10,11 @@ const reducers2 = (state = [], action) => {
       return [...state, action.payload];
 
     case REMOVE_FROM_WISHLIST:
-      const deletedAray2 = state.filter((item, index) => {
+      const deletedArray2 = state.filter((item, index) => {
         return index !== action.payload;
       });
 
-      return deletedAray2;
+      return deletedArray2;
 
     default:
       return state;

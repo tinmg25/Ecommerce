@@ -3,7 +3,8 @@ import {
     ADD_TO_WISHLIST, 
     REMOVE_FROM_CART, 
     REMOVE_FROM_WISHLIST,
-    CHANGE_LANGUAGE } from "../ActionTypes";
+    CLEAR_CART,
+ } from "../ActionTypes";
 
 export const addItemToCart = data => ({
     type: ADD_TO_CART,
@@ -24,3 +25,9 @@ export const removeItemFromWishlist = index => ({
     type: REMOVE_FROM_WISHLIST,
     payload: index,
 });
+
+export const clearCart = () => {
+    return {
+        type: CLEAR_CART,
+    };
+};

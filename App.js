@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Splash from './src/HomeScreens/Splash';
 import LoginScreen from './src/HomeScreens/LoginScreen';
 import RegisterScreen from './src/HomeScreens/RegisterScreen';
@@ -21,12 +21,13 @@ import WishListScreen from './src/WishlistScreen/Wishlist';
 import AccountSettingScreen from './src/SettingScreens/AccountScreens/AccountSetting';
 import AboutScreen from './src/SettingScreens/AboutScreen';
 
-import {EventRegister} from 'react-native-event-listeners';
+import { EventRegister } from 'react-native-event-listeners';
 import theme from './src/config/theme';
 import themeContext from './src/config/themeContext';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import store from './src/redux/store/Store';
 import HelpSupportScreen from './src/SettingScreens/Help&SupportScreen';
+import { LanguageProvider } from './src/LanguageContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,7 +38,7 @@ const MainTabNavigator = () => {
       <Tab.Screen
         name="Product"
         component={ProductScreen}
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           // headerRight: () => (
           //     <TouchableOpacity
           //         title="Logout"
@@ -52,10 +53,10 @@ const MainTabNavigator = () => {
             fontSize: 12,
           },
           tabBarStyle: {
-            backgroundColor:'#04144F',
+            backgroundColor: '#04144F',
           },
-          tabBarActiveTintColor:'#fff',
-          tabBarIcon: ({color, size}) => (
+          tabBarActiveTintColor: '#fff',
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="shopping" color={color} size={size} />
           ),
         })}
@@ -71,10 +72,10 @@ const MainTabNavigator = () => {
             fontSize: 12,
           },
           tabBarStyle: {
-            backgroundColor:'#04144F',
+            backgroundColor: '#04144F',
           },
-          tabBarActiveTintColor:'#fff',
-          tabBarIcon: ({color, size}) => (
+          tabBarActiveTintColor: '#fff',
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="view-list" color={color} size={size} />
           ),
         }}
@@ -89,10 +90,10 @@ const MainTabNavigator = () => {
             fontSize: 12,
           },
           tabBarStyle: {
-            backgroundColor:'#04144F',
+            backgroundColor: '#04144F',
           },
-          tabBarActiveTintColor:'#fff',
-          tabBarIcon: ({color, size}) => (
+          tabBarActiveTintColor: '#fff',
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cart" color={color} size={size} />
           ),
         }}
@@ -107,10 +108,10 @@ const MainTabNavigator = () => {
             fontSize: 12,
           },
           tabBarStyle: {
-            backgroundColor:'#04144F',
+            backgroundColor: '#04144F',
           },
-          tabBarActiveTintColor:'#fff',
-          tabBarIcon: ({color, size}) => (
+          tabBarActiveTintColor: '#fff',
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="heart" color={color} size={size} />
           ),
         }}
@@ -125,10 +126,10 @@ const MainTabNavigator = () => {
             fontSize: 12,
           },
           tabBarStyle: {
-            backgroundColor:'#04144F',
+            backgroundColor: '#04144F',
           },
-          tabBarActiveTintColor:'#fff',
-          tabBarIcon: ({color, size}) => (
+          tabBarActiveTintColor: '#fff',
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cog" color={color} size={size} />
           ),
         }}
@@ -143,27 +144,27 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Splash"
         component={Splash}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Register"
         component={RegisterScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PasswordReset"
         component={PasswordResetScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Main"
         component={MainTabNavigator}
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           title: 'Home',
           headerShown: false,
           headerBackVisible: false,
@@ -180,7 +181,7 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="ProductDetail"
         component={ProductDetailScreen}
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           title: 'Details',
           headerBackVisible: true,
         })}
@@ -287,13 +288,15 @@ const App = () => {
   }, [mode]);
 
   return (
-    <Provider store={store}>
-      <themeContext.Provider value={mode === true ? theme.dark : theme.light}>
-        <NavigationContainer>
-          <MainStackNavigator />
-        </NavigationContainer>
-      </themeContext.Provider>
-    </Provider>
+    <LanguageProvider>
+      <Provider store={store}>
+        <themeContext.Provider value={mode === true ? theme.dark : theme.light}>
+          <NavigationContainer>
+            <MainStackNavigator />
+          </NavigationContainer>
+        </themeContext.Provider>
+      </Provider>
+    </LanguageProvider>
   );
 };
 

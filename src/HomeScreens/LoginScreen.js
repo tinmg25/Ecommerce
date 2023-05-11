@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
@@ -12,8 +12,11 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LanguageContext } from '../LanguageContext';
 
 const LoginScreen = ({ navigation }) => {
+
+    const { translate } = useContext(LanguageContext)
 
     const disableBackButton = () => {
         BackHandler.exitApp();
@@ -64,9 +67,9 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.img}
                     source={require('../images/login_logo.png')} />
                 </View>
-                <Text style={styles.login}>Login</Text>
+                <Text style={styles.login}>{translate('login')}</Text>
                 <View style={styles.view2}>
-                    <Text style={styles.email_text}>Email Address</Text>
+                    <Text style={styles.email_text}>{translate('email')}</Text>
                     <View style={styles.email_view}>
                         <MaterialCommunityIcons
                             style={{ alignSelf: 'center', paddingLeft: 10, color: '#000' }}
@@ -79,7 +82,7 @@ const LoginScreen = ({ navigation }) => {
                             onChangeText={(text) => setEmail(text)}
                             inlineImageLeft='' />
                     </View>
-                    <Text style={styles.pwd_text}>Password</Text>
+                    <Text style={styles.pwd_text}>{translate('password')}</Text>
                     <View style={styles.pwd_view}>
                         <MaterialCommunityIcons
                             style={{ alignSelf: 'center', paddingLeft: 10, color: '#000', }}
@@ -95,18 +98,18 @@ const LoginScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.view3}>
                     <TouchableOpacity onPress={() => handleLogin()}>
-                        <Text style={styles.login_btn}>Login</Text>
+                        <Text style={styles.login_btn}>{translate('login')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.reg_btn}>Register</Text>
+                        <Text style={styles.reg_btn}>{translate('register')}</Text>
                     </TouchableOpacity>
-                    {/* <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
                         <Text style={styles.reg_btn}>Test Login</Text>
-                    </TouchableOpacity> */}
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.view4}>
                     <TouchableOpacity onPress={() => navigation.navigate('PasswordReset')}>
-                        <Text style={styles.forgot_pwd}>forgot password?</Text>
+                        <Text style={styles.forgot_pwd}>{translate('forgot')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -137,6 +140,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#000000",
         alignSelf: 'center',
+        marginVertical: 20,
     },
     email_view: {
         flexDirection: 'row',
