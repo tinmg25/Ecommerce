@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { API_KEY } from '../common/APIKey';
 
 const OrderDetailScreen = ({ route }) => {
 
@@ -29,7 +30,7 @@ const OrderDetailScreen = ({ route }) => {
             try {
                 const orderId = item.order_id;
 
-                const response = await fetch(`http://192.168.64.91:8087/api/${orderId}`);
+                const response = await fetch(`${API_KEY}/api/${orderId}`);
                 const data = await response.json();
                 setOrderDetailList(data);
             }

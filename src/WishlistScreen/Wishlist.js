@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     View,
     Text,
@@ -9,8 +9,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, removeItemFromWishlist } from '../redux/actions/Actions';
+import { LanguageContext } from '../LanguageContext';
 
 const WishlistScreen = ({ navigation }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const [cartList, setCartList ] = useState([]);
     const cartData = useSelector( state => state.reducers2);
@@ -34,7 +37,7 @@ const WishlistScreen = ({ navigation }) => {
                 }}/>
             ):(
                 <View style={styles.sub_view}>
-                    <Text>No Item Added To Wishlist</Text>
+                    <Text>{translate('no_wishlist')}</Text>
                 </View>
             )}
             

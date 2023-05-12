@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
+import { LanguageContext } from '../LanguageContext';
 
 const ViewCartScreen = ({ navigation }) => {
+
+  const { translate } = useContext(LanguageContext);
+
   const cartData = useSelector(state => state.reducers);
   const dispatch = useDispatch();
 
@@ -66,12 +70,12 @@ const ViewCartScreen = ({ navigation }) => {
         />
       ) : (
         <View style={styles.no_data}>
-          <Text>No Item Added To Cart</Text>
+          <Text>{translate('no_item')}</Text>
         </View>
       )}
       {cartData.length > 0 ? (
         <TouchableOpacity onPress={()=>navigation.navigate('Checkout',{cartData})}>
-          <Text style={styles.button}>Checkout</Text>
+          <Text style={styles.button}>{translate('checkout')}</Text>
         </TouchableOpacity>
       ) : null}
 

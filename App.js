@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -28,11 +28,15 @@ import { Provider } from 'react-redux';
 import store from './src/redux/store/Store';
 import HelpSupportScreen from './src/SettingScreens/Help&SupportScreen';
 import { LanguageProvider } from './src/LanguageContext';
+import { LanguageContext } from './src/LanguageContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -47,7 +51,7 @@ const MainTabNavigator = () => {
           //         <MaterialCommunityIcons name="logout" size={30} color="black" />
           //     </TouchableOpacity>
           // ),
-          tabBarLabel: 'Products',
+          tabBarLabel: translate('products'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -66,7 +70,7 @@ const MainTabNavigator = () => {
         component={OrderStackNavigator}
         options={{
           headerShown: false,
-          tabBarLabel: 'Order List',
+          tabBarLabel: translate('order_lists'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -81,10 +85,11 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Cart"
-        component={ViewCartScreen}
+        name="ViewCart"
+        component={ViewCartStackNavigator}
         options={{
-          tabBarLabel: 'Cart',
+          headerShown: false,
+          tabBarLabel: translate('cart'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -100,9 +105,10 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="Wishlist"
-        component={WishListScreen}
+        component={WishlistStackNavigator}
         options={{
-          tabBarLabel: 'Wishlist',
+          headerShown: false,
+          tabBarLabel: translate('wishlist'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -118,9 +124,10 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="Setting"
-        component={SettingScreen}
+        component={SettingStackNavigator}
         options={{
-          tabBarLabel: 'Setting',
+          headerShown:false,
+          tabBarLabel: translate('setting'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -139,6 +146,9 @@ const MainTabNavigator = () => {
 };
 
 const MainStackNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen
@@ -178,104 +188,129 @@ const MainStackNavigator = () => {
           // ),
         })}
       />
-      <Stack.Screen
-        name="ProductDetail"
-        component={ProductDetailScreen}
-        options={({ navigation }) => ({
-          title: 'Details',
-          headerBackVisible: true,
-        })}
-      />
-      <Stack.Screen
-        name="Checkout"
-        component={CheckoutScreen}
-        options={{
-          title: 'Checkout',
-        }}
-      />
-      <Stack.Screen
-        name="Payment"
-        component={PaymentScreen}
-        options={{
-          title: 'Payment',
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileStackNavigator}
-        options={{
-          headerShown: false,
-          title: 'Profile',
-        }}
-      />
-      <Stack.Screen
-        name="Account"
-        component={AccountSettingScreen}
-        options={{
-          title: 'Account Setting',
-        }}
-      />
-      <Stack.Screen
-        name="About"
-        component={AboutScreen}
-        options={{
-          title: 'About',
-        }}
-      />
-      <Stack.Screen
-        name="Help"
-        component={HelpSupportScreen}
-        options={{
-          title: 'Help & Support',
-        }}
-      />
     </Stack.Navigator>
   );
 };
 
 const OrderStackNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="OrderLists"
         component={OrderListScreen}
         options={{
-          title: 'Order List',
+          title: translate('order_lists'),
         }}
       />
       <Stack.Screen
         name="OrderDetails"
         component={OrderDetailScreen}
         options={{
-          title: 'Details',
+          title: translate('detail'),
         }}
       />
     </Stack.Navigator>
   );
 };
 
-const ProfileStackNavigator = () => {
+const ViewCartStackNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
+  return(
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Cart"
+        component={ViewCartScreen}
+        options={{
+          title: translate('cart'),
+        }}
+      />
+      <Stack.Screen
+        name="Checkout"
+        component={CheckoutScreen}
+        options={{
+          title: translate('checkout'),
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const WishlistStackNavigator =() => {
+
+  const { translate } = useContext(LanguageContext);
+
+  return(
+    <Stack.Navigator>
+      <Stack.Screen
+        name='WishLists'
+        component={WishListScreen}
+        options={{
+          title: translate('wishlist'),
+        }}
+      />
+    </Stack.Navigator>
+  )
+}
+
+const SettingStackNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="Settings"
+        component={SettingScreen}
+        options={{
+          title: translate('setting'),
+        }}
+      />
       <Stack.Screen
         name="UserProfile"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: translate('profile'),
         }}
       />
       <Stack.Screen
         name="EditProfile"
         component={EditProfileScreen}
         options={{
-          title: 'Edit Profile',
+          title: translate('edit'),
+        }}
+      />
+      <Stack.Screen
+        name="Account"
+        component={AccountSettingScreen}
+        options={{
+          title: translate('account_setting'),
+        }}
+      />
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          title: translate('about'),
+        }}
+      />
+      <Stack.Screen
+        name="Help"
+        component={HelpSupportScreen}
+        options={{
+          title: translate('help_support'),
         }}
       />
     </Stack.Navigator>
-  );
-};
+  )
+}
 
 const App = () => {
+
   const [mode, setMode] = useState(false);
 
   useEffect(() => {

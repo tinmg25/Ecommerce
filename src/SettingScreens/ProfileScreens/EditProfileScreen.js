@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { 
     View, 
     Text, 
@@ -11,8 +11,12 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from "../../config/theme";
 import { useNavigation } from '@react-navigation/native'
+import { LanguageContext } from "../../LanguageContext";
+import { API_KEY } from "../../common/APIKey";
 
 const EditProfileScreen = ({ route }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const navigation = useNavigation();
 
@@ -50,33 +54,33 @@ const EditProfileScreen = ({ route }) => {
 
     const handleTextbox = () => {
         if (name.trim() === '') {
-            setNameError('Please Enter Name');
+            setNameError(translate('name_error'));
         } else if (!handleName(name)) {
-            setNameError('Please Enter Only Characters in Name');
+            setNameError(translate('name_format'));
         } else {
             setNameError('');
         }
 
         if (email.trim() === '') {
-            setEmailError('Please Enter Email');
+            setEmailError(translate('mail_error'));
         } else if (!handleEmail(email)) {
-            setEmailError('Please Enter Correct Format in Email');
+            setEmailError(translate('mail_format'));
         } else {
             setEmailError('');
         }
 
         if (address.trim() === '') {
-            setAddressError('Please Enter Address');
+            setAddressError(translate('address_error'));
         } else if (!handleAddress(address)) {
-            setAddressError('Please Enter Only Characters and Numbers in Address');
+            setAddressError(translate('address_format'));
         } else {
             setAddressError('');
         }
 
         if (phone.trim() === '') {
-            setPhoneError('Please Enter Phone Number');
+            setPhoneError(translate('phone_error'));
         } else if (!handlePhone(phone)) {
-            setPhoneError('Please Enter Only Numbers in Phone Number');
+            setPhoneError(translate('phone_format2'));
         } else {
             setPhoneError('');
         }
@@ -91,7 +95,7 @@ const EditProfileScreen = ({ route }) => {
     const handleUpdate = async () => {
         try {
             const userId = userData.user_id;
-            const response = await fetch(`http://192.168.64.91:8087/api/users/update/${userId}`, {
+            const response = await fetch(`${API_KEY}/api/users/update/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -118,32 +122,32 @@ const EditProfileScreen = ({ route }) => {
         <View style={styles.container}>
             <MaterialCommunityIcons style={[styles.user_icon, { color: theme.color }]} name='account' size={150} />
             <View style={styles.view1}>
-                <Text style={styles.label}>Name</Text>
+                <Text style={styles.label}>{translate('p_name')}</Text>
                 <TextInput
                     style={styles.input}
                     value={name}
                     onChangeText={setName} />
                 {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>{translate('p_email')}</Text>
                 <TextInput
                     style={styles.input}
                     value={email}
                     onChangeText={setEmail} />
                 {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
-                <Text style={styles.label}>Address</Text>
+                <Text style={styles.label}>{translate('p_address')}</Text>
                 <TextInput
                     style={styles.input}
                     value={address}
                     onChangeText={setAddress} />
                 {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
-                <Text style={styles.label}>Phone No.</Text>
+                <Text style={styles.label}>{translate('p_phone')}</Text>
                 <TextInput
                     style={styles.input}
                     value={phone}
                     onChangeText={setPhone} />
                 {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
                 <TouchableOpacity onPress={() => handleTextbox()}>
-                    <Text style={styles.update_btn}>Update</Text>
+                    <Text style={styles.update_btn}>{translate('update')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

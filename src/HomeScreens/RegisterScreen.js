@@ -9,6 +9,7 @@ import {
     KeyboardAvoidingView
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
+import { API_KEY } from '../common/APIKey';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -53,41 +54,41 @@ const RegisterScreen = ({ navigation }) => {
 
     const validateForm = () => {
         if (name.trim() === '') {
-            setNameError('Please Enter Username');
+            setNameError(translate('name_error'));
         } else if (!handleUserName(name)) {
-            setNameError('Please Enter Only Characters in Name');
+            setNameError(translate('name_format'));
         } else {
             setNameError('');
         }
 
         if (email.trim() === '') {
-            setEmailError('Please Enter Email');
+            setEmailError(translate('mail_error'));
         } else if (!handleEmail(email)) {
-            setEmailError('Please Enter Correct Format in Email');
+            setEmailError(translate('mail_format'));
         } else {
             setEmailError('');
         }
 
         if (phone.trim() === '') {
-            setPhoneError('Please Enter Phone No.');
+            setPhoneError(translate('phone_error'));
         } else if (!handlePhone(phone)) {
-            setPhoneError('Please Enter Only Numbers in Phone Number');
+            setPhoneError(translate('phone_format'));
         } else {
             setPhoneError('');
         }
 
         if (password.trim() === '') {
-            setPasswordError('Please Enter Password');
+            setPasswordError(translate('pwd_error'));
         } else if (!handlePassword(password)) {
-            setPasswordError('Password must be at leaset 8 characters');
+            setPasswordError(translate('pwd_format'));
         } else {
             setPasswordError('');
         }
 
         if (conPassword.trim() === '') {
-            setConPasswordError('Please Enter Confirm Password');
+            setConPasswordError(translate('con_pwd_error'));
         } else if (!handleConPassword(conPassword)) {
-            setConPasswordError('Password do not match');
+            setConPasswordError(translate('con_pwd_format'));
         } else {
             setConPasswordError('');
         }
@@ -101,7 +102,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleRegister = async () => {
         try {
-            const response = await fetch('http://192.168.64.91:8087/api/register', {
+            const response = await fetch(`${API_KEY}/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

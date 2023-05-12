@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
     View, 
     Text, 
@@ -12,11 +12,15 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearCart } from '../redux/actions/Actions';
 import { useDispatch } from 'react-redux';
+import { LanguageContext } from '../LanguageContext';
+import { API_KEY } from '../common/APIKey';
 
 const CheckoutScreen = ({ route }) => {
     const navigation = useNavigation();
 
     const dispatch = useDispatch();
+
+    const { translate } = useContext(LanguageContext);
 
     const { cartData } = route.params;
 
@@ -32,7 +36,7 @@ const CheckoutScreen = ({ route }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.91:8087/api/${mEmail}`, {
+                    const response = await fetch(`${API_KEY}/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -100,53 +104,53 @@ const CheckoutScreen = ({ route }) => {
 
     const handleCheckout = () => {
         if (nameInput.trim() === '') {
-            setNameError('Please Enter Name');
+            setNameError(translate('name_error'));
         } else if (!handleName(nameInput)) {
-            setNameError('Please Enter Only Characters in Name');
+            setNameError(translate('name_format'));
         } else {
             setNameError('');
         }
 
         if (emailInput.trim() === '') {
-            setEmailError('Please Enter Email');
+            setEmailError(translate('mail_error'));
         } else if (!handleEmail(emailInput)) {
-            setEmailError('Please Enter Correct Format in Email');
+            setEmailError(translate('mail_format'));
         } else {
             setEmailError('');
         }
 
         if (addressInput.trim() === '') {
-            setAddressError('Please Enter Address');
+            setAddressError(translate('address_error'));
         } else if (!handleAddress(addressInput)) {
-            setAddressError('Please Enter Only Characters and Numbers in Address');
+            setAddressError(translate('address_format'));
         } else {
             setAddressError('');
         }
 
         if (phoneInput.trim() === '') {
-            setPhoneError('Please Enter Phone Number');
+            setPhoneError(translate('phone_error'));
         } else if(phoneInput.length < 11){
-            setPhoneError('Phone must be at least 11 number');
+            setPhoneError(translate('phone_format1'));
         } else if (!handlePhone(phoneInput)) {
-            setPhoneError('Please Enter Only Numbers in Phone Number');
+            setPhoneError(translate('phone_format2'));
         } else {
             setPhoneError('');
         }
 
         if (townshipInput.trim() === '') {
-            setTownshipError('Please Enter Towhship');
+            setTownshipError(translate('township_error'));
         } else if (!handleTownship(townshipInput)) {
-            setTownshipError('Please Enter Only Characters in Township');
+            setTownshipError(translate('township_format'));
         } else {
             setTownshipError('');
         }
 
         if (postalInput.trim() === '') {
-            setPostalError('Please Enter Postal Code');
+            setPostalError(translate('postal_code'));
         } else if (postalInput.length < 6){
-            setPostalError('Postal Code must be at least 6 characters');
+            setPostalError(translate('postal_format1'));
         } else if (!handlePostal(postalInput)) {
-            setPostalError('Please Enter Only Numbers in Postal Code');
+            setPostalError(translate('postal_format2'));
         } else {
             setPostalError('');
         }
@@ -160,7 +164,7 @@ const CheckoutScreen = ({ route }) => {
 
     const handleOrder = async () => {
         try {
-            const response = await fetch('http://192.168.64.91:8087/api/order/save', {
+            const response = await fetch(`${API_KEY}/api/order/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -192,46 +196,46 @@ const CheckoutScreen = ({ route }) => {
         <KeyboardAvoidingView behavior='padding'>
             <View>
             <View style={styles.view1}>
-                <Text style={styles.title}>Add Shipping Address</Text>
+                <Text style={styles.title}>{translate('shipping_address')}</Text>
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Name'
+                    placeholder={translate('p_name')}
                     value={nameInput}
                     onChangeText={setNameInput} />
                 {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Email'
+                    placeholder={translate('p_email')}
                     value={emailInput}
                     onChangeText={setEmailInput} />
                 {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Address'
+                    placeholder={translate('p_address')}
                     value={addressInput}
                     onChangeText={setAddressInput} />
                 {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Phone'
+                    placeholder={translate('p_phone')}
                     value={phoneInput}
                     onChangeText={setPhoneInput} />
                 {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Township'
+                    placeholder={translate('township')}
                     value={townshipInput}
                     onChangeText={setTownshipInput} />
                 {townshipError ? <Text style={styles.errorMessage}>{townshipError}</Text> : null}
                 <TextInput
                     style={styles.textbox}
-                    placeholder='Postal Code'
+                    placeholder={translate('postal_code')}
                     value={postalInput}
                     onChangeText={setPostalInput} />
                 {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
             </View>
             <TouchableOpacity onPress={() => handleCheckout()}>
-                <Text style={styles.order}>Order now</Text>
+                <Text style={styles.order}>{translate('order_now')}</Text>
             </TouchableOpacity>
         </View>
         </KeyboardAvoidingView>

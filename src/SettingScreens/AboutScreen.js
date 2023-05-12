@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { LanguageContext } from '../LanguageContext';
 
 const AboutScreen = () => {
+
+    const { translate} = useContext(LanguageContext);
+
     return (
         <View style={styles.container}>
             <View style={styles.sub_view}>
-                <Text style={styles.header}>App Name</Text>
+                <Text style={styles.header}>{translate('app_name')}</Text>
                 <Text style={styles.label}>HL Ecommerce</Text>
             </View>
             <View style={styles.sub_view}>
-                <Text style={styles.header}>Version</Text>
+                <Text style={styles.header}>{translate('version')}</Text>
                 <Text style={styles.label}>1.0.0</Text>
             </View>
             <View style={styles.sub_view}>
-                <Text style={styles.header}>Description</Text>
+                <Text style={styles.header}>{translate('description')}</Text>
                 <Text style={styles.label}>Search Fast, Buy Smart</Text>
             </View>
             <View style={styles.sub_view}>
-                <Text style={styles.header}>Contact</Text>
+                <Text style={styles.header}>{translate('contact')}</Text>
                 <Text style={styles.label}>tinmgwai25@gmail.com</Text>
             </View>
         </View>

@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { LanguageContext } from '../LanguageContext';
 
 const ProductItemCard = ({ item, onAddToCart, onAddToWishlist }) => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <View style={styles.main_view}>
       <Image source={item.image} style={styles.product_img} />
@@ -13,7 +17,7 @@ const ProductItemCard = ({ item, onAddToCart, onAddToWishlist }) => {
           onPress={() => {
             onAddToCart(item);
           }}>
-          <Text>Add to Cart</Text>
+          <Text>{translate('add_to_cart')}</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity

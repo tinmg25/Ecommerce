@@ -5,6 +5,7 @@ import {
     FlatList
 } from 'react-native';
 import OrderItemCard from '../common/OrderItemCard';
+import { API_KEY } from '../common/APIKey';
 
 const OrderListScreen = () => {
 
@@ -14,7 +15,7 @@ const OrderListScreen = () => {
 
         const getOrder = async () => {
             try {
-                const response = await fetch('http://192.168.64.91:8087/api/order', {
+                const response = await fetch(`${API_KEY}/api/order`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

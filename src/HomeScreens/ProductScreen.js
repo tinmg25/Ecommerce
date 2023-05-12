@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,6 @@ import {
   FlatList,
   TextInput,
   Image,
-  TouchableOpacity,
-  BackHandler,
   ScrollView,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {products} from '../common/Products';
 import ProductItemCard from '../common/ProductItemCard';
 import {addItemToCart, addItemToWishlist} from '../redux/actions/Actions';
+import { LanguageContext } from '../LanguageContext';
 
 // const data = [
 //     {
@@ -43,6 +42,9 @@ import {addItemToCart, addItemToWishlist} from '../redux/actions/Actions';
 // ]
 
 const ProductScreen = ({navigation}) => {
+
+  const { translate } = useContext(LanguageContext);
+
   const dispatch = useDispatch();
   const [categoryList, setCategoryList] = useState([]);
   const [laptopList, setLaptopList] = useState([]);
@@ -161,7 +163,7 @@ const ProductScreen = ({navigation}) => {
             style={styles.inputStyle}
             autoCapitalize="none"
             autoCorrect={false}
-            placeholder="Search"
+            placeholder={translate('search')}
           />
         </View>
         <View style={styles.view2}>

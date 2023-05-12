@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from 'react-native';
+import { LanguageContext } from "../LanguageContext";
 
 const HelpSupportScreen = () => {
+
+    const { translate } = useContext(LanguageContext);
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>FAQs</Text>
+            <Text style={styles.title}>{translate('faq')}</Text>
             <View style={styles.border}></View>
         </View>
     );

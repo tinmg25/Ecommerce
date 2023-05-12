@@ -13,6 +13,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageContext } from '../LanguageContext';
+import { API_KEY } from '../common/APIKey';
 
 const LoginScreen = ({ navigation }) => {
 
@@ -36,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.64.91:8087/api/login', {
+            const response = await fetch(`${API_KEY}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,6 +49,8 @@ const LoginScreen = ({ navigation }) => {
             });
             await AsyncStorage.setItem('EMAIL', email);
             if (response.ok) {
+                setEmail('');
+                setPassword('');
                 navigation.navigate('Main');
             } else {
                 ToastAndroid.show('Invalid Email or Password, Try Again!', ToastAndroid.SHORT)

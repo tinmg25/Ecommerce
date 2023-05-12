@@ -2,42 +2,59 @@ import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import themeContext from "../config/themeContext";
 import AwesomeAlert from "react-native-awesome-alerts";
+import { LanguageContext } from "../LanguageContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingScreen = ({ navigation }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const theme = useContext(themeContext);
 
     const [mode, setMode] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
 
+    const removeAsyncStorageItem = async (key) => {
+        try{
+            await AsyncStorage.removeItem(key);
+        } catch(error){
+
+        }
+    }
+
+    const handleLogout = async () => {
+        await removeAsyncStorageItem('EMAIL');
+        navigation.navigate('Login');
+    }
+
     return (
         <View style={[styles.container]}>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Profile Setting</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('profile_setting')}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
                     <Image source={require('../images/profile.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Account Setting</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('account_setting')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Account')}>
                     <Image source={require('../images/user.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Help & Support</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('help_support')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Help')}>
                     <Image source={require('../images/question.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>About</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('about')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('About')}>
                     <Image source={require('../images/info.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Logout</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('logout')}</Text>
                 <TouchableOpacity
                     title="Logout"
                     onPress={() => setShowAlert(!showAlert)}
@@ -47,10 +64,10 @@ const SettingScreen = ({ navigation }) => {
             </View>
             <AwesomeAlert
                 show={showAlert}
-                title="Logout"
+                title={translate('logout')}
                 titleStyle={{ color: '#04144F', fontSize: 30, fontWeight: '600', textDecorationLine: 'underline', }}
-                message="Are you sure want to logout?"
-                messageStyle={{ color: 'red', fontSize: 20, }}
+                message={translate('logout_message')}
+                messageStyle={{ color: 'red', fontSize: 15, }}
                 closeOnTouchOutside={false}
                 closeOnHardwareBackPress={false}
                 showProgress={true}
@@ -68,7 +85,7 @@ const SettingScreen = ({ navigation }) => {
                 confirmButtonStyle={{ backgroundColor: '#04144F', width: 70, }}
                 confirmText="Yes"
                 confirmButtonTextStyle={{ textAlign: 'center', fontSize: 15, }}
-                onConfirmPressed={() => navigation.navigate('Login')}
+                onConfirmPressed={() => handleLogout()}
             />
         </View>
     )

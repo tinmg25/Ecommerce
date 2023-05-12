@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LanguageContext } from '../LanguageContext';
 
 const CardItemCard = ({
   item,
@@ -10,6 +11,9 @@ const CardItemCard = ({
   onRemoveFromWishList,
   isWishList
 }) => {
+
+  const { translate } = useContext(LanguageContext);
+
   return (
     <View style={styles.main_view}>
       <Image source={item.image} style={styles.product_img} />
@@ -22,7 +26,7 @@ const CardItemCard = ({
             onPress={() => {
               onAddToCart(item);
             }}>
-            <Text>Add To Cart</Text>
+            <Text>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -30,7 +34,7 @@ const CardItemCard = ({
             onPress={() => {
               onRemoveFromCart(item);
             }}>
-            <Text>Remove Item</Text>
+            <Text>{translate('remove_item')}</Text>
           </TouchableOpacity>
         )}
       </View>

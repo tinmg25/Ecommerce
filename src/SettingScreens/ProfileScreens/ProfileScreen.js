@@ -3,8 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import themeContext from '../../config/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LanguageContext } from '../../LanguageContext';
+import { API_KEY } from '../../common/APIKey';
 
 const ProfileScreen = ({ navigation }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const [userData, setUserData] = useState(null);
     const theme = useContext(themeContext);
@@ -14,7 +18,7 @@ const ProfileScreen = ({ navigation }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`http://192.168.64.91:8087/api/${mEmail}`, {
+                    const response = await fetch(`${API_KEY}/api/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -35,13 +39,13 @@ const ProfileScreen = ({ navigation }) => {
         <View style={[styles.container, { backgroundColor: theme.background }]}>
             <MaterialCommunityIcons style={[styles.user_icon, { color: theme.color }]} name='account' size={150} />
             <View style={[styles.profile_view, { borderColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>Name : {userData && userData.name}</Text>
-                <Text style={[styles.label, { color: theme.color }]}>Email : {userData && userData.email}</Text>
-                <Text style={[styles.label, { color: theme.color }]}>Address : {userData && userData.address}</Text>
-                <Text style={[styles.label, { color: theme.color }]}>Phone No. : {userData && userData.phone_number}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('p_name')} : {userData && userData.name}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('p_email')} : {userData && userData.email}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('p_address')} : {userData && userData.address}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('p_phone')} : {userData && userData.phone_number}</Text>
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('EditProfile', { userData })}>
-                <Text style={styles.edit_btn}>Edit Profile</Text>
+                <Text style={styles.edit_btn}>{translate('edit')}</Text>
             </TouchableOpacity>
         </View>
     )
