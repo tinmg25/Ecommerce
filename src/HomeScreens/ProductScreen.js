@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,40 +8,15 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {useDispatch, useSelector} from 'react-redux';
-import {products} from '../common/Products';
+import { useDispatch, useSelector } from 'react-redux';
+import { products } from '../common/Products';
 import ProductItemCard from '../common/ProductItemCard';
-import {addItemToCart, addItemToWishlist} from '../redux/actions/Actions';
+import { addItemToCart, addItemToWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
+import { API_KEY } from '../common/APIKey';
 
-// const data = [
-//     {
-//         id: 1, name: 'Laptop',
-//         items: [
-//             { id: 1, name: 'asus', source: require('../images/laptop1.png') },
-//             { id: 2, name: 'dell', source: require('../images/laptop2.png') },
-//             { id: 3, name: 'hp', source: require('../images/laptop3.png') },
-//         ]
-//     },
-//     {
-//         id: 2, name: 'Phone',
-//         items: [
-//             { id: 1, source: require('../images/phone1.png') },
-//             { id: 2, source: require('../images/phone2.png') },
-//         ]
-//     },
-//     {
-//         id: 3, name: 'Backpack',
-//         items: [
-//             { id: 1, source: require('../images/bp1.png') },
-//             { id: 2, source: require('../images/bp2.png') },
-//         ]
-//     },
-// ]
-
-const ProductScreen = ({navigation}) => {
+const ProductScreen = ({ navigation }) => {
 
   const { translate } = useContext(LanguageContext);
 
@@ -52,19 +27,36 @@ const ProductScreen = ({navigation}) => {
   const [backpackList, setBackpackList] = useState([]);
 
   useEffect(() => {
-    let categories = [];
-    products.category.map(item => {
-      categories.push(item.category);
-    });
-    setLaptopList(products.category[0].data);
-    setPhoneList(products.category[1].data);
-    setBackpackList(products.category[2].data);
-    setCategoryList(categories);
+    fetchProducts();
   }, []);
 
   const items = useSelector(state => state);
 
-  const [data, setData] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${API_KEY}/api/product`);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  const renderProduct = ({ item }) => {
+    return (
+      <View style={styles.product_view}>
+        <Image
+          source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+          style={styles.product_img}
+        />
+        <Text style={styles.title}>{item.product_name}</Text>
+        <Text style={styles.sub_label}>{item.description}</Text>
+        <Text style={styles.sub_label}>Price: $ {item.price}</Text>
+      </View>
+    );
+  };
 
   // useEffect(() => {
   //   fetch('http://192.168.64.91:8087/api/product')
@@ -125,7 +117,7 @@ const ProductScreen = ({navigation}) => {
   // }, []);
 
   const categoryItem = [
-    {label: '', value: null},
+    { label: '', value: null },
     ...categoryItems.map(catItem => ({
       label: catItem.category_name,
       value: catItem.category_id,
@@ -147,7 +139,7 @@ const ProductScreen = ({navigation}) => {
   // }, []);
 
   const brandItem = [
-    {label: '', value: null},
+    { label: '', value: null },
     ...brandItems.map(bItem => ({
       label: bItem.brand_name,
       value: bItem.brand_id,
@@ -158,7 +150,7 @@ const ProductScreen = ({navigation}) => {
     <ScrollView style={styles.scroll}>
       <View style={styles.container}>
         <View style={styles.searchBar}>
-        <Image source={require('../images/search.png')} style={styles.logo_img} />
+          <Image source={require('../images/search.png')} style={styles.logo_img} />
           <TextInput
             style={styles.inputStyle}
             autoCapitalize="none"
@@ -168,9 +160,9 @@ const ProductScreen = ({navigation}) => {
         </View>
         <View style={styles.view2}>
           <View
-            style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+            style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
             <DropDownPicker
-              style={{zIndex: 2, elevation: 2}}
+              style={{ zIndex: 2, elevation: 2 }}
               open={category}
               value={categoryValue}
               items={categoryItem}
@@ -181,9 +173,9 @@ const ProductScreen = ({navigation}) => {
             />
           </View>
           <View
-            style={{width: 150, position: 'relative', zIndex: 1, elevation: 1}}>
+            style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
             <DropDownPicker
-              style={{zIndex: 2, elevation: 2}}
+              style={{ zIndex: 2, elevation: 2 }}
               open={brand}
               value={brandValue}
               items={brandItem}
@@ -194,73 +186,13 @@ const ProductScreen = ({navigation}) => {
             />
           </View>
         </View>
-        <Text style={styles.product_title}>
-          {products.category[0].category}
-        </Text>
-        <View style={styles.view3}>
+        <View style={styles.category_view}>
           <FlatList
-            data={laptopList}
+            data={products}
             horizontal
             showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <ProductItemCard
-                  item={item}
-                  onAddToWishlist={(x) => {
-                    dispatch(addItemToWishlist(x))
-                  }}
-                  onAddToCart={(x) => {
-                    dispatch(addItemToCart(x));
-                  }}
-                />
-              );
-            }}
-          />
-        </View>
-        <Text style={styles.product_title}>
-          {products.category[1].category}
-        </Text>
-        <View style={styles.view3}>
-          <FlatList
-            data={phoneList}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <ProductItemCard
-                  item={item}
-                  onAddToWishlist={(x) => {
-                    dispatch(addItemToWishlist(x))
-                  }}
-                  onAddToCart={(x) => {
-                    dispatch(addItemToCart(x));
-                  }}
-                />
-              );
-            }}
-          />
-        </View>
-        <Text style={styles.product_title}>
-          {products.category[2].category}
-        </Text>
-        <View style={styles.view3}>
-          <FlatList
-            data={backpackList}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => {
-              return (
-                <ProductItemCard
-                  item={item}
-                  onAddToWishlist={(x) => {
-                    dispatch(addItemToWishlist(x))
-                  }}
-                  onAddToCart={(x) => {
-                    dispatch(addItemToCart(x));
-                  }}
-                />
-              );
-            }}
+            renderItem={renderProduct}
+            keyExtractor={(item) => item.product_id}
           />
         </View>
       </View>
@@ -303,31 +235,35 @@ const styles = StyleSheet.create({
     zIndex: 1,
     elevation: 1,
   },
-  view3: {
-    marginTop: 20,
+  category_view: {
+    margin:10,
+    borderBottomWidth:5,
+    borderBottomColor:'gray',
   },
-  product_title: {
-    fontSize: 16,
+  product_view: {
+    margin: 10,
+    elevation:5,
+    backgroundColor:'#fff',
+    borderRadius:10,
+  },
+  title: {
+    fontSize: 20,
     color: '#000',
     fontWeight: '600',
-    marginTop: 20,
+    marginVertical: 5,
     marginLeft: 20,
   },
-  image_view: {
-    backgroundColor: '#ffffff',
-    padding: 15,
-    width: 200,
-    borderRadius: 10,
-    marginHorizontal: 10,
-    shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+  sub_label: {
+    fontSize: 15,
+    color: '#000',
+    fontWeight: '600',
+    marginVertical: 5,
+    marginLeft: 20,
   },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
+  product_img: {
+    width: 200,
+    height: 200,
+    margin:10,
   },
   cart: {
     alignSelf: 'flex-end',
@@ -347,8 +283,8 @@ const styles = StyleSheet.create({
   logo_img: {
     width: 30,
     height: 30,
-    alignSelf:'center',
-    marginHorizontal:15,
+    alignSelf: 'center',
+    marginHorizontal: 15,
   },
 });
 
