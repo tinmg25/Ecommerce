@@ -41,7 +41,7 @@ const MainTabNavigator = () => {
     <Tab.Navigator>
       <Tab.Screen
         name="Product"
-        component={ProductScreen}
+        component={ProductStackNavigator}
         options={({ navigation }) => ({
           // headerRight: () => (
           //     <TouchableOpacity
@@ -51,6 +51,7 @@ const MainTabNavigator = () => {
           //         <MaterialCommunityIcons name="logout" size={30} color="black" />
           //     </TouchableOpacity>
           // ),
+          headerShown: false,
           tabBarLabel: translate('products'),
           tabBarLabelStyle: {
             color: '#fff',
@@ -147,8 +148,6 @@ const MainTabNavigator = () => {
 
 const MainStackNavigator = () => {
 
-  const { translate } = useContext(LanguageContext);
-
   return (
     <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen
@@ -187,6 +186,30 @@ const MainStackNavigator = () => {
           //     </TouchableOpacity>
           // ),
         })}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const ProductStackNavigator = () => {
+
+  const { translate } = useContext(LanguageContext);
+
+  return(
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Products"
+        component={ProductScreen}
+        options={{
+          title: translate('products'),
+        }}
+      />
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetailScreen}
+        options={{
+          title: translate('detail'),
+        }}
       />
     </Stack.Navigator>
   );

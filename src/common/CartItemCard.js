@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LanguageContext } from '../LanguageContext';
 
 const CardItemCard = ({
@@ -16,7 +15,8 @@ const CardItemCard = ({
 
   return (
     <View style={styles.main_view}>
-      <Image source={item.image} style={styles.product_img} />
+      <Image source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+        style={styles.product_img} />
       <Text style={styles.label1}>{item.name}</Text>
       <View style={styles.sub_view}>
         <Text style={styles.label2}>{'$' + item.price}</Text>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: '#fff',
     marginLeft: 20,
-    marginVertical:10,
+    marginVertical: 10,
   },
   product_img: {
     width: '100%',

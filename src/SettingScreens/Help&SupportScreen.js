@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -13,6 +13,7 @@ import { LanguageContext } from "../LanguageContext";
 import { launchImageLibrary } from "react-native-image-picker";
 import { API_KEY } from "../common/APIKey";
 import { useNavigation } from "@react-navigation/native"
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const HelpSupportScreen = () => {
 
@@ -76,7 +77,11 @@ const HelpSupportScreen = () => {
 
     const handleProduct = async () => {
         try {
+            console.log(categoryValue);
+            console.log(brandValue);
             const formData = new FormData();
+            formData.append("categoryId",categoryValue);
+            formData.append("brandId",brandValue);
             formData.append("productName", productName);
             formData.append("description", description);
             formData.append("price", price);
@@ -112,6 +117,49 @@ const HelpSupportScreen = () => {
         });
     };
 
+    //category select box
+    const [category, setCategory] = useState(false);
+    const [categoryValue, setCategoryValue] = useState(null);
+    const [categoryItems, setCategoryItems] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('http://192.168.64.91:8087/api/category');
+            const result = await response.json();
+            setCategoryItems(result);
+        };
+        fetchData();
+    }, []);
+
+    const categoryItem = [
+        { label: '', value: null },
+        ...categoryItems.map(catItem => ({
+            label: catItem.category_name,
+            value: catItem.category_id,
+        })),
+    ];
+
+    //brand select box
+    const [brand, setBrand] = useState(false);
+    const [brandValue, setBrandValue] = useState(null);
+    const [brandItems, setBrandItems] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('http://192.168.64.91:8087/api/brand');
+            const result = await response.json();
+            setBrandItems(result);
+        };
+        fetchData();
+    }, []);
+
+    const brandItem = [
+        { label: '', value: null },
+        ...brandItems.map(bItem => ({
+            label: bItem.brand_name,
+            value: bItem.brand_id,
+        })),
+    ];
 
     const { translate } = useContext(LanguageContext);
 
@@ -138,6 +186,34 @@ const HelpSupportScreen = () => {
                 placeholder="price"
                 keyboardType="numeric" />
             {priceError ? <Text>{priceError}</Text> : null}
+            <View style={styles.select_box}>
+                <View
+                    style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
+                    <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
+                        open={category}
+                        value={categoryValue}
+                        items={categoryItem}
+                        setOpen={setCategory}
+                        setValue={setCategoryValue}
+                        setItems={setCategoryItems}
+                        placeholder="Category"
+                    />
+                </View>
+                <View
+                    style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
+                    <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
+                        open={brand}
+                        value={brandValue}
+                        items={brandItem}
+                        setOpen={setBrand}
+                        setValue={setBrandValue}
+                        setItems={setBrandItems}
+                        placeholder="Brand"
+                    />
+                </View>
+            </View>
             <TouchableOpacity style={styles.imageContainer} onPress={openGallery}>
                 {image ? (
                     <Image style={styles.image} source={{ uri: image.uri }} />
@@ -183,6 +259,15 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         marginBottom: 10,
     },
+    select_box: {
+        flexDirection: 'row',
+        marginHorizontal: 15,
+        justifyContent: 'space-around',
+        position: 'relative',
+        zIndex: 1,
+        elevation: 1,
+        marginBottom:20,
+      },
 });
 
 export default HelpSupportScreen;

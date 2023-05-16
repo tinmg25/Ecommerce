@@ -32,6 +32,8 @@ const translation = {
         //product screen
         add_to_cart: 'Add To Cart',
         search: 'Search',
+        category: 'Category',
+        brand: 'Brand',
 
         //cart screen
         no_item: 'No Item Added To Cart',
@@ -130,6 +132,8 @@ const translation = {
         //product screen
         add_to_cart: 'カートに追加',
         search: '検索',
+        category: 'カテゴリー',
+        brand: 'ブランド',
 
         //cart screen
         no_item: 'カートに商品が追加されていません',

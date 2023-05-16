@@ -1,6 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
@@ -12,20 +11,6 @@ const ViewCartScreen = ({ navigation }) => {
 
   const cartData = useSelector(state => state.reducers);
   const dispatch = useDispatch();
-
-  // const [count, setCount] = useState(1);
-
-  // const increment = () => {
-  //     setCount( count + 1);
-  // }
-
-  // const decrement = () => {
-  //     if(count<=1){
-  //         setCount(1);
-  //     } else{
-  //         setCount( count - 1);
-  //     }
-  // }
 
   return (
     <View style={styles.main_view}>

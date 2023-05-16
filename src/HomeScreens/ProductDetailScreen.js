@@ -1,55 +1,45 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch } from "react-redux";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image
+} from 'react-native';
 
-const ProductDetailScreen = ({ route, navigation }) => {
+const ProductDetailScreen = ({ route }) => {
 
-    const { productId,productName,productPrice,productDesc } = route.params;
-    const dispatch = useDispatch();
+    const { product } = route.params;
 
     return (
-        <View>
-            <View style={styles.view1}>
-                <TouchableOpacity 
-                    style={{alignSelf:'flex-end',marginRight:10,marginTop:5}}>
-                    <MaterialCommunityIcons
-                        style={styles.cart}
-                        name='cart'
-                        size={30} />
-                </TouchableOpacity>
-                <Text style={{fontSize:50}}>Image</Text>
-            </View>
-            <View style={styles.view2}>
-                <Text style={styles.stock}>Remaining Stock - </Text>
-                <Text style={styles.title}>{productDesc}</Text>
-            </View>
+        <View style={styles.container}>
+            <Image
+                source={product.image ? { uri: `data:image/jpeg;base64,${product.image}` } : require('../images/no_image.png')}
+                style={styles.product_img}
+            />
+            <Text style={styles.text}>- {product.product_name}</Text>
+            <Text style={styles.text}>- {product.description}</Text>
+            <Text style={styles.text}>- $ {product.price}</Text>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    view1: {
-        alignItems: 'center',
+    container: {
+        flex: 1,
+        marginTop:20,
     },
-    cart: {
-        color: 'black',
-        alignSelf: 'center',
+    product_img:{
+        alignSelf:'center',
+        width:200,
+        height:200,
+        marginBottom:10,
     },
-    image: {
-        width: 300,
-        height: 300,
+    text: {
+        fontSize: 20,
+        color:'#000',
+        marginLeft:20,
+        marginBottom:10,
     },
-    view2: {
-        alignItems: 'center',
-    },
-    stock: {
-        color: 'black',
-    },
-    title: {
-        fontSize: 30,
-        color: 'black',
-    }
 });
 
 export default ProductDetailScreen;

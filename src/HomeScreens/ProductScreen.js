@@ -6,12 +6,10 @@ import {
   FlatList,
   TextInput,
   Image,
-  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import SelectBox from '../SelectBox';
 import { useDispatch, useSelector } from 'react-redux';
-import { products } from '../common/Products';
-import ProductItemCard from '../common/ProductItemCard';
 import { addItemToCart, addItemToWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
@@ -21,189 +19,111 @@ const ProductScreen = ({ navigation }) => {
   const { translate } = useContext(LanguageContext);
 
   const dispatch = useDispatch();
-  const [categoryList, setCategoryList] = useState([]);
-  const [laptopList, setLaptopList] = useState([]);
-  const [phoneList, setPhoneList] = useState([]);
-  const [backpackList, setBackpackList] = useState([]);
 
   useEffect(() => {
-    fetchProducts();
+    fetchCategories();
   }, []);
 
   const items = useSelector(state => state);
 
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  const fetchProducts = async () => {
+  const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_KEY}/api/product`);
-      const data = await response.json();
-      setProducts(data);
+      const categoryResponse = await fetch(`${API_KEY}/api/category`);
+      const categoriesData = await categoryResponse.json();
+
+      const productResponse = await fetch(`${API_KEY}/api/product`);
+      const productsData = await productResponse.json();
+
+      const categoriesWithProducts = categoriesData.map(category => {
+        const filteredProducts = productsData.filter(product => product.category_id === category.category_id);
+        return { ...category, products: filteredProducts };
+      });
+
+      setCategories(categoriesWithProducts);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching categories', error);
     }
+  };
+
+  const navigateToProductDetails = product => {
+    navigation.navigate('ProductDetails', { product });
   };
 
   const renderProduct = ({ item }) => {
     return (
       <View style={styles.product_view}>
-        <Image
-          source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
-          style={styles.product_img}
-        />
-        <Text style={styles.title}>{item.product_name}</Text>
-        <Text style={styles.sub_label}>{item.description}</Text>
-        <Text style={styles.sub_label}>Price: $ {item.price}</Text>
+        <TouchableOpacity onPress={()=> navigateToProductDetails(item)}>
+          <Image
+            source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+            style={styles.product_img}
+            resizeMode='cover'
+          />
+        </TouchableOpacity>
+        <Text style={styles.label1}>{item.product_name}</Text>
+        <View style={styles.sub_view}>
+          <Text style={styles.label2}>{'$' + item.price}</Text>
+          <TouchableOpacity
+            style={styles.cart_btn}
+            onPress={() => {
+              dispatch(addItemToCart(item));
+            }}>
+            <Text>{translate('add_to_cart')}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={() => {
+            dispatch(addItemToWishlist(item));
+          }}>
+          <Image source={require('../images/like.png')} style={styles.logo_img} />
+        </TouchableOpacity>
       </View>
     );
   };
 
-  // useEffect(() => {
-  //   fetch('http://192.168.64.91:8087/api/product')
-  //     .then(response => response.json())
-  //     .then(data => setData(data))
-  //     .catch(error => console.log(error));
-  // }, []);
+  const renderCategoryItem = ({ item }) => {
 
-  // const renderItem = ({item, onAddToCart}) => (
-  //   <View>
-  //     <Text style={styles.product_title}>{item.name}</Text>
-  //     <FlatList
-  //       data={data}
-  //       renderItem={({item}) => (
-  //         <View style={styles.image_view} key={item.product_id}>
-  //           <TouchableOpacity
-  //             onPress={() =>
-  //               navigation.navigate('ProductDetail', {
-  //                 productId: item.product_id,
-  //                 productName: item.product_name,
-  //                 productPrice: item.price,
-  //                 productDesc: item.description,
-  //               })
-  //             }>
-  //             <Text style={{fontSize: 50}}>Image</Text>
-  //           </TouchableOpacity>
-  //           <Text>{item.product_name}</Text>
-  //           <Text>${item.price}</Text>
-  //           <TouchableOpacity onPress={() => onAddToCart(item)}>
-  //             <Text style={styles.cart}>Add to Cart</Text>
-  //           </TouchableOpacity>
-  //           <MaterialCommunityIcons
-  //             style={styles.icon}
-  //             name="heart"
-  //             size={30}
-  //           />
-  //         </View>
-  //       )}
-  //       keyExtractor={item => item.product_id}
-  //       horizontal={true}
-  //       showsHorizontalScrollIndicator={false}
-  //     />
-  //   </View>
-  // );
-
-  const [category, setCategory] = useState(false);
-  const [categoryValue, setCategoryValue] = useState(null);
-  const [categoryItems, setCategoryItems] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await fetch('http://192.168.64.91:8087/api/category');
-  //     const result = await response.json();
-  //     setCategoryItems(result);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  const categoryItem = [
-    { label: '', value: null },
-    ...categoryItems.map(catItem => ({
-      label: catItem.category_name,
-      value: catItem.category_id,
-    })),
-  ];
-
-  const [brand, setBrand] = useState(false);
-  const [brandValue, setBrandValue] = useState(null);
-  const [brandItems, setBrandItems] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await fetch('http://192.168.64.91:8087/api/brand');
-  //     const result = await response.json();
-  //     setBrandItems(result);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  const brandItem = [
-    { label: '', value: null },
-    ...brandItems.map(bItem => ({
-      label: bItem.brand_name,
-      value: bItem.brand_id,
-    })),
-  ];
+    return (
+      <View>
+        <Text style={styles.title}>{item.category_name}</Text>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={item.products}
+          renderItem={renderProduct}
+          keyExtractor={product => product.product_id}
+        />
+      </View>
+    );
+  };
 
   return (
-    <ScrollView style={styles.scroll}>
-      <View style={styles.container}>
-        <View style={styles.searchBar}>
-          <Image source={require('../images/search.png')} style={styles.logo_img} />
-          <TextInput
-            style={styles.inputStyle}
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholder={translate('search')}
-          />
-        </View>
-        <View style={styles.view2}>
-          <View
-            style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
-            <DropDownPicker
-              style={{ zIndex: 2, elevation: 2 }}
-              open={category}
-              value={categoryValue}
-              items={categoryItem}
-              setOpen={setCategory}
-              setValue={setCategoryValue}
-              setItems={setCategoryItems}
-              placeholder="Category"
-            />
-          </View>
-          <View
-            style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
-            <DropDownPicker
-              style={{ zIndex: 2, elevation: 2 }}
-              open={brand}
-              value={brandValue}
-              items={brandItem}
-              setOpen={setBrand}
-              setValue={setBrandValue}
-              setItems={setBrandItems}
-              placeholder="Brand"
-            />
-          </View>
-        </View>
-        <View style={styles.category_view}>
-          <FlatList
-            data={products}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderProduct}
-            keyExtractor={(item) => item.product_id}
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.searchBar}>
+        <Image source={require('../images/search.png')} style={styles.search_icon} />
+        <TextInput
+          style={styles.inputStyle}
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder={translate('search')}
+        />
       </View>
-    </ScrollView>
+      <SelectBox />
+      <View style={styles.category_view}>
+        <FlatList
+          style={styles.category_list}
+          data={categories}
+          renderItem={renderCategoryItem}
+          keyExtractor={(item) => item.category_id}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },
@@ -218,6 +138,13 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
   },
+  search_icon: {
+    width: 30,
+    height: 30,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginLeft: 20,
+  },
   inputStyle: {
     flex: 1,
     fontSize: 18,
@@ -227,31 +154,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: 15,
   },
-  view2: {
-    flexDirection: 'row',
-    marginHorizontal: 15,
-    justifyContent: 'space-around',
-    position: 'relative',
-    zIndex: 1,
-    elevation: 1,
-  },
   category_view: {
-    margin:10,
-    borderBottomWidth:5,
-    borderBottomColor:'gray',
+    flex: 1,
   },
   product_view: {
-    margin: 10,
-    elevation:5,
-    backgroundColor:'#fff',
-    borderRadius:10,
+    marginLeft: 10,
+    elevation: 5,
+    backgroundColor: '#fff',
+    borderRadius: 10,
   },
   title: {
     fontSize: 20,
     color: '#000',
     fontWeight: '600',
     marginVertical: 5,
-    marginLeft: 20,
+    marginLeft: 10,
   },
   sub_label: {
     fontSize: 15,
@@ -262,8 +179,9 @@ const styles = StyleSheet.create({
   },
   product_img: {
     width: 200,
-    height: 200,
-    margin:10,
+    height: 100,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   cart: {
     alignSelf: 'flex-end',
@@ -276,15 +194,46 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   icon: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    elevation: 5,
     position: 'absolute',
-    right: 10,
     top: 10,
+    right: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo_img: {
     width: 30,
     height: 30,
-    alignSelf: 'center',
-    marginHorizontal: 15,
+  },
+  label1: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginLeft: 10,
+    marginTop: 10,
+  },
+  sub_view: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  label2: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  cart_btn: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  category_list: {
+    marginVertical: 10,
   },
 });
 
