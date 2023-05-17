@@ -47,6 +47,11 @@ const ProfileScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('EditProfile', { userData })}>
                 <Text style={styles.edit_btn}>{translate('edit')}</Text>
             </TouchableOpacity>
+            <View style={styles.order_view}>
+                <TouchableOpacity onPress={()=>navigation.navigate('OrderLists')}>
+                    <Text style={styles.order_text}>{translate('my_order')}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -85,19 +90,18 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginVertical: 10,
     },
-    change_pwd_btn: {
-        alignSelf: 'center',
-        width: 250,
-        fontSize: 20,
-        padding: 15,
-        backgroundColor: '#04144F',
-        color: 'white',
-        textAlign: 'center',
-        borderRadius: 50,
-        marginVertical: 10,
-    },
     user_icon: {
         alignSelf: 'center',
+        color: '#000',
+    },
+    order_view: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        padding: 10,
+    },
+    order_text: {
+        fontSize: 20,
+        fontWeight: '600',
         color: '#000',
     }
 })

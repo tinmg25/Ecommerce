@@ -60,6 +60,7 @@ const translation = {
         p_email: 'Email',
         p_address: 'Address',
         p_phone: 'Phone No.',
+        my_order: 'My Order Lists',
 
         //account screen
         dark_mode: 'Dark Mode',
@@ -160,6 +161,7 @@ const translation = {
         p_email: 'メール',
         p_address: '住所',
         p_phone: '電話番号',
+        my_order: '注文リスト',
 
         //account screen
         dark_mode: '暗いモード',

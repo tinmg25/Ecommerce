@@ -102,13 +102,15 @@ const ProductScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
-        <Image source={require('../images/search.png')} style={styles.search_icon} />
         <TextInput
           style={styles.inputStyle}
           autoCapitalize="none"
           autoCorrect={false}
           placeholder={translate('search')}
         />
+        <Image 
+        source={require('../images/search.png')} 
+        style={styles.search_icon} />
       </View>
       <SelectBox />
       <View style={styles.category_view}>
@@ -128,22 +130,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchBar: {
-    marginTop: 10,
     backgroundColor: '#F0EEEE',
     height: 50,
     borderRadius: 50,
     marginHorizontal: 15,
     flexDirection: 'row',
-    marginBottom: 10,
     borderColor: 'black',
     borderWidth: 1,
+    marginVertical:10,
+    paddingHorizontal:10,
   },
   search_icon: {
     width: 30,
     height: 30,
     alignSelf: 'center',
     justifyContent: 'center',
-    marginLeft: 20,
   },
   inputStyle: {
     flex: 1,

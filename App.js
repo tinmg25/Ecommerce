@@ -20,6 +20,7 @@ import SettingScreen from './src/SettingScreens/SettingScreen';
 import WishListScreen from './src/WishlistScreen/Wishlist';
 import AccountSettingScreen from './src/SettingScreens/AccountScreens/AccountSetting';
 import AboutScreen from './src/SettingScreens/AboutScreen';
+import SearchScreen from './src/HomeScreens/SearchScreen';
 
 import { EventRegister } from 'react-native-event-listeners';
 import theme from './src/config/theme';
@@ -67,11 +68,11 @@ const MainTabNavigator = () => {
         })}
       />
       <Tab.Screen
-        name="OrderList"
-        component={OrderStackNavigator}
+        name="Searches"
+        component={SearchStackNavigator}
         options={{
           headerShown: false,
-          tabBarLabel: translate('order_lists'),
+          tabBarLabel: translate('search'),
           tabBarLabelStyle: {
             color: '#fff',
             fontSize: 12,
@@ -81,7 +82,7 @@ const MainTabNavigator = () => {
           },
           tabBarActiveTintColor: '#fff',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="view-list" color={color} size={size} />
+            <MaterialCommunityIcons name="magnify" color={color} size={size} />
           ),
         }}
       />
@@ -215,24 +216,17 @@ const ProductStackNavigator = () => {
   );
 };
 
-const OrderStackNavigator = () => {
+const SearchStackNavigator = () => {
 
   const { translate } = useContext(LanguageContext);
 
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="OrderLists"
-        component={OrderListScreen}
+        name="Search"
+        component={SearchScreen}
         options={{
-          title: translate('order_lists'),
-        }}
-      />
-      <Stack.Screen
-        name="OrderDetails"
-        component={OrderDetailScreen}
-        options={{
-          title: translate('detail'),
+          title: translate('search'),
         }}
       />
     </Stack.Navigator>
@@ -305,6 +299,20 @@ const SettingStackNavigator = () => {
         component={EditProfileScreen}
         options={{
           title: translate('edit'),
+        }}
+      />
+      <Stack.Screen
+        name="OrderLists"
+        component={OrderListScreen}
+        options={{
+          title: translate('order_lists'),
+        }}
+      />
+      <Stack.Screen
+        name="OrderDetails"
+        component={OrderDetailScreen}
+        options={{
+          title: translate('detail'),
         }}
       />
       <Stack.Screen

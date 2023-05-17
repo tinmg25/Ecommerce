@@ -30,7 +30,7 @@ const SettingScreen = ({ navigation }) => {
     return (
         <View style={[styles.container]}>
             <View style={[styles.sub_view, { borderBottomColor: theme.color }]}>
-                <Text style={[styles.label, { color: theme.color }]}>{translate('profile_setting')}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('profile')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
                     <Image source={require('../images/profile.png')} style={styles.logo_img} />
                 </TouchableOpacity>
