@@ -101,7 +101,7 @@ const ProductScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBar}>
+      {/* <View style={styles.searchBar}>
         <TextInput
           style={styles.inputStyle}
           autoCapitalize="none"
@@ -112,7 +112,7 @@ const ProductScreen = ({ navigation }) => {
         source={require('../images/search.png')} 
         style={styles.search_icon} />
       </View>
-      <SelectBox />
+      <SelectBox /> */}
       <View style={styles.category_view}>
         <FlatList
           style={styles.category_list}

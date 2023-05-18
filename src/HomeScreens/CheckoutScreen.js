@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    TouchableOpacity, 
-    TextInput, 
-    ToastAndroid, 
-    KeyboardAvoidingView 
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    TextInput,
+    ToastAndroid,
+    KeyboardAvoidingView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,7 +29,8 @@ const CheckoutScreen = ({ route }) => {
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        const totalAmount = cartData.reduce((total, item) => total + item.price, 0);
+
+        const totalAmount = Object.values(cartData).reduce((total, item) => total + item.price, 0);
         setTotal(totalAmount);
 
         const getData = async () => {
@@ -129,7 +130,7 @@ const CheckoutScreen = ({ route }) => {
 
         if (phoneInput.trim() === '') {
             setPhoneError(translate('phone_error'));
-        } else if(phoneInput.length < 11){
+        } else if (phoneInput.length < 11) {
             setPhoneError(translate('phone_format1'));
         } else if (!handlePhone(phoneInput)) {
             setPhoneError(translate('phone_format2'));
@@ -147,7 +148,7 @@ const CheckoutScreen = ({ route }) => {
 
         if (postalInput.trim() === '') {
             setPostalError(translate('postal_code'));
-        } else if (postalInput.length < 6){
+        } else if (postalInput.length < 6) {
             setPostalError(translate('postal_format1'));
         } else if (!handlePostal(postalInput)) {
             setPostalError(translate('postal_format2'));
@@ -158,30 +159,38 @@ const CheckoutScreen = ({ route }) => {
         if (handleName(nameInput) && handleEmail(emailInput) &&
             handleAddress(addressInput) && handlePhone(phoneInput) &&
             handleTownship(townshipInput) && handlePostal(postalInput)) {
-                handleOrder();
+            handleOrder();
         }
     };
 
     const handleOrder = async () => {
         try {
+
+            const orderRequest = {
+                userId: userId,
+                addressInput: addressInput,
+                phoneInput: phoneInput,
+                townshipInput: townshipInput,
+                postalInput: postalInput,
+                total: total,
+                orderDetails: cartData.map(item => ({
+                    product_id: item.product_id,
+                    quantity: 1,
+                    price: item.price,
+                })),
+            };
+
             const response = await fetch(`${API_KEY}/api/order/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    userId,
-                    addressInput,
-                    phoneInput,
-                    townshipInput,
-                    postalInput,
-                    total
-                })
+                body: JSON.stringify(orderRequest),
             });
-            const data = await response.json();
+
             if (response.ok) {
-                dispatch(clearCart());  
-                navigation.navigate('OrderList');
+                dispatch(clearCart());
+                navigation.navigate('Products');
             }
             else {
                 ToastAndroid.show('Order Unsuccessful!', ToastAndroid.SHORT);
@@ -195,56 +204,56 @@ const CheckoutScreen = ({ route }) => {
     return (
         <KeyboardAvoidingView behavior='padding'>
             <View>
-            <View style={styles.view1}>
-                <Text style={styles.title}>{translate('shipping_address')}</Text>
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('p_name')}
-                    value={nameInput}
-                    onChangeText={setNameInput} />
-                {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('p_email')}
-                    value={emailInput}
-                    onChangeText={setEmailInput} />
-                {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('p_address')}
-                    value={addressInput}
-                    onChangeText={setAddressInput} />
-                {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('p_phone')}
-                    value={phoneInput}
-                    onChangeText={setPhoneInput} />
-                {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('township')}
-                    value={townshipInput}
-                    onChangeText={setTownshipInput} />
-                {townshipError ? <Text style={styles.errorMessage}>{townshipError}</Text> : null}
-                <TextInput
-                    style={styles.textbox}
-                    placeholder={translate('postal_code')}
-                    value={postalInput}
-                    onChangeText={setPostalInput} />
-                {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
+                <View style={styles.view1}>
+                    <Text style={styles.title}>{translate('shipping_address')}</Text>
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('p_name')}
+                        value={nameInput}
+                        onChangeText={setNameInput} />
+                    {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('p_email')}
+                        value={emailInput}
+                        onChangeText={setEmailInput} />
+                    {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('p_address')}
+                        value={addressInput}
+                        onChangeText={setAddressInput} />
+                    {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('p_phone')}
+                        value={phoneInput}
+                        onChangeText={setPhoneInput} />
+                    {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('township')}
+                        value={townshipInput}
+                        onChangeText={setTownshipInput} />
+                    {townshipError ? <Text style={styles.errorMessage}>{townshipError}</Text> : null}
+                    <TextInput
+                        style={styles.textbox}
+                        placeholder={translate('postal_code')}
+                        value={postalInput}
+                        onChangeText={setPostalInput} />
+                    {postalError ? <Text style={styles.errorMessage}>{postalError}</Text> : null}
+                </View>
+                <TouchableOpacity onPress={() => handleCheckout()}>
+                    <Text style={styles.order}>{translate('order_now')}</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => handleCheckout()}>
-                <Text style={styles.order}>{translate('order_now')}</Text>
-            </TouchableOpacity>
-        </View>
         </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex: 1,
     },
     view1: {
         padding: 10,

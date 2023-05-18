@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LanguageContext } from "../LanguageContext";
 import { API_KEY } from "../common/APIKey";
 import { useNavigation } from '@react-navigation/native';
+import SelectBox from "../SelectBox";
 
 const SearchScreen = () => {
 
@@ -118,6 +119,7 @@ const SearchScreen = () => {
                         source={require('../images/clear.png')} />
                 </TouchableOpacity>
             </View>
+            <SelectBox/>
             <View style={styles.result_list}>
                 {noItem ? (
                     <Text style={styles.no_search_text}>No Search Results</Text>
@@ -210,7 +212,6 @@ const styles = StyleSheet.create({
     },
     result_list: {
         flex: 1,
-        alignItems:'center',
         justifyContent: 'center',
         padding:10,
     },

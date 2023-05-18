@@ -14,28 +14,6 @@ const ViewCartScreen = ({ navigation }) => {
 
   return (
     <View style={styles.main_view}>
-      {/* <View style={styles.main_view}>
-                <View>
-                    <Text>Image</Text>
-                    <Text style={styles.title}></Text>
-                    <Text style={styles.price}>Price : $</Text>
-                </View>
-                <View style={styles.view2}>
-                    <TouchableOpacity onPress={()=>decrement()}>
-                        <MaterialCommunityIcons name='minus-box' size={30} />
-                    </TouchableOpacity>
-                    <Text style={styles.count}>{count}</Text>
-                    <TouchableOpacity onPress={increment}>
-                        <MaterialCommunityIcons name='plus-box' size={30} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={styles.horizontal_line}></View>
-            <View style={styles.button_view}>
-                <TouchableOpacity onPress={()=>navigation.navigate('Checkout')}>
-                    <Text style={styles.button}>Checkout</Text>
-                </TouchableOpacity>
-            </View> */}
       {cartData.length > 0 ? (
         <FlatList
           data={cartData}

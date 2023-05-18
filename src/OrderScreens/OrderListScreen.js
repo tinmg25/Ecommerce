@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     View,
+    Text,
     StyleSheet,
     FlatList
 } from 'react-native';
@@ -34,23 +35,33 @@ const OrderListScreen = () => {
     }, []);
     return (
         <View style={styles.container}>
-            <FlatList
-                data={orderList}
-                renderItem={({ item, index }) => {
-                    return (
-                        <OrderItemCard
-                            item={item}
-                        />
-                    );
-                }}
-            />
+            {orderList.length === 0 ? (
+                <Text style={styles.text}>No Orders</Text>
+            ) : (
+                <FlatList
+                    data={orderList}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <OrderItemCard
+                                item={item}
+                            />
+                        );
+                    }}
+                />
+            )}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex:1,
+        flex: 1,
+        justifyContent:'center',
+    },
+    text: {
+        fontSize:20,
+        color:'#000',
+        fontWeight:'600',
     }
 });
 

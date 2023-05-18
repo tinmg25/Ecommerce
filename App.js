@@ -11,7 +11,6 @@ import ProductDetailScreen from './src/HomeScreens/ProductDetailScreen';
 import ViewCartScreen from './src/HomeScreens/ViewCartScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckoutScreen from './src/HomeScreens/CheckoutScreen';
-import PaymentScreen from './src/HomeScreens/PaymentScreen';
 import OrderListScreen from './src/OrderScreens/OrderListScreen';
 import OrderDetailScreen from './src/OrderScreens/OrderDetailScreen';
 import ProfileScreen from './src/SettingScreens/ProfileScreens/ProfileScreen';
