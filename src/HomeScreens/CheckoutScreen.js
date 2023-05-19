@@ -165,7 +165,6 @@ const CheckoutScreen = ({ route }) => {
 
     const handleOrder = async () => {
         try {
-
             const orderRequest = {
                 userId: userId,
                 addressInput: addressInput,
@@ -173,33 +172,32 @@ const CheckoutScreen = ({ route }) => {
                 townshipInput: townshipInput,
                 postalInput: postalInput,
                 total: total,
-                orderDetails: cartData.map(item => ({
-                    product_id: item.product_id,
-                    quantity: 1,
-                    price: item.price,
-                })),
+                orderDetails: cartData
+                    ? Object.keys(cartData).map(key => ({
+                          product_id: cartData[key].product_id,
+                          quantity: 1,
+                          price: cartData[key].price,
+                      }))
+                    : [],
             };
 
             const response = await fetch(`${API_KEY}/api/order/save`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(orderRequest),
             });
-
+    
             if (response.ok) {
-                dispatch(clearCart());
                 navigation.navigate('Products');
-            }
-            else {
+            } else {
                 ToastAndroid.show('Order Unsuccessful!', ToastAndroid.SHORT);
             }
+        } catch (error) {
+            console.error('Something went wrong!', error);
         }
-        catch (error) {
-            console.error('Something was wrong!', error)
-        }
-    }
+    };
 
     return (
         <KeyboardAvoidingView behavior='padding'>

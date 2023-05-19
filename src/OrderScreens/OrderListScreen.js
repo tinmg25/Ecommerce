@@ -25,6 +25,7 @@ const OrderListScreen = () => {
                 });
                 const data = await response.json();
                 setOrderList(data);
+                console.log(data);
             }
             catch (e) {
                 console.error('Something went wrong!', e)

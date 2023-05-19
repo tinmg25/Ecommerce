@@ -50,40 +50,6 @@ const styles = StyleSheet.create({
   main_view: {
     flex: 1,
   },
-  //   view1: {},
-  //   view2: {
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     justifyContent: 'space-between',
-  //   },
-  //   image: {
-  //     width: 150,
-  //     height: 150,
-  //     borderRadius: 10,
-  //   },
-  //   title: {
-  //     fontSize: 15,
-  //     color: 'black',
-  //   },
-  //   price: {
-  //     fontSize: 15,
-  //     color: 'black',
-  //   },
-  //   count: {
-  //     fontSize: 15,
-  //     marginHorizontal: 15,
-  //   },
-  //   horizontal_line: {
-  //     borderWidth: 1,
-  //     borderColor: 'gray',
-  //     marginHorizontal: 15,
-  //     marginVertical: 10,
-  //   },
-  //   button_view: {
-  //     flex: 1,
-  //     alignItems: 'center',
-  //     justifyContent: 'center',
-  //   },
   button: {
     width: 250,
     fontSize: 20,
