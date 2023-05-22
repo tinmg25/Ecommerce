@@ -1,12 +1,13 @@
 import React, { useContext, useState } from "react";
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    TextInput, 
-    TouchableOpacity, 
+import {
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
     ToastAndroid,
-    Alert
+    Alert,
+    KeyboardAvoidingView
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from "../../config/theme";
@@ -119,40 +120,44 @@ const EditProfileScreen = ({ route }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <MaterialCommunityIcons style={[styles.user_icon, { color: theme.color }]} name='account' size={150} />
-            <View style={styles.view1}>
-                <Text style={styles.label}>{translate('p_name')}</Text>
-                <TextInput
-                    style={styles.input}
-                    value={name}
-                    onChangeText={setName} />
-                {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
-                <Text style={styles.label}>{translate('p_email')}</Text>
-                <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={setEmail} />
-                {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
-                <Text style={styles.label}>{translate('p_address')}</Text>
-                <TextInput
-                    style={styles.input}
-                    value={address}
-                    onChangeText={setAddress} />
-                {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
-                <Text style={styles.label}>{translate('p_phone')}</Text>
-                <TextInput
-                    style={styles.input}
-                    value={phone}
-                    onChangeText={setPhone} />
-                {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
-                <TouchableOpacity onPress={() => handleTextbox()}>
-                    <Text style={styles.update_btn}>{translate('update')}</Text>
-                </TouchableOpacity>
+        <KeyboardAvoidingView
+            behavior="position"
+            style={styles.container}>
+            <View>
+                <MaterialCommunityIcons style={[styles.user_icon, { color: theme.color }]} name='account' size={150} />
+                <View style={styles.view1}>
+                    <Text style={styles.label}>{translate('p_name')}</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={name}
+                        onChangeText={setName} />
+                    {nameError ? <Text style={styles.errorMessage}>{nameError}</Text> : null}
+                    <Text style={styles.label}>{translate('p_email')}</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={email}
+                        onChangeText={setEmail} />
+                    {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+                    <Text style={styles.label}>{translate('p_address')}</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={address}
+                        onChangeText={setAddress} />
+                    {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
+                    <Text style={styles.label}>{translate('p_phone')}</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={phone}
+                        onChangeText={setPhone} />
+                    {phoneError ? <Text style={styles.errorMessage}>{phoneError}</Text> : null}
+                    <TouchableOpacity onPress={() => handleTextbox()}>
+                        <Text style={styles.update_btn}>{translate('update')}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    )
-}
+        </KeyboardAvoidingView>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {

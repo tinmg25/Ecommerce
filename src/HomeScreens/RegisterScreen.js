@@ -123,7 +123,7 @@ const RegisterScreen = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView
-            behavior='padding' style={styles.container}>
+            behavior='height' style={styles.container}>
             <View>
                 <Text style={styles.reg}>{translate('register')}</Text>
                 <View style={styles.view2}>

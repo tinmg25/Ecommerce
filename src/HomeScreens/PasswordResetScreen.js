@@ -1,14 +1,15 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    ToastAndroid
+    ToastAndroid,
+    Linking
 } from 'react-native';
-import Mailer from 'react-native-mail';
 import { LanguageContext } from '../LanguageContext';
+import { API_KEY } from '../common/APIKey';
 
 const PasswordResetScreen = ({ navigation }) => {
     
@@ -16,29 +17,38 @@ const PasswordResetScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
 
-    const handlePassword = () => {
-        const code = generateCode();
+    const comment = 'your password';
 
-        const body = `Your Code is ${code}`;
+    const url = `mailto:${email}?body=${comment}`;
 
-        Mailer.mail({
-            subject: 'Test Email',
-            recipients: [email],
-            body: body,
-            isHTML: true,
-        }, (error, event) => {
-            if(error){
-                ToastAndroid.show('Error sending email!',ToastAndroid.SHORT)
+    const handlePassword = async () => {
+        try{
+            const mEmail = email;
+            const emailResponse = await fetch(`${API_KEY}/api/users/${mEmail}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({mEmail})
+            });
+            if(emailResponse.ok){
+                handleEmailSend();
             } else {
-                ToastAndroid.show('Email sent successfully!',ToastAndroid.SHORT)
-            }
-        });
-    }
 
-    const generateCode = () => {
-        const code = '1234';
-        return code;
-    }
+            }
+        }catch(e){
+            ToastAndroid.show('Email does not exist',ToastAndroid.SHORT);
+        }
+    };
+
+    const handleEmailSend = useCallback(async () => {
+        console.log(url);
+        const supported = await Linking.canOpenURL(url);
+
+        if(supported){
+            await Linking.openURL(url);
+        }
+    },[url]);
 
     return (
         <View>

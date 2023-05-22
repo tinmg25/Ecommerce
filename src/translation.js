@@ -60,7 +60,17 @@ const translation = {
         p_email: 'Email',
         p_address: 'Address',
         p_phone: 'Phone No.',
+
+        //order list
         my_order: 'My Order Lists',
+        no_order: 'No Orders',
+        order_id: 'Order Id',
+        order_date: 'Date',
+        total_amount: 'Total',
+        order_status: 'Status',
+        name: 'Name',
+        qty: 'Qty',
+        price: 'Price',
 
         //account screen
         dark_mode: 'Dark Mode',
@@ -161,7 +171,17 @@ const translation = {
         p_email: 'メール',
         p_address: '住所',
         p_phone: '電話番号',
+
+        //order list
         my_order: '注文リスト',
+        no_order: '注文はありません。',
+        order_id: '注文ID',
+        order_date: '日付',
+        total_amount: '合計金額',
+        order_status: 'ステータス',
+        name: '製品名',
+        qty: '量',
+        price: '本体金額',
 
         //account screen
         dark_mode: '暗いモード',

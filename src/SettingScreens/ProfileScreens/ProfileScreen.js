@@ -18,7 +18,7 @@ const ProfileScreen = ({ navigation }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`${API_KEY}/api/${mEmail}`, {
+                    const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

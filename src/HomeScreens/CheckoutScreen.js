@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     TextInput,
     ToastAndroid,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    ScrollView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,7 +38,7 @@ const CheckoutScreen = ({ route }) => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
                 if (mEmail !== null) {
-                    const response = await fetch(`${API_KEY}/api/${mEmail}`, {
+                    const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -165,6 +166,16 @@ const CheckoutScreen = ({ route }) => {
 
     const handleOrder = async () => {
         try {
+
+            const groupedCartData = Object.values(cartData).reduce((result, item) => {
+                if (result[item.product_id]) {
+                    result[item.product_id].quantity += 1;
+                } else {
+                    result[item.product_id] = { ...item, quantity: 1 };
+                }
+                return result;
+            }, {});
+
             const orderRequest = {
                 userId: userId,
                 addressInput: addressInput,
@@ -172,13 +183,7 @@ const CheckoutScreen = ({ route }) => {
                 townshipInput: townshipInput,
                 postalInput: postalInput,
                 total: total,
-                orderDetails: cartData
-                    ? Object.keys(cartData).map(key => ({
-                          product_id: cartData[key].product_id,
-                          quantity: 1,
-                          price: cartData[key].price,
-                      }))
-                    : [],
+                orderDetails: Object.values(groupedCartData),
             };
 
             const response = await fetch(`${API_KEY}/api/order/save`, {
@@ -188,7 +193,7 @@ const CheckoutScreen = ({ route }) => {
                 },
                 body: JSON.stringify(orderRequest),
             });
-    
+
             if (response.ok) {
                 navigation.navigate('Products');
             } else {
@@ -200,8 +205,10 @@ const CheckoutScreen = ({ route }) => {
     };
 
     return (
-        <KeyboardAvoidingView behavior='padding'>
-            <View>
+        <KeyboardAvoidingView
+            behavior='none'
+            style={styles.container}>
+            <ScrollView>
                 <View style={styles.view1}>
                     <Text style={styles.title}>{translate('shipping_address')}</Text>
                     <TextInput
@@ -244,7 +251,7 @@ const CheckoutScreen = ({ route }) => {
                 <TouchableOpacity onPress={() => handleCheckout()}>
                     <Text style={styles.order}>{translate('order_now')}</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </KeyboardAvoidingView>
     );
 }

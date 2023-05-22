@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -7,8 +7,11 @@ import {
     Image
 } from 'react-native';
 import { API_KEY } from '../common/APIKey';
+import { LanguageContext } from '../LanguageContext';
 
 const OrderDetailScreen = ({ route }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const { orders } = route.params;
 
@@ -68,11 +71,11 @@ const OrderDetailScreen = ({ route }) => {
             <View style={styles.main_view}>
                 <View style={styles.sub_view}>
                     {productDetail
-                        ? <Text style={styles.label_text}>Name - {productDetail.product_name}</Text>
+                        ? <Text style={styles.label_text}>{translate('name')} - {productDetail.product_name}</Text>
                         : <Text>Loading</Text>
                     }
-                    <Text style={styles.label_text}>Qty - {item.quantity}</Text>
-                    <Text style={styles.label_text}>Price - $ {item.price}</Text>
+                    <Text style={styles.label_text}>{translate('qty')} - {item.quantity}</Text>
+                    <Text style={styles.label_text}>{translate('price')} - $ {item.price}</Text>
                 </View>
                 <View>
                     {productDetail

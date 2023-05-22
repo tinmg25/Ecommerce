@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { 
     View, 
     Text, 
@@ -6,8 +6,11 @@ import {
     Image, 
     TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { LanguageContext } from "../LanguageContext";
 
 const OrderItemCard = ({ item }) => {
+
+    const { translate } = useContext(LanguageContext);
 
     const navigation = useNavigation();
 
@@ -37,10 +40,10 @@ const OrderItemCard = ({ item }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Order Id - {item.order_id}</Text>
-            <Text style={styles.label}>Order Date - {formattedDate}</Text>
-            <Text style={styles.label}>Total Amount- $ {item.total_amount}</Text>
-            <Text style={styles.label}>Order Status - {statusText}</Text>
+            <Text style={styles.label}>{translate('order_id')} - {item.order_id}</Text>
+            <Text style={styles.label}>{translate('order_date')} - {formattedDate}</Text>
+            <Text style={styles.label}>{translate('total_amount')} - $ {item.total_amount}</Text>
+            <Text style={styles.label}>{translate('order_status')} - {statusText}</Text>
             <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('OrderDetails',{ orders : item })}>
                 <Image source={require('../images/detail.png')} style={styles.detail_img}/>
             </TouchableOpacity>

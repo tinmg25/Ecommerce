@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TextInput,
+  Dimensions,
   Image,
   TouchableOpacity,
 } from 'react-native';
@@ -17,6 +17,9 @@ import { API_KEY } from '../common/APIKey';
 const ProductScreen = ({ navigation }) => {
 
   const { translate } = useContext(LanguageContext);
+
+  const { width } = Dimensions.get('screen');
+  const imageWidth = width;
 
   const dispatch = useDispatch();
 
@@ -54,7 +57,7 @@ const ProductScreen = ({ navigation }) => {
   const renderProduct = ({ item }) => {
     return (
       <View style={styles.product_view}>
-        <TouchableOpacity onPress={()=> navigateToProductDetails(item)}>
+        <TouchableOpacity onPress={() => navigateToProductDetails(item)}>
           <Image
             source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
             style={styles.product_img}
@@ -101,18 +104,9 @@ const ProductScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.searchBar}>
-        <TextInput
-          style={styles.inputStyle}
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder={translate('search')}
-        />
-        <Image 
-        source={require('../images/search.png')} 
-        style={styles.search_icon} />
-      </View>
-      <SelectBox /> */}
+      <Image
+        resizeMode='cover'
+        source={require('../images/background_img.png')} />
       <View style={styles.category_view}>
         <FlatList
           style={styles.category_list}
@@ -128,32 +122,6 @@ const ProductScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  searchBar: {
-    backgroundColor: '#F0EEEE',
-    height: 50,
-    borderRadius: 50,
-    marginHorizontal: 15,
-    flexDirection: 'row',
-    borderColor: 'black',
-    borderWidth: 1,
-    marginVertical:10,
-    paddingHorizontal:10,
-  },
-  search_icon: {
-    width: 30,
-    height: 30,
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
-  inputStyle: {
-    flex: 1,
-    fontSize: 18,
-  },
-  iconStyle: {
-    fontSize: 35,
-    alignSelf: 'center',
-    marginHorizontal: 15,
   },
   category_view: {
     flex: 1,
