@@ -72,7 +72,7 @@ const ProductScreen = ({ navigation }) => {
             onPress={() => {
               dispatch(addItemToCart(item));
             }}>
-            <Text>{translate('add_to_cart')}</Text>
+            <Text style={{fontFamily:'NotoSerifJP-Black'}}>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -105,7 +105,8 @@ const ProductScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        resizeMode='cover'
+        style={[styles.img,{width:imageWidth}]}
+        resizeMode='contain'
         source={require('../images/background_img.png')} />
       <View style={styles.category_view}>
         <FlatList
@@ -122,6 +123,10 @@ const ProductScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  img: {
+    width:'100%',
+    height:'32%',
   },
   category_view: {
     flex: 1,
@@ -183,6 +188,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 10,
     marginTop: 10,
+    fontFamily: 'NotoSerifJP-Black'
   },
   sub_view: {
     flexDirection: 'row',
@@ -200,6 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 7,
+    fontFamily: 'NotoSerifJP-Black'
   },
   category_list: {
     marginVertical: 10,

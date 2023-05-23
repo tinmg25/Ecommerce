@@ -8,7 +8,7 @@ const SelectBox = () => {
 
   const { translate } = useContext(LanguageContext);
 
-  const [category, setCategory] = useState(false);
+  const [category, setCategory] = useState(null);
   const [categoryValue, setCategoryValue] = useState(null);
   const [categoryItems, setCategoryItems] = useState([]);
 
@@ -34,7 +34,7 @@ const SelectBox = () => {
     })),
   ];
 
-  const [brand, setBrand] = useState(false);
+  const [brand, setBrand] = useState(null);
   const [brandValue, setBrandValue] = useState(null);
   const [brandItems, setBrandItems] = useState([]);
 

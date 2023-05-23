@@ -28,10 +28,13 @@ const SearchScreen = () => {
     const [products, setProducts] = useState([]);
     const [noItem, setNoItem] = useState(true);
 
+    const [category, setCategory] = useState(null);
+    const [brand, setBrand] = useState(null);
+
     const searchProduct = async () => {
         try {
             if (name !== '') {
-                const response = await fetch(`${API_KEY}/api/product/search?name=${name}`, {
+                const response = await fetch(`${API_KEY}/api/product/search?name=${name}&category=${category}&brand=${brand}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -119,7 +122,7 @@ const SearchScreen = () => {
                         source={require('../images/clear.png')} />
                 </TouchableOpacity>
             </View>
-            <SelectBox/>
+            <SelectBox category={category} brand={brand}/>
             <View style={styles.result_list}>
                 {noItem ? (
                     <Text style={styles.no_search_text}>No Search Results</Text>

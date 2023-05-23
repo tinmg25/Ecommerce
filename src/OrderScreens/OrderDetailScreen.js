@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         borderBottomWidth: 2,
-        borderBottomColor:'#04144F',
+        borderBottomColor: '#04144F',
     },
     sub_view: {
         justifyContent: 'space-around',
