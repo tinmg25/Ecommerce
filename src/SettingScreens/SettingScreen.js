@@ -62,6 +62,9 @@ const SettingScreen = ({ navigation }) => {
                     <Image source={require('../images/exit.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
+            <View style={styles.setting_logo}>
+                <Image style={styles.img} source={require('../images/setting_logo.png')}/>
+            </View>
             <AwesomeAlert
                 show={showAlert}
                 title={translate('logout')}
@@ -107,6 +110,15 @@ const styles = StyleSheet.create({
     logo_img: {
         width: 30,
         height: 30,
+    },
+    setting_logo: {
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center',
+    },
+    img: {
+        width:300,
+        height:300,
     }
 });
 

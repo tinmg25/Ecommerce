@@ -4,7 +4,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { API_KEY } from "./common/APIKey";
 import { LanguageContext } from "./LanguageContext";
 
-const SelectBox = () => {
+const SelectBox = ({ categoryId, brandId}) => {
 
   const { translate } = useContext(LanguageContext);
 

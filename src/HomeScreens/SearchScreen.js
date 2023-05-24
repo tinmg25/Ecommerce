@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -7,14 +7,13 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
-    ToastAndroid
 } from 'react-native';
 import { addItemToCart, addItemToWishlist } from '../redux/actions/Actions';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { LanguageContext } from "../LanguageContext";
 import { API_KEY } from "../common/APIKey";
 import { useNavigation } from '@react-navigation/native';
-import SelectBox from "../SelectBox";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const SearchScreen = () => {
 
@@ -29,27 +28,74 @@ const SearchScreen = () => {
     const [noItem, setNoItem] = useState(true);
 
     const [category, setCategory] = useState(null);
+    const [categoryValue, setCategoryValue] = useState(null);
+    const [categoryItems, setCategoryItems] = useState([]);
+
     const [brand, setBrand] = useState(null);
+    const [brandValue, setBrandValue] = useState(null);
+    const [brandItems, setBrandItems] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const categoryResponse = await fetch(`${API_KEY}/api/category`);
+            const categoryResult = await categoryResponse.json();
+            setCategoryItems(categoryResult);
+
+            const brandResponse = await fetch(`${API_KEY}/api/brand`);
+            const brandResult = await brandResponse.json();
+            setBrandItems(brandResult);
+        };
+
+        fetchData();
+    }, []);
+
+    const categoryItem = [
+        { label: '', value: null },
+        ...categoryItems.map(catItem => ({
+            label: catItem.category_name,
+            value: catItem.category_id,
+        })),
+    ];
+
+    const brandItem = [
+        { label: '', value: null },
+        ...brandItems.map(bItem => ({
+            label: bItem.brand_name,
+            value: bItem.brand_id,
+        })),
+    ];
+
+    const [categoryId, setCategoryId] = useState('');
+    const [brandId, setBrandId] = useState('');
 
     const searchProduct = async () => {
         try {
-            if (name !== '') {
-                const response = await fetch(`${API_KEY}/api/product/search?name=${name}&category=${category}&brand=${brand}`, {
+
+            if (categoryValue != null) {
+                setCategoryId(categoryValue);
+            } else {
+                setCategoryId('');
+            }
+
+            if (brandValue != null) {
+                setBrandId(brandValue);
+            } else {
+                setBrandId('');
+            }
+
+            const response = await fetch(`${API_KEY}/api/product/search?name=${name}&categoryId=${categoryId}&brandId=${brandId}`,
+                {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-                const data = await response.json();
-                setProducts(data);
-                if(data.length < 1){
-                    setNoItem(true);
-                } else{
-                    setNoItem(false);
-                }
-            }
-            else {
+            const data = await response.json();
+            setProducts(data);
+            if (data.length < 1) {
                 setNoItem(true);
+            } else {
+                setNoItem(false);
             }
         } catch (error) {
             console.error(error);
@@ -63,7 +109,7 @@ const SearchScreen = () => {
 
     const navigateToProductDetails = product => {
         navigation.navigate('ProductDetails', { product });
-      };
+    };
 
     const renderProduct = ({ item }) => (
         <View style={styles.search_item}>
@@ -122,10 +168,40 @@ const SearchScreen = () => {
                         source={require('../images/clear.png')} />
                 </TouchableOpacity>
             </View>
-            <SelectBox category={category} brand={brand}/>
+            <View style={styles.view2}>
+                <View
+                    style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
+                    <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
+                        open={category}
+                        value={categoryValue}
+                        items={categoryItem}
+                        setOpen={setCategory}
+                        setValue={setCategoryValue}
+                        setItems={setCategoryItems}
+                        placeholder={translate('category')}
+                    />
+                </View>
+                <View
+                    style={{ width: 150, position: 'relative', zIndex: 1, elevation: 1 }}>
+                    <DropDownPicker
+                        style={{ zIndex: 2, elevation: 2 }}
+                        open={brand}
+                        value={brandValue}
+                        items={brandItem}
+                        setOpen={setBrand}
+                        setValue={setBrandValue}
+                        setItems={setBrandItems}
+                        placeholder={translate('brand')}
+                    />
+                </View>
+            </View>
             <View style={styles.result_list}>
                 {noItem ? (
-                    <Text style={styles.no_search_text}>No Search Results</Text>
+                    <View style={styles.no_data}>
+                        <Image style={styles.img} source={require('../images/empty_search.png')}/>
+                        <Text style={styles.no_search_text}>No Search Results</Text>
+                    </View>
                 ) : (
                     <FlatList
                         showsVerticalScrollIndicator={false}
@@ -168,10 +244,10 @@ const styles = StyleSheet.create({
     },
     search_item: {
         flexDirection: 'row',
-        elevation:5,
-        backgroundColor:'#fff',
+        elevation: 5,
+        backgroundColor: '#fff',
         padding: 10,
-        justifyContent:'space-between',
+        justifyContent: 'space-between',
     },
     product_img: {
         width: 100,
@@ -216,13 +292,29 @@ const styles = StyleSheet.create({
     result_list: {
         flex: 1,
         justifyContent: 'center',
-        padding:10,
+        padding: 10,
+    },
+    view2: {
+        flexDirection: 'row',
+        marginHorizontal: 15,
+        justifyContent: 'space-around',
+        position: 'relative',
+        zIndex: 1,
+        elevation: 1,
+    },
+    no_data: {
+        flex:1,
+        alignItems:'center',
+        justifyContent:'space-evenly',
+    },
+    img: {
+        width:250,
+        height:250,
     },
     no_search_text: {
-        alignSelf:'center',
-        fontSize: 20,
+        fontSize: 18,
         color: '#000',
-    }
+    },
 });
 
 export default SearchScreen;

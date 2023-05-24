@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
@@ -33,11 +33,12 @@ const ViewCartScreen = ({ navigation }) => {
         />
       ) : (
         <View style={styles.no_data}>
-          <Text>{translate('no_item')}</Text>
+          <Image style={styles.img} source={require('../images/empty_cart.png')} />
+          <Text style={styles.no_item}>{translate('no_item')}</Text>
         </View>
       )}
       {cartData.length > 0 ? (
-        <TouchableOpacity onPress={()=>navigation.navigate('Checkout',{cartData})}>
+        <TouchableOpacity onPress={() => navigation.navigate('Checkout', { cartData })}>
           <Text style={styles.button}>{translate('checkout')}</Text>
         </TouchableOpacity>
       ) : null}
@@ -67,8 +68,16 @@ const styles = StyleSheet.create({
   no_data: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-  }
+    justifyContent: 'space-evenly',
+  },
+  no_item: {
+    fontSize: 18,
+    color: '#000',
+  },
+  img: {
+    width: 350,
+    height: 400,
+  },
 });
 
 export default ViewCartScreen;

@@ -4,6 +4,7 @@ import {
     Text,
     StyleSheet,
     FlatList,
+    Image,
 } from 'react-native';
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,8 +35,9 @@ const WishlistScreen = ({ navigation }) => {
                     }}/>;
                 }}/>
             ):(
-                <View style={styles.sub_view}>
-                    <Text>{translate('no_wishlist')}</Text>
+                <View style={styles.no_data}>
+                    <Image style={styles.img} source={require('../images/empty_wishlist.png')}/>
+                    <Text style={styles.no_item}>{translate('no_wishlist')}</Text>
                 </View>
             )}
             
@@ -47,10 +49,18 @@ const styles = StyleSheet.create({
     main_view: {
         flex:1,
     },
-    sub_view: {
+    no_data: {
         flex:1,
         alignItems:'center',
-        justifyContent:'center',
+        justifyContent:'space-evenly',
+    },
+    no_item: {
+        fontSize:18,
+        color:'#000',
+    },
+    img: {
+        width:350,
+        height:400,
     }
 })
 
