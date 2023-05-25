@@ -169,8 +169,11 @@ const RegisterScreen = ({ navigation }) => {
                     <TouchableOpacity onPress={() => validateForm()}>
                         <Text style={styles.reg_btn}>{translate('register')}</Text>
                     </TouchableOpacity>
+                </View>
+                <View style={styles.view4}>
+                    <Text style={styles.label2}>{translate('already')}</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.login_btn}>{translate('already')}</Text>
+                        <Text style={styles.login_text}>{translate('login')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -219,17 +222,23 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginVertical: 20,
     },
-    login_btn: {
-        textDecorationLine: 'underline',
-        textDecorationColor: '#000',
-        alignSelf: 'center',
-        fontSize: 15,
-        color: '#000',
-    },
     errorMessage: {
         color: 'red',
         marginBottom: 5,
     },
+    view4: {
+        flexDirection:'row',
+        justifyContent:'space-evenly',
+    },
+    label2: {
+        fontSize:18,
+        color:'#000',
+    },
+    login_text: {
+        textDecorationLine:'underline',
+        fontSize:18,
+        color:'blue',
+    }
 });
 
 export default RegisterScreen;

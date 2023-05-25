@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
+    ActivityIndicator,
 } from 'react-native';
 import { addItemToCart, addItemToWishlist } from '../redux/actions/Actions';
 import { useDispatch } from 'react-redux';
@@ -34,6 +35,8 @@ const SearchScreen = () => {
     const [brand, setBrand] = useState(null);
     const [brandValue, setBrandValue] = useState(null);
     const [brandItems, setBrandItems] = useState([]);
+
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -65,42 +68,46 @@ const SearchScreen = () => {
         })),
     ];
 
-    const [categoryId, setCategoryId] = useState('');
-    const [brandId, setBrandId] = useState('');
+    const [categoryId, setCategoryId] = useState(null);
+    const [brandId, setBrandId] = useState(null);
 
-    const searchProduct = async () => {
-        try {
+    useEffect(() => {
+        const searchProduct = async () => {
+            try {
 
-            if (categoryValue != null) {
-                setCategoryId(categoryValue);
-            } else {
-                setCategoryId('');
+                if (categoryId !== null && brandId !== null) {
+                    const response = await fetch(`${API_KEY}/api/product/search?name=${name}&categoryId=${categoryId}&brandId=${brandId}`,
+                        {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                    const data = await response.json();
+                    setProducts(data);
+                    setNoItem(data.length < 1);
+                }
+            } catch (error) {
+                console.error(error);
             }
+        };
+        searchProduct();
+    }, [categoryId, brandId]);
 
-            if (brandValue != null) {
-                setBrandId(brandValue);
-            } else {
-                setBrandId('');
-            }
 
-            const response = await fetch(`${API_KEY}/api/product/search?name=${name}&categoryId=${categoryId}&brandId=${brandId}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-            const data = await response.json();
-            setProducts(data);
-            if (data.length < 1) {
-                setNoItem(true);
-            } else {
-                setNoItem(false);
-            }
-        } catch (error) {
-            console.error(error);
+    const searchProduct = () => {
+        if (categoryValue !== null) {
+            setCategoryId(categoryValue);
+        } else {
+            setCategoryId('');
         }
-    };
+
+        if (brandValue !== null) {
+            setBrandId(brandValue);
+        } else {
+            setBrandId('');
+        }
+    }
 
     const clearProduct = () => {
         setProducts([]);
@@ -197,9 +204,9 @@ const SearchScreen = () => {
                 </View>
             </View>
             <View style={styles.result_list}>
-                {noItem ? (
+                { noItem ? (
                     <View style={styles.no_data}>
-                        <Image style={styles.img} source={require('../images/empty_search.png')}/>
+                        <Image style={styles.img} source={require('../images/empty_search.png')} />
                         <Text style={styles.no_search_text}>No Search Results</Text>
                     </View>
                 ) : (
@@ -303,13 +310,13 @@ const styles = StyleSheet.create({
         elevation: 1,
     },
     no_data: {
-        flex:1,
-        alignItems:'center',
-        justifyContent:'space-evenly',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
     },
     img: {
-        width:250,
-        height:250,
+        width: 250,
+        height: 250,
     },
     no_search_text: {
         fontSize: 18,

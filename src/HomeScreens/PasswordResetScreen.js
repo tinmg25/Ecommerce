@@ -6,49 +6,58 @@ import {
     TextInput,
     TouchableOpacity,
     ToastAndroid,
-    Linking
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
+import Mailer from 'react-native-mail';
 
 const PasswordResetScreen = ({ navigation }) => {
-    
+
     const { translate } = useContext(LanguageContext);
 
     const [email, setEmail] = useState('');
-
-    const comment = 'your password';
-
-    const url = `mailto:${email}?body=${comment}`;
+    const [password, setPassword] = useState(null);
 
     const handlePassword = async () => {
-        try{
+        try {
             const mEmail = email;
-            const emailResponse = await fetch(`${API_KEY}/api/users/${mEmail}`,{
+            console.log(mEmail);
+            const emailResponse = await fetch(`${API_KEY}/api/users/${mEmail}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({mEmail})
+                body: JSON.stringify({ mEmail })
             });
-            if(emailResponse.ok){
-                handleEmailSend();
+            if (emailResponse.ok) {
+                const data = await emailResponse.json();
+                setPassword(data.password);
+                sendEmail();
             } else {
 
             }
-        }catch(e){
-            ToastAndroid.show('Email does not exist',ToastAndroid.SHORT);
+        } catch (e) {
+            ToastAndroid.show('Email does not exist', ToastAndroid.SHORT);
         }
     };
 
-    const handleEmailSend = useCallback(async () => {
-        console.log(url);
-        const supported = await Linking.canOpenURL(url);
+    const sendEmail = useCallback(() => {
+        const emailBody = `Your password: ${password}`;
+        const emailSubject = 'Password Recovery';
 
-        if(supported){
-            await Linking.openURL(url);
-        }
-    },[url]);
+        Mailer.mail({
+            subject: emailSubject,
+            recipients: [email],
+            body: emailBody,
+            isHTML: false,
+        }, (error, event) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent successfully');
+            }
+        });
+    }, [email, password]);
 
     return (
         <View>
@@ -66,8 +75,11 @@ const PasswordResetScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => handlePassword()}>
                     <Text style={styles.reg_btn}>{translate('get_pwd')}</Text>
                 </TouchableOpacity>
+            </View>
+            <View style={styles.view4}>
+                <Text style={styles.label}>{translate('already')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.login_btn}>{translate('already')}</Text>
+                    <Text style={styles.login_text}>{translate('login')}</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -112,12 +124,18 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginBottom: 20,
     },
-    login_btn: {
-        textDecorationLine:'underline',
-        textDecorationColor:'#000',
-        alignSelf:'center',
-        fontSize:15,
-        color:'#000',
+    view4: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+    },
+    label: {
+        fontSize: 18,
+        color: '#000',
+    },
+    login_text: {
+        textDecorationLine: 'underline',
+        fontSize: 18,
+        color: 'blue',
     },
 });
 
