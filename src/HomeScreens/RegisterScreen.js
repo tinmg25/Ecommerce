@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useContext } from 'react';
 import {
     View,
@@ -10,6 +9,10 @@ import {
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
+import firestore from '@react-native-firebase/firestore';
+import { auth, db } from '../config/firebase-config';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs } from 'firebase/firestore/lite';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -121,6 +124,16 @@ const RegisterScreen = ({ navigation }) => {
         }
     };
 
+    const handleFirestoreSave = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((re) => {
+                console.log(re);
+            })
+            .catch((re) => {
+                console.log(re);
+            });
+    }
+
     return (
         <KeyboardAvoidingView
             behavior='height' style={styles.container}>
@@ -227,17 +240,17 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     view4: {
-        flexDirection:'row',
-        justifyContent:'space-evenly',
+        flexDirection: 'row',
+        justifyContent: 'center',
     },
     label2: {
-        fontSize:18,
-        color:'#000',
+        fontSize: 18,
+        color: '#000',
     },
     login_text: {
-        textDecorationLine:'underline',
-        fontSize:18,
-        color:'blue',
+        textDecorationLine: 'underline',
+        fontSize: 18,
+        color: 'blue',
     }
 });
 
