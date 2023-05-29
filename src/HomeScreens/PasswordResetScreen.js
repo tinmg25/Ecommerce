@@ -6,17 +6,18 @@ import {
     TextInput,
     TouchableOpacity,
     ToastAndroid,
+    Alert,
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import Mailer from 'react-native-mail';
+import { auth } from '../config/firebase-config';
+import { sendPasswordResetEmail } from "firebase/auth";
 
 const PasswordResetScreen = ({ navigation }) => {
 
     const { translate } = useContext(LanguageContext);
 
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState(null);
 
     const handlePassword = async () => {
         try {
@@ -32,7 +33,6 @@ const PasswordResetScreen = ({ navigation }) => {
             if (emailResponse.ok) {
                 const data = await emailResponse.json();
                 setPassword(data.password);
-                sendEmail();
             } else {
 
             }
@@ -41,23 +41,19 @@ const PasswordResetScreen = ({ navigation }) => {
         }
     };
 
-    const sendEmail = useCallback(() => {
-        const emailBody = `Your password: ${password}`;
-        const emailSubject = 'Password Recovery';
-
-        Mailer.mail({
-            subject: emailSubject,
-            recipients: [email],
-            body: emailBody,
-            isHTML: false,
-        }, (error, event) => {
-            if (error) {
-                console.error('Error sending email:', error);
-            } else {
-                console.log('Email sent successfully');
-            }
-        });
-    }, [email, password]);
+    const handleFirebasePasswordReset = () => {
+        if (email !== '') {
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    Alert.alert("Password Reset Email Sent Successfully")
+                })
+                .catch((error) => {
+                    ToastAndroid.show('Email send unsuccessful!',ToastAndroid.SHORT);
+                });
+        } else {
+            ToastAndroid.show('Please enter email address!', ToastAndroid.SHORT);
+        }
+    }
 
     return (
         <View>
@@ -72,8 +68,8 @@ const PasswordResetScreen = ({ navigation }) => {
                     autoCapitalize='none' />
             </View>
             <View style={styles.view3}>
-                <TouchableOpacity onPress={() => handlePassword()}>
-                    <Text style={styles.reg_btn}>{translate('get_pwd')}</Text>
+                <TouchableOpacity onPress={() => handleFirebasePasswordReset()}>
+                    <Text style={styles.reg_btn}>{translate('send')}</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.view4}>
@@ -110,6 +106,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 10,
         marginBottom: 50,
+        fontSize: 20,
     },
     view3: {
         alignSelf: 'center',
@@ -126,7 +123,7 @@ const styles = StyleSheet.create({
     },
     view4: {
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
     },
     label: {
         fontSize: 18,

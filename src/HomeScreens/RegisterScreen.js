@@ -5,14 +5,12 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import firestore from '@react-native-firebase/firestore';
-import { auth, db } from '../config/firebase-config';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs } from 'firebase/firestore/lite';
+import { auth } from '../config/firebase-config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -20,12 +18,14 @@ const RegisterScreen = ({ navigation }) => {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [conPassword, setConPassword] = useState('');
 
     const [nameError, setNameError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [addressError, setAddressError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [conPasswordError, setConPasswordError] = useState('');
@@ -40,16 +40,21 @@ const RegisterScreen = ({ navigation }) => {
         return emailRegex.test(email);
     };
 
+    const handleAddress = (address) => {
+        const addressRegex = /^[a-zA-Z0-9\s]+$/;
+        return addressRegex.test(address);
+    };
+
     const handlePhone = (phone) => {
         const phoneRegex = /^[0-9]{11}$/;
         return phoneRegex.test(phone);
-    }
+    };
 
     const handlePassword = (password) => {
         const passwordRegex = /^.{8,}$/;
         return passwordRegex.test(password);
 
-    }
+    };
 
     const handleConPassword = (conPassword) => {
         return conPassword === password;
@@ -70,6 +75,14 @@ const RegisterScreen = ({ navigation }) => {
             setEmailError(translate('mail_format'));
         } else {
             setEmailError('');
+        }
+
+        if (address.trim() === '') {
+            setAddressError(translate('address_error'));
+        } else if (!handleAddress(address)) {
+            setAddressError(translate('address_format'));
+        } else {
+            setAddressError('');
         }
 
         if (phone.trim() === '') {
@@ -98,7 +111,8 @@ const RegisterScreen = ({ navigation }) => {
 
         if (handleUserName(name) && handleEmail(email) && handlePhone(phone) &&
             handlePassword(password) && handleConPassword(conPassword)) {
-            handleRegister();
+            // handleRegister();
+            handleFirebaseRegister();
         }
     }
 
@@ -124,14 +138,27 @@ const RegisterScreen = ({ navigation }) => {
         }
     };
 
-    const handleFirestoreSave = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((re) => {
-                console.log(re);
-            })
-            .catch((re) => {
-                console.log(re);
-            });
+    const handleFirebaseRegister = async () => {
+        try {
+            const authResult = await createUserWithEmailAndPassword(auth, email, password);
+            const user = authResult.user;
+
+            // if (user) {
+            //     await setDoc(doc(db, "user_mst", user.uid), {
+            //         name: name,
+            //         email: email,
+            //         address: address,
+            //         phone: phone,
+            //         password: password,
+            //     })
+            //         .then(() => {
+            //             ToastAndroid.show('User Regiseter successfully!');
+            //         });
+            //     navigation.goBack();
+            // }
+        } catch (error) {
+            console.error("Registration Failed", error);
+        }
     }
 
     return (
@@ -154,6 +181,12 @@ const RegisterScreen = ({ navigation }) => {
                         value={email}
                         onChangeText={setEmail} />
                     {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
+                    <Text style={styles.label}>{translate('p_address')}</Text>
+                    <TextInput
+                        style={styles.text_input}
+                        value={address}
+                        onChangeText={setAddress} />
+                    {addressError ? <Text style={styles.errorMessage}>{addressError}</Text> : null}
                     <Text style={styles.label}>{translate('phone')}</Text>
                     <TextInput
                         style={styles.text_input}

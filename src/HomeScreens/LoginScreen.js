@@ -67,11 +67,11 @@ const LoginScreen = ({ navigation }) => {
     const handleFirebaseLogin = () => {
         signInWithEmailAndPassword(auth,email,password)
         .then((re)=>{
-            console.log(re);
+            ToastAndroid.show('Login Successful', ToastAndroid.SHORT)
             navigation.navigate('Main');
         })
         .catch((re)=>{
-            console.log(re);
+            ToastAndroid.show('Invalid Email or Password, Try Again!', ToastAndroid.SHORT)
         })
     }
 
@@ -114,14 +114,11 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.view3}>
-                    <TouchableOpacity onPress={() => handleLogin()}>
+                    <TouchableOpacity onPress={() => handleFirebaseLogin()}>
                         <Text style={styles.login_btn}>{translate('login')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                         <Text style={styles.reg_btn}>{translate('register')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                        <Text style={styles.reg_btn}>Test Login</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.view4}>
@@ -228,9 +225,6 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
 
     },
-    toast: {
-
-    }
 });
 
 export default LoginScreen;

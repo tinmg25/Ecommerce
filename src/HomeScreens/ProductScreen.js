@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import SelectBox from '../SelectBox';
 import { useDispatch, useSelector } from 'react-redux';
-import { addItemToCart, addItemToWishlist } from '../redux/actions/Actions';
+import { addItemToCart, addItemToWishlist, removeItemFromWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
 
@@ -55,6 +55,19 @@ const ProductScreen = ({ navigation }) => {
   };
 
   const renderProduct = ({ item }) => {
+
+    const isItemInWishlist = items.reducers2.find(
+      (wishlistItem) => wishlistItem.product_id === item.product_id
+    );
+
+    const toggleWishlist = () => {
+      if (isItemInWishlist) {
+        dispatch(removeItemFromWishlist(item.product_id));
+      } else {
+        dispatch(addItemToWishlist(item));
+      }
+    };
+
     return (
       <View style={styles.product_view}>
         <TouchableOpacity onPress={() => navigateToProductDetails(item)}>
@@ -72,15 +85,18 @@ const ProductScreen = ({ navigation }) => {
             onPress={() => {
               dispatch(addItemToCart(item));
             }}>
-            <Text style={{fontFamily:'NotoSerifJP-Black'}}>{translate('add_to_cart')}</Text>
+            <Text>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
           style={styles.icon}
-          onPress={() => {
-            dispatch(addItemToWishlist(item));
-          }}>
-          <Image source={require('../images/like.png')} style={styles.logo_img} />
+          onPress={toggleWishlist}>
+          <Image source={
+            isItemInWishlist
+              ? require('../images/love.png')
+              : require('../images/like.png')
+          }
+            style={styles.logo_img} />
         </TouchableOpacity>
       </View>
     );
@@ -105,7 +121,7 @@ const ProductScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        style={[styles.img,{width:imageWidth}]}
+        style={[styles.img, { width: imageWidth }]}
         resizeMode='contain'
         source={require('../images/background_img.png')} />
       <View style={styles.category_view}>
@@ -125,8 +141,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   img: {
-    width:'100%',
-    height:'32%',
+    width: '100%',
+    height: '32%',
   },
   category_view: {
     flex: 1,

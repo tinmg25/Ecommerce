@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import themeContext from '../../config/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,8 +48,9 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.edit_btn}>{translate('edit')}</Text>
             </TouchableOpacity>
             <View style={styles.order_view}>
-                <TouchableOpacity onPress={()=>navigation.navigate('OrderLists')}>
-                    <Text style={styles.order_text}>{translate('my_order')}</Text>
+                <Text style={styles.order_text}>{translate('my_order')}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('OrderLists')}>
+                    <Image source={require('../../images/orderlist.png')} style={styles.logo_img} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -95,6 +96,8 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     order_view: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         borderTopWidth: 1,
         borderBottomWidth: 1,
         padding: 10,
@@ -103,7 +106,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: '#000',
-    }
+    },
+    logo_img: {
+        width: 30,
+        height: 30,
+    },
 })
 
 export default ProfileScreen;

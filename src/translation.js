@@ -19,7 +19,7 @@ const translation = {
         phone: 'Phone No.',
         password_re: 'Password (Re-Entered)',
         recovery: 'Password Recovery',
-        get_pwd: 'Get Password',
+        send: 'Send',
         already: 'Already have account?',
 
         //tab navigator
@@ -131,7 +131,7 @@ const translation = {
         phone: '電話便号',
         password_re: 'パスワード（再入力）',
         recovery: 'パスワードの復元',
-        get_pwd: 'パスワードを取得',
+        send: '遅れる',
         already: 'すでにアカウントをお持ちですか?',
 
         //tab navigator
