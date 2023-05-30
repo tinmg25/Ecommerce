@@ -14,6 +14,9 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { API_KEY } from "../common/APIKey";
 import { useNavigation } from "@react-navigation/native"
 import DropDownPicker from 'react-native-dropdown-picker';
+import { db, storage } from '../config/firebase-config';
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes } from 'firebase/storage';
 
 const HelpSupportScreen = () => {
 
@@ -71,7 +74,7 @@ const HelpSupportScreen = () => {
 
         if (handleProductName(productName) && handleDescription(description) &&
             handlePrice(price)) {
-            handleProduct();
+            handleFirebaseProduct();
         }
     }
 
@@ -80,8 +83,8 @@ const HelpSupportScreen = () => {
             console.log(categoryValue);
             console.log(brandValue);
             const formData = new FormData();
-            formData.append("categoryId",categoryValue);
-            formData.append("brandId",brandValue);
+            formData.append("categoryId", categoryValue);
+            formData.append("brandId", brandValue);
             formData.append("productName", productName);
             formData.append("description", description);
             formData.append("price", price);
@@ -107,6 +110,22 @@ const HelpSupportScreen = () => {
         }
     }
 
+    const handleFirebaseProduct = async () => {
+        const productRef = collection(db, "product_tbl");
+
+        const newProductRef = await addDoc(productRef, {
+            product_name: productName,
+            description: description,
+            price: price,
+            category_id: categoryValue,
+            brand_id: brandValue,
+        });
+
+        const newProductId = newProductRef.id;
+        const storageRef = ref(storage, `product-images/${newProductId}`);
+        await uploadBytes(storageRef, image);
+    }
+
     const openGallery = () => {
         launchImageLibrary({ mediaType: 'photo' }, (response) => {
             if (!response.didCancel) {
@@ -124,7 +143,7 @@ const HelpSupportScreen = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.91:8087/api/category');
+            const response = await fetch(`${API_KEY}/api/category`);
             const result = await response.json();
             setCategoryItems(result);
         };
@@ -146,7 +165,7 @@ const HelpSupportScreen = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://192.168.64.91:8087/api/brand');
+            const response = await fetch(`${API_KEY}/api/brand`);
             const result = await response.json();
             setBrandItems(result);
         };
@@ -266,8 +285,8 @@ const styles = StyleSheet.create({
         position: 'relative',
         zIndex: 1,
         elevation: 1,
-        marginBottom:20,
-      },
+        marginBottom: 20,
+    },
 });
 
 export default HelpSupportScreen;

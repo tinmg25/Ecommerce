@@ -51,6 +51,7 @@ const CheckoutScreen = ({ route }) => {
                     setUserId(data.user_id || '');
                     setNameInput(data.name || '');
                     setEmailInput(data.email || '');
+                    setAddressInput(data.address || '');
                     setPhoneInput(data.phone_number || '');
                 }
             }

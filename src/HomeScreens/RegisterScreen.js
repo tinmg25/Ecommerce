@@ -6,11 +6,13 @@ import {
     TextInput,
     TouchableOpacity,
     KeyboardAvoidingView,
+    ToastAndroid,
 } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import { auth } from '../config/firebase-config';
+import { auth, db } from '../config/firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -143,19 +145,22 @@ const RegisterScreen = ({ navigation }) => {
             const authResult = await createUserWithEmailAndPassword(auth, email, password);
             const user = authResult.user;
 
-            // if (user) {
-            //     await setDoc(doc(db, "user_mst", user.uid), {
-            //         name: name,
-            //         email: email,
-            //         address: address,
-            //         phone: phone,
-            //         password: password,
-            //     })
-            //         .then(() => {
-            //             ToastAndroid.show('User Regiseter successfully!');
-            //         });
-            //     navigation.goBack();
-            // }
+            if (user) {
+
+                const userRef = collection(db,"user_mst");
+
+                await addDoc(userRef, {
+                    name: name,
+                    email: email,
+                    address: address,
+                    phone: phone,
+                    password: password,
+                })
+                    .then(() => {
+                        ToastAndroid.show('User Registered successfully!',ToastAndroid.SHORT);
+                    });
+                navigation.goBack();
+            }
         } catch (error) {
             console.error("Registration Failed", error);
         }

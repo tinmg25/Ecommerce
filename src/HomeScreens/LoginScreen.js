@@ -67,6 +67,7 @@ const LoginScreen = ({ navigation }) => {
     const handleFirebaseLogin = () => {
         signInWithEmailAndPassword(auth,email,password)
         .then((re)=>{
+            AsyncStorage.setItem('EMAIL',email);
             ToastAndroid.show('Login Successful', ToastAndroid.SHORT)
             navigation.navigate('Main');
         })

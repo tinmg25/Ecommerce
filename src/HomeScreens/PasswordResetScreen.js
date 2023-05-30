@@ -45,7 +45,7 @@ const PasswordResetScreen = ({ navigation }) => {
         if (email !== '') {
             sendPasswordResetEmail(auth, email)
                 .then(() => {
-                    Alert.alert("Password Reset Email Sent Successfully")
+                    Alert.alert(`Password Reset Email has sent to ${email}`)
                 })
                 .catch((error) => {
                     ToastAndroid.show('Email send unsuccessful!',ToastAndroid.SHORT);
