@@ -8,11 +8,13 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import SelectBox from '../SelectBox';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, addItemToWishlist, removeItemFromWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
+import { getDocs, collection } from 'firebase/firestore';
+import { db, storage } from '../config/firebase-config';
+import { ref,getDownloadURL } from 'firebase/storage';
 
 const ProductScreen = ({ navigation }) => {
 
@@ -24,7 +26,8 @@ const ProductScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchCategories();
+    // fetchCategories();
+    fetchFirestore();
   }, []);
 
   const items = useSelector(state => state);
@@ -50,6 +53,26 @@ const ProductScreen = ({ navigation }) => {
     }
   };
 
+  const fetchFirestore = async () => {
+    try {
+      const categorySnapshot = await getDocs(collection(db, 'category'));
+      const categoriesData = categorySnapshot.docs.map(doc => ({ category_id: doc.id, ...doc.data() }));
+
+      const productSnapshot = await getDocs(collection(db, 'product_tbl'));
+      const productsData = productSnapshot.docs.map(doc => ({ product_id: doc.id, ...doc.data() }));
+
+      const categoriesWithProducts = categoriesData.map(category => {
+        const filteredProducts = productsData.filter(product => product.category_id === category.id);
+        return { ...category, products: filteredProducts };
+      });
+
+      setCategories(categoriesWithProducts);
+
+    } catch (error) {
+      console.error('Error fetching categories', error);
+    }
+  };
+
   const navigateToProductDetails = product => {
     navigation.navigate('ProductDetails', { product });
   };
@@ -57,22 +80,48 @@ const ProductScreen = ({ navigation }) => {
   const renderProduct = ({ item }) => {
 
     const isItemInWishlist = items.reducers2.find(
-      (wishlistItem) => wishlistItem.product_id === item.product_id
+      (wishlistItem) => wishlistItem.id === item.id
     );
 
     const toggleWishlist = () => {
       if (isItemInWishlist) {
-        dispatch(removeItemFromWishlist(item.product_id));
+        dispatch(removeItemFromWishlist(item.id));
       } else {
         dispatch(addItemToWishlist(item));
       }
     };
 
+    // Get the Firebase Storage reference for the product image
+    const storageRef = ref(storage, `images/${item.id}.jpg`);
+
+    // Function to download the image URL from Firebase Storage
+    const getImageUrl = async () => {
+      try {
+        const imageUrl = await getDownloadURL(storageRef);
+        return imageUrl;
+      } catch (error) {
+        console.error('Error getting image URL', error);
+        return null;
+      }
+    };
+
+    // State to store the image URL
+    const [imageUrl, setImageUrl] = useState(null);
+
+    // Fetch the image URL on component mount
+    useEffect(() => {
+      const fetchImageUrl = async () => {
+        const url = await getImageUrl();
+        setImageUrl(url);
+      };
+      fetchImageUrl();
+    }, []);
+
     return (
       <View style={styles.product_view}>
         <TouchableOpacity onPress={() => navigateToProductDetails(item)}>
           <Image
-            source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+            source={item.image ? { uri: imageUrl } : require('../images/no_image.png')}
             style={styles.product_img}
             resizeMode='cover'
           />
