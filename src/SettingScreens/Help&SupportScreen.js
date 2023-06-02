@@ -15,18 +15,18 @@ import { API_KEY } from "../common/APIKey";
 import { useNavigation } from "@react-navigation/native"
 import DropDownPicker from 'react-native-dropdown-picker';
 import { db, storage } from '../config/firebase-config';
-import { addDoc, getDocs, collection } from "firebase/firestore";
-import { ref, uploadBytes } from 'firebase/storage';
+import { addDoc, getDocs, collection, updateDoc } from "firebase/firestore";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { firebase } from '@react-native-firebase/app';
 
 const HelpSupportScreen = () => {
 
     const navigation = useNavigation();
 
-    const [productId, setProductId] = useState('');
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [image, setImage] = useState(null);
+    const [file, setFile] = useState(null);
     const [imageSelected, setImageSelected] = useState(false);
 
     const [productNameError, setProductNameError] = useState('');
@@ -81,8 +81,6 @@ const HelpSupportScreen = () => {
 
     const handleProduct = async () => {
         try {
-            console.log(categoryValue);
-            console.log(brandValue);
             const formData = new FormData();
             formData.append("categoryId", categoryValue);
             formData.append("brandId", brandValue);
@@ -111,65 +109,44 @@ const HelpSupportScreen = () => {
         }
     }
 
-    //Generate Product Id
-    // const generateProductId = async () => {
-    //     const productCollection = await getDocs(collection(db, 'product_tbl'));
-
-    //     // Get the current year
-    //     const currentYear = new Date().getFullYear() % 100;
-
-    //     // Create the product ID format
-    //     const productIdFormat = `PID${currentYear.toString().padStart(2, '0')}0001`;
-
-    //     let productId = productIdFormat;
-
-    //     const snapshot = productCollection;
-    //     if (!snapshot.empty) {
-    //         console.log("Snapshot has data");
-            
-    //         // Get the last document in the collection
-    //         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-    //         const lastProductId = lastDocument.data().product_id;
-
-    //         // Extract the numeric part of the last product ID
-    //         const lastProductIdNumber = parseInt(lastProductId.match(/\d+$/)[0]);
-
-    //         // Increment the last product ID
-    //         const nextProductIdNumber = lastProductIdNumber + 1;
-    //         productId = `PID${nextProductIdNumber.toString().padStart(6, '0')}`;
-
-    //     } else{
-    //         productId = `PID${currentYear.toString().padStart(2, "0")}0001`;
-    //     }
-
-    //     console.log(productId);
-    //     setProductId(productId);
-
-    //     return productId;
-    // }
-
     const handleFirebaseProduct = async () => {
+        try {
+            const productRef = collection(db, "product_tbl");
 
-        const productRef = collection(db, "product_tbl");
+            const newProductRef = await addDoc(productRef, {
+                product_name: productName,
+                description: description,
+                price: price,
+                category_id: categoryValue,
+                brand_id: brandValue,
+                image_url: '',
+            });
 
-        const newProductRef = await addDoc(productRef, {
-            product_name: productName,
-            description: description,
-            price: price,
-            category_id: categoryValue,
-            brand_id: brandValue,
-        });
+            const reference = ref(storage, file.fileName);
 
-        const newProductId = newProductRef.id;
-        const storageRef = ref(storage, `product-images/${newProductId}`);
-        await uploadBytes(storageRef, image);
+            // path to existing file on filesystem
+            const pathToFile = file.uri;
+            // uploads file
+            await uploadBytes(reference, pathToFile, { contentType: file.type });
+
+            ToastAndroid.show('Add Product Successfully', ToastAndroid.SHORT);
+            navigation.navigate('Products');
+        } catch (error) {
+            console.error('Error adding product:', error);
+            ToastAndroid.show('Add Product Unsuccessful!', ToastAndroid.SHORT);
+        }
     }
 
     const openGallery = () => {
-        launchImageLibrary({ mediaType: 'photo' }, (response) => {
+        let options = {
+            quality: 1,
+            mediaType: 'photo',
+        }
+        launchImageLibrary(options, (response) => {
             if (!response.didCancel) {
                 const selectedImage = response.assets ? response.assets[0] : response;
-                setImage(selectedImage);
+                console.log(selectedImage);
+                setFile(selectedImage);
                 setImageSelected(true);
             }
         });
@@ -189,13 +166,12 @@ const HelpSupportScreen = () => {
         // fetchData();
 
         const fetchFirebaseCategory = async () => {
-            const categoryLists = await getDocs(collection(db,'category'));
+            const categoryLists = await getDocs(collection(db, 'category'));
             const categoryData = categoryLists.docs.map(doc => ({
-                label:doc.data().category_name,
-                value:doc.id
+                label: doc.data().category_name,
+                value: doc.id
             }));
             setCategoryItems(categoryData);
-            console.log(categoryData);
         };
         fetchFirebaseCategory();
     }, []);
@@ -212,15 +188,14 @@ const HelpSupportScreen = () => {
         //     setBrandItems(result);
         // };
         // fetchData();
-        
+
         const fetchFirebaseBrand = async () => {
-            const brandLists = await getDocs(collection(db,'brand'));
-            const brandData = brandLists.docs.map(doc=>({
-                label:doc.data().brand_name,
-                value:doc.id
+            const brandLists = await getDocs(collection(db, 'brand'));
+            const brandData = brandLists.docs.map(doc => ({
+                label: doc.data().brand_name,
+                value: doc.id
             }));
             setBrandItems(brandData);
-            console.log(brandData);
         }
         fetchFirebaseBrand();
     }, []);
@@ -279,8 +254,8 @@ const HelpSupportScreen = () => {
                 </View>
             </View>
             <TouchableOpacity style={styles.imageContainer} onPress={openGallery}>
-                {image ? (
-                    <Image style={styles.image} source={{ uri: image.uri }} />
+                {file ? (
+                    <Image style={styles.image} source={{ uri: file.uri }} />
                 ) : (
                     <Text>No Image Selected</Text>
                 )}

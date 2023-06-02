@@ -12,9 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, addItemToWishlist, removeItemFromWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db, storage } from '../config/firebase-config';
-import { ref,getDownloadURL } from 'firebase/storage';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 const ProductScreen = ({ navigation }) => {
 
@@ -25,14 +25,59 @@ const ProductScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // fetchCategories();
-    fetchFirestore();
-  }, []);
-
   const items = useSelector(state => state);
 
   const [categories, setCategories] = useState([]);
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    // fetchCategories();
+    const fetchFirestoreData = async () => {
+      try {
+        const categoriesSnapshot = await getDocs(collection(db, 'category'));
+
+        const categoriesData = [];
+        for (const categoryDoc of categoriesSnapshot.docs) {
+          const categoryId = categoryDoc.id;
+          const categoryData = categoryDoc.data();
+          const productsSnapshot = await getDocs(
+            query(collection(db, 'product_tbl'), where('category_id', '==', categoryId))
+          );
+
+          const productsData = await Promise.all(
+            productsSnapshot.docs.map(async (productDoc) => {
+              const productId = productDoc.id;
+              const productData = productDoc.data();
+
+              // const imageRef = ref(storage, `product-images/${productId}.jpg`);
+              // const imageURL = await getDownloadURL(imageRef);
+              // console.log(imageURL);
+
+              return {
+                id: productId,
+                ...productData,
+                // imageURL: imageURL,
+              };
+            })
+          );
+          console.log(productsData);
+
+          categoriesData.push({
+            id: categoryId,
+            name: categoryData.category_name,
+            products: productsData,
+          });
+        }
+
+        setCategories(categoriesData);
+
+      } catch (error) {
+        console.error('Error fetching categories', error);
+      }
+    }
+
+    fetchFirestoreData();
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -48,26 +93,6 @@ const ProductScreen = ({ navigation }) => {
       });
 
       setCategories(categoriesWithProducts);
-    } catch (error) {
-      console.error('Error fetching categories', error);
-    }
-  };
-
-  const fetchFirestore = async () => {
-    try {
-      const categorySnapshot = await getDocs(collection(db, 'category'));
-      const categoriesData = categorySnapshot.docs.map(doc => ({ category_id: doc.id, ...doc.data() }));
-
-      const productSnapshot = await getDocs(collection(db, 'product_tbl'));
-      const productsData = productSnapshot.docs.map(doc => ({ product_id: doc.id, ...doc.data() }));
-
-      const categoriesWithProducts = categoriesData.map(category => {
-        const filteredProducts = productsData.filter(product => product.category_id === category.id);
-        return { ...category, products: filteredProducts };
-      });
-
-      setCategories(categoriesWithProducts);
-
     } catch (error) {
       console.error('Error fetching categories', error);
     }
@@ -91,37 +116,11 @@ const ProductScreen = ({ navigation }) => {
       }
     };
 
-    // Get the Firebase Storage reference for the product image
-    const storageRef = ref(storage, `images/${item.id}.jpg`);
-
-    // Function to download the image URL from Firebase Storage
-    const getImageUrl = async () => {
-      try {
-        const imageUrl = await getDownloadURL(storageRef);
-        return imageUrl;
-      } catch (error) {
-        console.error('Error getting image URL', error);
-        return null;
-      }
-    };
-
-    // State to store the image URL
-    const [imageUrl, setImageUrl] = useState(null);
-
-    // Fetch the image URL on component mount
-    useEffect(() => {
-      const fetchImageUrl = async () => {
-        const url = await getImageUrl();
-        setImageUrl(url);
-      };
-      fetchImageUrl();
-    }, []);
-
     return (
       <View style={styles.product_view}>
         <TouchableOpacity onPress={() => navigateToProductDetails(item)}>
           <Image
-            source={item.image ? { uri: imageUrl } : require('../images/no_image.png')}
+            source={{ uri: item.image_url }}
             style={styles.product_img}
             resizeMode='cover'
           />
@@ -155,13 +154,13 @@ const ProductScreen = ({ navigation }) => {
 
     return (
       <View>
-        <Text style={styles.title}>{item.category_name}</Text>
+        <Text style={styles.title}>{item.name}</Text>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
           data={item.products}
           renderItem={renderProduct}
-          keyExtractor={product => product.product_id}
+          keyExtractor={(item) => item.id}
         />
       </View>
     );
@@ -178,7 +177,7 @@ const ProductScreen = ({ navigation }) => {
           style={styles.category_list}
           data={categories}
           renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.category_id}
+          keyExtractor={(item) => item.id}
         />
       </View>
     </View>
