@@ -17,7 +17,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { db, storage } from '../config/firebase-config';
 import { addDoc, getDocs, collection, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
-import { firebase } from '@react-native-firebase/app';
 
 const HelpSupportScreen = () => {
 
@@ -127,7 +126,15 @@ const HelpSupportScreen = () => {
             // path to existing file on filesystem
             const pathToFile = file.uri;
             // uploads file
-            await uploadBytes(reference, pathToFile, { contentType: file.type });
+            const snapshot = await uploadBytes(reference, pathToFile, { contentType: file.type });
+
+            // Get the download URL of the uploaded image
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            // Update the image_url field with the download URL
+            await updateDoc(newProductRef, {
+                image_url: downloadURL,
+            });
 
             ToastAndroid.show('Add Product Successfully', ToastAndroid.SHORT);
             navigation.navigate('Products');

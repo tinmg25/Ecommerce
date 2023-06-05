@@ -7,14 +7,14 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, addItemToWishlist, removeItemFromWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import { getDocs, collection, query, where } from 'firebase/firestore';
-import { db, storage } from '../config/firebase-config';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { getDocs, collection, query, where, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 const ProductScreen = ({ navigation }) => {
 
@@ -28,7 +28,8 @@ const ProductScreen = ({ navigation }) => {
   const items = useSelector(state => state);
 
   const [categories, setCategories] = useState([]);
-  const [imageUrl, setImageUrl] = useState('');
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // fetchCategories();
@@ -49,18 +50,12 @@ const ProductScreen = ({ navigation }) => {
               const productId = productDoc.id;
               const productData = productDoc.data();
 
-              // const imageRef = ref(storage, `product-images/${productId}.jpg`);
-              // const imageURL = await getDownloadURL(imageRef);
-              // console.log(imageURL);
-
               return {
                 id: productId,
                 ...productData,
-                // imageURL: imageURL,
               };
             })
           );
-          console.log(productsData);
 
           categoriesData.push({
             id: categoryId,
@@ -70,9 +65,11 @@ const ProductScreen = ({ navigation }) => {
         }
 
         setCategories(categoriesData);
+        setLoading(false);
 
       } catch (error) {
         console.error('Error fetching categories', error);
+        setLoading(false);
       }
     }
 
@@ -98,22 +95,59 @@ const ProductScreen = ({ navigation }) => {
     }
   };
 
-  const navigateToProductDetails = product => {
-    navigation.navigate('ProductDetails', { product });
-  };
+  const addtoCart = async (item) => {
+    try {
+      const cartQuery = query(collection(db, 'cart'), where('id', '==', item.id));
+      const cartSnapshot = await getDocs(cartQuery);
+
+      if (cartSnapshot.empty) {
+        // Item does not exist in the cart, add it as a new item with quantity 1
+        await addDoc(collection(db, 'cart'), { ...item, quantity: 1 });
+      } else {
+        // Item already exists in the cart, update the quantity
+        const cartDoc = cartSnapshot.docs[0];
+        const cartItemRef = doc(db, 'cart', cartDoc.id);
+        const cartItemData = cartDoc.data();
+        const updatedQuantity = cartItemData.quantity + 1;
+
+        await updateDoc(cartItemRef, { quantity: updatedQuantity });
+      }
+
+    } catch (error) {
+      console.error('Error adding item', error);
+    }
+  }
 
   const renderProduct = ({ item }) => {
 
-    const isItemInWishlist = items.reducers2.find(
-      (wishlistItem) => wishlistItem.id === item.id
-    );
+    // const isItemInWishlist = items.reducers2.find(
+    //   (wishlistItem) => wishlistItem.id === item.id
+    // );
 
-    const toggleWishlist = () => {
-      if (isItemInWishlist) {
-        dispatch(removeItemFromWishlist(item.id));
-      } else {
-        dispatch(addItemToWishlist(item));
+    const toggleWishlist = async (item) => {
+      try {
+        const wishlistQuery = query(collection(db, 'wishlist'), where('id', '==', item.id));
+        const wishlistSnapshot = await getDocs(wishlistQuery);
+
+        if (wishlistSnapshot.empty) {
+          await addDoc(collection(db, 'wishlist'), { ...item, quantity: 1 });
+        } else {
+          const wishlistDoc = wishlistSnapshot.docs[0];
+          const wishlistItemRef = doc(db, 'wishlist', wishlistDoc.id);
+          const wishlistItemData = wishlistDoc.data();
+          const updatedQuantity = wishlistItemData.quantity + 1;
+
+          await updateDoc(wishlistItemRef, { quantity: updatedQuantity });
+        }
+        // dispatch(removeItemFromWishlist(item.id));
+      } catch (error) {
+        console.error("Error fetching wishlist", error);
+        // dispatch(addItemToWishlist(item));
       }
+    };
+
+    const navigateToProductDetails = product => {
+      navigation.navigate('ProductDetails', { product });
     };
 
     return (
@@ -124,25 +158,42 @@ const ProductScreen = ({ navigation }) => {
             style={styles.product_img}
             resizeMode='cover'
           />
+          {/* <Image
+            style={{ width: 200, height: 200 }}
+            source={{ uri: `data:image/jpeg;base64,${imageData}` }}
+          /> */}
         </TouchableOpacity>
         <Text style={styles.label1}>{item.product_name}</Text>
         <View style={styles.sub_view}>
           <Text style={styles.label2}>{'$' + item.price}</Text>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.cart_btn}
             onPress={() => {
               dispatch(addItemToCart(item));
             }}>
             <Text>{translate('add_to_cart')}</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            style={styles.cart_btn}
+            onPress={() => addtoCart(item)}>
+            <Text>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.icon}
           onPress={toggleWishlist}>
           <Image source={
             isItemInWishlist
               ? require('../images/love.png')
               : require('../images/like.png')
+          }
+            style={styles.logo_img} />
+        </TouchableOpacity> */}
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={() => toggleWishlist(item)}>
+          <Image source={
+             require('../images/like.png')
           }
             style={styles.logo_img} />
         </TouchableOpacity>
@@ -173,12 +224,16 @@ const ProductScreen = ({ navigation }) => {
         resizeMode='contain'
         source={require('../images/background_img.png')} />
       <View style={styles.category_view}>
-        <FlatList
-          style={styles.category_list}
-          data={categories}
-          renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.id}
-        />
+        {loading ? (
+          <ActivityIndicator size="large" animating={true} />
+        ) : (
+          <FlatList
+            style={styles.category_list}
+            data={categories}
+            renderItem={renderCategoryItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </View>
     </View>
   );
@@ -194,12 +249,12 @@ const styles = StyleSheet.create({
   },
   category_view: {
     flex: 1,
+    justifyContent: 'center',
   },
   product_view: {
     marginLeft: 10,
     elevation: 5,
     backgroundColor: '#fff',
-    borderRadius: 10,
   },
   title: {
     fontSize: 20,

@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
+import { collection, deleteDoc, doc, where, getDocs, query, updateDoc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 const CardItemCard = ({
   item,
@@ -13,56 +15,144 @@ const CardItemCard = ({
 
   const { translate } = useContext(LanguageContext);
 
-  return (
-    <View style={styles.main_view}>
-      <Image source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
-        style={styles.product_img} />
-      <Text style={styles.label1}>{item.name}</Text>
-      <View style={styles.sub_view}>
-        <Text style={styles.label2}>{'$' + item.price}</Text>
-        {isWishList ? (
-          <TouchableOpacity
-            style={styles.cart_btn}
-            onPress={() => {
-              onAddToCart(item);
-            }}>
-            <Text>{translate('add_to_cart')}</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.cart_btn}
-            onPress={() => {
-              onRemoveFromCart(item);
-            }}>
-            <Text>{translate('remove_item')}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+  useEffect(() => {
+    setQty(item.quantity || 1);
+  }, [item.quantity])
+
+  const [qty, setQty] = useState(1);
+
+  const increaseQty = async () => {
+    const newQty = qty + 1;
+    setQty(newQty);
+
+    // Update quantity in Firestore
+    if (isWishList) {
+      // Update quantity in the wishlist collection
+      const itemDocRef = doc(db, 'wishlist', item.id);
+      await setDoc(itemDocRef, { ...item, quantity: newQty });
+    } else {
+      // Update quantity in the cart collection
+      const itemQuerySnapshot = await getDocs(
+        query(collection(db, 'cart'), where('id', '==', item.id))
+      );
+      const itemDoc = itemQuerySnapshot.docs[0];
+
+      const itemDocRef = doc(db, 'cart', itemDoc.id);
+      await updateDoc(itemDocRef, { quantity: newQty });
+    }
+  };
+
+  const decreaseQty = async () => {
+    if (qty > 1) {
+      const newQty = qty - 1;
+      setQty(newQty);
+
+      // Update quantity in Firestore
+      if (isWishList) {
+        // Update quantity in the wishlist collection
+        const itemDocRef = doc(db, 'wishlist', item.id);
+        await setDoc(itemDocRef, { ...item, quantity: newQty });
+      } else {
+        // Update quantity in the cart collection
+        const itemQuerySnapshot = await getDocs(
+          query(collection(db, 'cart'), where('id', '==', item.id))
+        );
+        const itemDoc = itemQuerySnapshot.docs[0];
+
+        const itemDocRef = doc(db, 'cart', itemDoc.id);
+        await updateDoc(itemDocRef, { quantity: newQty });
+      }
+    };
+}
+
+const removeItemFromCart = async (item) => {
+  try {
+    const itemQuerySnapshot = await getDocs(
+      query(collection(db, 'cart'), where('id', '==', item.id))
+    );
+    const itemDoc = itemQuerySnapshot.docs[0];
+
+    const itemDocRef = doc(db, 'cart', itemDoc.id);
+    await deleteDoc(itemDocRef);
+  } catch (error) {
+    console.error('Error removing cart item')
+  }
+}
+
+return (
+  <View style={styles.main_view}>
+    <Image source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+      style={styles.product_img} />
+    <Text style={styles.label1}>{item.name}</Text>
+    <View style={styles.sub_view}>
+      <Text style={styles.label2}>{'$' + item.price}</Text>
       {isWishList ? (
         <TouchableOpacity
-          style={styles.icon}
+          style={styles.cart_btn}
           onPress={() => {
-            onRemoveFromWishList();
+            onAddToCart(item);
           }}>
-          <Image source={require('../images/love.png')} style={styles.logo_img} />
+          <Text>{translate('add_to_cart')}</Text>
         </TouchableOpacity>
       ) : (
+        // <TouchableOpacity
+        //   style={styles.cart_btn}
+        //   onPress={() => {
+        //     onRemoveFromCart(item);
+        //   }}>
+        //   <Text>{translate('remove_item')}</Text>
+        // </TouchableOpacity>
         <TouchableOpacity
-          style={styles.icon}
+          style={styles.cart_btn}
           onPress={() => {
-            onAddWishList(item);
+            removeItemFromCart(item);
           }}>
-          <Image source={require('../images/like.png')} style={styles.logo_img} />
+          <Text>{translate('remove_item')}</Text>
         </TouchableOpacity>
       )}
     </View>
-  );
+    {isWishList ? (
+      <TouchableOpacity
+        style={styles.icon}
+        onPress={() => {
+          onRemoveFromWishList();
+        }}>
+        <Image source={require('../images/love.png')} style={styles.logo_img} />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity
+        style={styles.icon}
+        onPress={() => {
+          onAddWishList(item);
+        }}>
+        <Image source={require('../images/like.png')} style={styles.logo_img} />
+      </TouchableOpacity>
+    )}
+    {!isWishList ? (
+      <View style={styles.qty_view}>
+        <TouchableOpacity onPress={decreaseQty}>
+          <Image
+            style={styles.qty_icon}
+            source={require('../images/minus.png')} />
+        </TouchableOpacity>
+        <Text style={styles.qty_txt}>{qty}</Text>
+        <TouchableOpacity onPress={increaseQty}>
+          <Image
+            style={styles.qty_icon}
+            source={require('../images/plus.png')} />
+        </TouchableOpacity>
+      </View>
+    ) : (
+      null
+    )}
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
   main_view: {
     width: '90%',
-    height: 200,
+    height: 250,
     borderRadius: 10,
     elevation: 5,
     backgroundColor: '#fff',
@@ -112,6 +202,23 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  qty_view: {
+    width: 200,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    padding: 10,
+  },
+  qty_icon: {
+    width: 30,
+    height: 30,
+  },
+  qty_txt: {
+    fontWeight: 600,
+    fontSize: 20,
+    color: '#000',
+  }
 });
 
 export default CardItemCard;

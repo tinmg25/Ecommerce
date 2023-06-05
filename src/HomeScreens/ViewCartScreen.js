@@ -1,16 +1,33 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 const ViewCartScreen = ({ navigation }) => {
 
   const { translate } = useContext(LanguageContext);
 
-  const cartData = useSelector(state => state.reducers);
+  // Postgresql Data Fetch
+  // const cartData = useSelector(state => state.reducers);
   const dispatch = useDispatch();
+
+  // Firestore Data Fetch
+  const [cartData, setCartData] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'cart'), (snapshot) => {
+      const updatedCartItems = snapshot.docs.map((doc) => doc.data());
+      setCartData(updatedCartItems);
+    });
+
+    return () => {
+      unsubscribe(); // Unsubscribe from the snapshot listener when the component is unmounted
+    };
+  }, []);
 
   return (
     <View style={styles.main_view}>
