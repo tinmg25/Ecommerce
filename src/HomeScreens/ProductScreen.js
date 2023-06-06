@@ -15,6 +15,7 @@ import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
 import { getDocs, collection, query, where, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductScreen = ({ navigation }) => {
 
@@ -30,11 +31,22 @@ const ProductScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('')
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     // fetchCategories();
     const fetchFirestoreData = async () => {
       try {
+        const mEmail = await AsyncStorage.getItem('EMAIL');
+        const userQuery = query(collection(db, 'user_mst'), where('email', '==', mEmail));
+        const userSnapshot = await getDocs(userQuery);
+        const user = userSnapshot.docs[0].data();
+        const userId = userSnapshot.docs[0].id;
+        const userName = user.name;
+        setUserId(userId);
+        setUserName(userName);
+
         const categoriesSnapshot = await getDocs(collection(db, 'category'));
 
         const categoriesData = [];
@@ -102,7 +114,7 @@ const ProductScreen = ({ navigation }) => {
 
       if (cartSnapshot.empty) {
         // Item does not exist in the cart, add it as a new item with quantity 1
-        await addDoc(collection(db, 'cart'), { ...item, quantity: 1 });
+        await addDoc(collection(db, 'cart'), { ...item, quantity: 1, user_id: userId  });
       } else {
         // Item already exists in the cart, update the quantity
         const cartDoc = cartSnapshot.docs[0];
@@ -112,7 +124,6 @@ const ProductScreen = ({ navigation }) => {
 
         await updateDoc(cartItemRef, { quantity: updatedQuantity });
       }
-
     } catch (error) {
       console.error('Error adding item', error);
     }
@@ -130,7 +141,7 @@ const ProductScreen = ({ navigation }) => {
         const wishlistSnapshot = await getDocs(wishlistQuery);
 
         if (wishlistSnapshot.empty) {
-          await addDoc(collection(db, 'wishlist'), { ...item, quantity: 1 });
+          await addDoc(collection(db, 'wishlist'), { ...item, quantity: 1, user_id: userId });
         } else {
           const wishlistDoc = wishlistSnapshot.docs[0];
           const wishlistItemRef = doc(db, 'wishlist', wishlistDoc.id);
@@ -193,7 +204,7 @@ const ProductScreen = ({ navigation }) => {
           style={styles.icon}
           onPress={() => toggleWishlist(item)}>
           <Image source={
-             require('../images/like.png')
+            require('../images/like.png')
           }
             style={styles.logo_img} />
         </TouchableOpacity>
@@ -223,6 +234,7 @@ const ProductScreen = ({ navigation }) => {
         style={[styles.img, { width: imageWidth }]}
         resizeMode='contain'
         source={require('../images/background_img.png')} />
+      <Text style={styles.user_name}>Welcome back {userName} !</Text>
       <View style={styles.category_view}>
         {loading ? (
           <ActivityIndicator size="large" animating={true} />
@@ -246,6 +258,13 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '32%',
+  },
+  user_name: {
+    fontSize:30,
+    fontWeight:600,
+    color:'#000',
+    marginLeft:10,
+    marginTop:10,
   },
   category_view: {
     flex: 1,

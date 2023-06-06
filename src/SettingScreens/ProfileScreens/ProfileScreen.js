@@ -5,6 +5,8 @@ import themeContext from '../../config/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageContext } from '../../LanguageContext';
 import { API_KEY } from '../../common/APIKey';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 const ProfileScreen = ({ navigation }) => {
 
@@ -14,25 +16,43 @@ const ProfileScreen = ({ navigation }) => {
     const theme = useContext(themeContext);
 
     useEffect(() => {
-        const getData = async () => {
+        // const getData = async () => {
+        //     try {
+        //         const mEmail = await AsyncStorage.getItem('EMAIL');
+        //         if (mEmail !== null) {
+        //             const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                 },
+        //                 body: JSON.stringify({ mEmail })
+        //             });
+        //             const data = await response.json();
+        //             setUserData(data);
+        //         }
+        //     }
+        //     catch (e) {
+        //     }
+        // };
+        // getData();
+
+        const getFirestoreData = async () => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
-                if (mEmail !== null) {
-                    const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ mEmail })
-                    });
-                    const data = await response.json();
-                    setUserData(data);
+                const userDataQuery = query(collection(db, 'user_mst'), where('email', '==', mEmail));
+                const userSnapshot = await getDocs(userDataQuery);
+
+                if (userSnapshot.docs.length > 0) {
+                    const user = userSnapshot.docs[0].data();
+                    setUserData(user);
                 }
+                
+            } catch (error) {
+                console.error('Error fetching firestore', error);
             }
-            catch (e) {
-            }
-        };
-        getData();
+        }
+
+        getFirestoreData();
     }, []);
 
     return (
@@ -42,7 +62,7 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={[styles.label, { color: theme.color }]}>{translate('p_name')} : {userData && userData.name}</Text>
                 <Text style={[styles.label, { color: theme.color }]}>{translate('p_email')} : {userData && userData.email}</Text>
                 <Text style={[styles.label, { color: theme.color }]}>{translate('p_address')} : {userData && userData.address}</Text>
-                <Text style={[styles.label, { color: theme.color }]}>{translate('p_phone')} : {userData && userData.phone_number}</Text>
+                <Text style={[styles.label, { color: theme.color }]}>{translate('p_phone')} : {userData && userData.phone}</Text>
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('EditProfile', { userData })}>
                 <Text style={styles.edit_btn}>{translate('edit')}</Text>
@@ -55,7 +75,7 @@ const ProfileScreen = ({ navigation }) => {
             </View>
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {

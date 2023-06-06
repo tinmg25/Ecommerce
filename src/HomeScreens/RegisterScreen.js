@@ -154,7 +154,6 @@ const RegisterScreen = ({ navigation }) => {
                     email: email,
                     address: address,
                     phone: phone,
-                    password: password,
                 })
                     .then(() => {
                         ToastAndroid.show('User Registered successfully!',ToastAndroid.SHORT);

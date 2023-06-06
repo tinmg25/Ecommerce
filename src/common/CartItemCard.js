@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LanguageContext } from '../LanguageContext';
-import { collection, deleteDoc, doc, where, getDocs, query, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, where, getDocs, query, updateDoc, setDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
 
 const CardItemCard = ({
@@ -63,90 +63,156 @@ const CardItemCard = ({
         await updateDoc(itemDocRef, { quantity: newQty });
       }
     };
-}
-
-const removeItemFromCart = async (item) => {
-  try {
-    const itemQuerySnapshot = await getDocs(
-      query(collection(db, 'cart'), where('id', '==', item.id))
-    );
-    const itemDoc = itemQuerySnapshot.docs[0];
-
-    const itemDocRef = doc(db, 'cart', itemDoc.id);
-    await deleteDoc(itemDocRef);
-  } catch (error) {
-    console.error('Error removing cart item')
   }
-}
 
-return (
-  <View style={styles.main_view}>
-    <Image source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
-      style={styles.product_img} />
-    <Text style={styles.label1}>{item.name}</Text>
-    <View style={styles.sub_view}>
-      <Text style={styles.label2}>{'$' + item.price}</Text>
+  const addItemToCart = async (item) => {
+    try {
+      const cartQuery = query(collection(db, 'cart'), where('id', '==', item.id));
+      const cartSnapshot = await getDocs(cartQuery);
+
+      if (cartSnapshot.empty) {
+        // Item does not exist in the cart, add it as a new item with quantity 1
+        await addDoc(collection(db, 'cart'), { ...item, quantity: 1 });
+      } else {
+        // Item already exists in the cart, update the quantity
+        const cartDoc = cartSnapshot.docs[0];
+        const cartItemRef = doc(db, 'cart', cartDoc.id);
+        const cartItemData = cartDoc.data();
+        const updatedQuantity = cartItemData.quantity + 1;
+
+        await updateDoc(cartItemRef, { quantity: updatedQuantity });
+      }
+
+    } catch (error) {
+      console.error('Error adding cart item');
+    }
+  };
+
+  const removeItemFromCart = async (item) => {
+    try {
+      const itemQuerySnapshot = await getDocs(
+        query(collection(db, 'cart'), where('id', '==', item.id))
+      );
+      const itemDoc = itemQuerySnapshot.docs[0];
+
+      const itemDocRef = doc(db, 'cart', itemDoc.id);
+      await deleteDoc(itemDocRef);
+    } catch (error) {
+      console.error('Error removing cart item');
+    }
+  };
+
+  const addItemToWishlist = async (item) => {
+    try {
+      await addDoc(collection(db, 'wishlist'), { ...item })
+    } catch (error) {
+      console.error('Error adding wishlist item');
+    }
+  };
+
+  const removeItemFromWishlist = async (item) => {
+    try {
+      const itemQuerySnapshot = await getDocs(
+        query(collection(db, 'wishlist'), where('id', '==', item.id))
+      );
+      const itemDoc = itemQuerySnapshot.docs[0];
+
+      const itemDocRef = doc(db, 'wishlist', itemDoc.id);
+      await deleteDoc(itemDocRef);
+    } catch (error) {
+      console.error('Error removing wishlist item');
+    }
+  }
+
+  return (
+    <View style={styles.main_view}>
+      <Image source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+        style={styles.product_img} />
+      <Text style={styles.label1}>{item.name}</Text>
+      <View style={styles.sub_view}>
+        <Text style={styles.label2}>{'$' + item.price}</Text>
+        {isWishList ? (
+          // <TouchableOpacity
+          //   style={styles.cart_btn}
+          //   onPress={() => {
+          //     onAddToCart(item);
+          //   }}>
+          //   <Text>{translate('add_to_cart')}</Text>
+          // </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cart_btn}
+            onPress={() => {
+              addItemToCart(item);
+            }}>
+            <Text>{translate('add_to_cart')}</Text>
+          </TouchableOpacity>
+        ) : (
+          // <TouchableOpacity
+          //   style={styles.cart_btn}
+          //   onPress={() => {
+          //     onRemoveFromCart(item);
+          //   }}>
+          //   <Text>{translate('remove_item')}</Text>
+          // </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cart_btn}
+            onPress={() => {
+              removeItemFromCart(item);
+            }}>
+            <Text>{translate('remove_item')}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       {isWishList ? (
+        // <TouchableOpacity
+        //   style={styles.icon}
+        //   onPress={() => {
+        //     onRemoveFromWishList();
+        //   }}>
+        //   <Image source={require('../images/love.png')} style={styles.logo_img} />
+        // </TouchableOpacity>
         <TouchableOpacity
-          style={styles.cart_btn}
+          style={styles.icon}
           onPress={() => {
-            onAddToCart(item);
+            removeItemFromWishlist(item);
           }}>
-          <Text>{translate('add_to_cart')}</Text>
+          <Image source={require('../images/love.png')} style={styles.logo_img} />
         </TouchableOpacity>
       ) : (
         // <TouchableOpacity
-        //   style={styles.cart_btn}
+        //   style={styles.icon}
         //   onPress={() => {
-        //     onRemoveFromCart(item);
+        //     onAddWishList(item);
         //   }}>
-        //   <Text>{translate('remove_item')}</Text>
+        //   <Image source={require('../images/like.png')} style={styles.logo_img} />
         // </TouchableOpacity>
         <TouchableOpacity
-          style={styles.cart_btn}
+          style={styles.icon}
           onPress={() => {
-            removeItemFromCart(item);
+            addItemToWishlist(item);
           }}>
-          <Text>{translate('remove_item')}</Text>
+          <Image source={require('../images/like.png')} style={styles.logo_img} />
         </TouchableOpacity>
       )}
+      {!isWishList ? (
+        <View style={styles.qty_view}>
+          <TouchableOpacity onPress={decreaseQty}>
+            <Image
+              style={styles.qty_icon}
+              source={require('../images/minus.png')} />
+          </TouchableOpacity>
+          <Text style={styles.qty_txt}>{qty}</Text>
+          <TouchableOpacity onPress={increaseQty}>
+            <Image
+              style={styles.qty_icon}
+              source={require('../images/plus.png')} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        null
+      )}
     </View>
-    {isWishList ? (
-      <TouchableOpacity
-        style={styles.icon}
-        onPress={() => {
-          onRemoveFromWishList();
-        }}>
-        <Image source={require('../images/love.png')} style={styles.logo_img} />
-      </TouchableOpacity>
-    ) : (
-      <TouchableOpacity
-        style={styles.icon}
-        onPress={() => {
-          onAddWishList(item);
-        }}>
-        <Image source={require('../images/like.png')} style={styles.logo_img} />
-      </TouchableOpacity>
-    )}
-    {!isWishList ? (
-      <View style={styles.qty_view}>
-        <TouchableOpacity onPress={decreaseQty}>
-          <Image
-            style={styles.qty_icon}
-            source={require('../images/minus.png')} />
-        </TouchableOpacity>
-        <Text style={styles.qty_txt}>{qty}</Text>
-        <TouchableOpacity onPress={increaseQty}>
-          <Image
-            style={styles.qty_icon}
-            source={require('../images/plus.png')} />
-        </TouchableOpacity>
-      </View>
-    ) : (
-      null
-    )}
-  </View>
-);
+  );
 };
 
 const styles = StyleSheet.create({

@@ -4,8 +4,8 @@ import CardItemCard from '../common/CartItemCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToWishlist, removeItemFromCart } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../config/firebase-config';
+import { getDocs, collection, onSnapshot, query, where } from 'firebase/firestore';
+import { auth, db } from '../config/firebase-config';
 
 const ViewCartScreen = ({ navigation }) => {
 
@@ -19,14 +19,26 @@ const ViewCartScreen = ({ navigation }) => {
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'cart'), (snapshot) => {
-      const updatedCartItems = snapshot.docs.map((doc) => doc.data());
-      setCartData(updatedCartItems);
-    });
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const userEmail = user.email;
+        const userQuery = query(collection(db, 'user_mst'), where('email', '==', userEmail));
+        const userSnapshot = await getDocs(userQuery);
+        const userId = userSnapshot.docs[0].id;
+        const cartQuery = query(collection(db, 'cart'), where('user_id', '==', userId));
+        const unsubscribeSnapshot = onSnapshot(cartQuery, (snapshot) => {
+          const updatedCartItems = snapshot.docs.map((doc) => doc.data());
+          setCartData(updatedCartItems);
+        });
 
-    return () => {
-      unsubscribe(); // Unsubscribe from the snapshot listener when the component is unmounted
-    };
+        return () => {
+          unsubscribeSnapshot();
+        };
+
+      } else {
+        setCartData([]);
+      }
+    });
   }, []);
 
   return (

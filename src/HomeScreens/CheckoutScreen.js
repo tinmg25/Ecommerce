@@ -15,6 +15,8 @@ import { clearCart } from '../redux/actions/Actions';
 import { useDispatch } from 'react-redux';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
+import { getDocs, collection, query, where, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../config/firebase-config';
 
 const CheckoutScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -31,34 +33,57 @@ const CheckoutScreen = ({ route }) => {
 
     useEffect(() => {
 
-        const totalAmount = Object.values(cartData).reduce((total, item) => total + item.price, 0);
+        const totalAmount = Object.values(cartData).reduce((total, item) => total + item.price * item.quantity, 0);
         setTotal(totalAmount);
 
-        const getData = async () => {
+        // const getData = async () => {
+        //     try {
+        //         const mEmail = await AsyncStorage.getItem('EMAIL');
+
+        //         if (mEmail !== null) {
+        //             const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                 },
+        //                 body: JSON.stringify({ mEmail })
+        //             });
+        //             const data = await response.json();
+
+        //             setUserData(data);
+        //             setUserId(data.user_id || '');
+        //             setNameInput(data.name || '');
+        //             setEmailInput(data.email || '');
+        //             setAddressInput(data.address || '');
+        //             setPhoneInput(data.phone_number || '');
+        //         }
+        //     }
+        //     catch (e) {
+        //     }
+        // };
+        // getData();
+
+        const getFirebaseUserData = async () => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
-                if (mEmail !== null) {
-                    const response = await fetch(`${API_KEY}/api/users/${mEmail}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ mEmail })
-                    });
-                    const data = await response.json();
+                const userQuery = query(collection(db, 'user_mst'), where('email', '==', mEmail));
+                const userSnapshot = await getDocs(userQuery);
 
-                    setUserData(data);
-                    setUserId(data.user_id || '');
-                    setNameInput(data.name || '');
-                    setEmailInput(data.email || '');
-                    setAddressInput(data.address || '');
-                    setPhoneInput(data.phone_number || '');
+                if (userSnapshot.docs.length > 0) {
+                    const user = userSnapshot.docs[0].data();
+                    const userId = userSnapshot.docs[0].id;
+                    setUserData(user);
+                    setUserId(userId || '');
+                    setNameInput(user.name || '');
+                    setEmailInput(user.email || '');
+                    setAddressInput(user.address || '');
+                    setPhoneInput(user.phone || '');
                 }
-            }
-            catch (e) {
+            } catch (error) {
+                console.error('Error Fetching User Data');
             }
         };
-        getData();
+        getFirebaseUserData();
     }, []);
 
     const [nameInput, setNameInput] = useState(userData.name || '');
@@ -161,7 +186,8 @@ const CheckoutScreen = ({ route }) => {
         if (handleName(nameInput) && handleEmail(emailInput) &&
             handleAddress(addressInput) && handlePhone(phoneInput) &&
             handleTownship(townshipInput) && handlePostal(postalInput)) {
-            handleOrder();
+            // handleOrder();
+            handleFirebaseOrder();
         }
     };
 
@@ -204,6 +230,34 @@ const CheckoutScreen = ({ route }) => {
             console.error('Something went wrong!', error);
         }
     };
+
+    const handleFirebaseOrder = async () => {
+        try {
+            const orderRequest = {
+                userId: userId,
+                addressInput: addressInput,
+                phoneInput: phoneInput,
+                townshipInput: townshipInput,
+                postalInput: postalInput,
+                total: total,
+            };
+
+            const cartQuery = query(collection(db, 'cart'), where('user_id', '==', userId));
+            const cartSnapshot = await getDocs(cartQuery);
+
+            if (!cartSnapshot.empty) {
+                const cartDocId = cartSnapshot.docs[0].id;
+                await deleteDoc(doc(db, 'cart', cartDocId));
+            }
+            
+            await addDoc(collection(db, 'order_tbl'), { ...orderRequest })
+
+            ToastAndroid.show('Ordered Succesfully!', ToastAndroid.SHORT);
+            navigation.navigate('Products');
+        } catch (error) {
+            console.error('Error adding order item')
+        }
+    }
 
     return (
         <KeyboardAvoidingView
