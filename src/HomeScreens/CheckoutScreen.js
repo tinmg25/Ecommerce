@@ -15,7 +15,7 @@ import { clearCart } from '../redux/actions/Actions';
 import { useDispatch } from 'react-redux';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import { getDocs, collection, query, where, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDocs, collection, query, where, addDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
 
 const CheckoutScreen = ({ route }) => {
@@ -88,7 +88,7 @@ const CheckoutScreen = ({ route }) => {
 
     const [nameInput, setNameInput] = useState(userData.name || '');
     const [emailInput, setEmailInput] = useState(userData.email || '');
-    const [addressInput, setAddressInput] = useState('');
+    const [addressInput, setAddressInput] = useState(userData.address || '');
     const [phoneInput, setPhoneInput] = useState(userData.phone || '');
     const [townshipInput, setTownshipInput] = useState('');
     const [postalInput, setPostalInput] = useState('');
@@ -233,24 +233,46 @@ const CheckoutScreen = ({ route }) => {
 
     const handleFirebaseOrder = async () => {
         try {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+
             const orderRequest = {
-                userId: userId,
-                addressInput: addressInput,
-                phoneInput: phoneInput,
-                townshipInput: townshipInput,
-                postalInput: postalInput,
+                user_id: userId,
+                address: addressInput,
+                phone: phoneInput,
+                township: townshipInput,
+                postal: postalInput,
                 total: total,
+                status: 1,
+                order_date: formattedDate,
             };
+
+            const orderRef = await addDoc(collection(db, 'order_tbl'), { ...orderRequest });
+            const orderId = orderRef.id;
+
+            const cartItems = Object.values(cartData);
+            for (const item of cartItems) {
+                const orderItem = {
+                    order_id: orderId,
+                    product_id: item.id,
+                    product_name: item.product_name,
+                    quantity: item.quantity,
+                    price: item.price,
+                };
+                await addDoc(collection(db, 'order_details'), { ...orderItem });
+            }
 
             const cartQuery = query(collection(db, 'cart'), where('user_id', '==', userId));
             const cartSnapshot = await getDocs(cartQuery);
 
-            if (!cartSnapshot.empty) {
-                const cartDocId = cartSnapshot.docs[0].id;
-                await deleteDoc(doc(db, 'cart', cartDocId));
+            if (!cartSnapshot.empty) {                
+                cartSnapshot.docs.forEach((doc)=>{
+                    deleteDoc(doc.ref)
+                });
             }
-            
-            await addDoc(collection(db, 'order_tbl'), { ...orderRequest })
 
             ToastAndroid.show('Ordered Succesfully!', ToastAndroid.SHORT);
             navigation.navigate('Products');

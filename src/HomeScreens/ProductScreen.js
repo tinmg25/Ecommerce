@@ -41,11 +41,14 @@ const ProductScreen = ({ navigation }) => {
         const mEmail = await AsyncStorage.getItem('EMAIL');
         const userQuery = query(collection(db, 'user_mst'), where('email', '==', mEmail));
         const userSnapshot = await getDocs(userQuery);
-        const user = userSnapshot.docs[0].data();
-        const userId = userSnapshot.docs[0].id;
-        const userName = user.name;
-        setUserId(userId);
-        setUserName(userName);
+        const userDoc = userSnapshot.docs[0];
+        if (userDoc) {
+          const userId = userDoc.id;
+          const user = userDoc.data();
+          const userName = user.name;
+          setUserId(userId);
+          setUserName(userName);
+        }
 
         const categoriesSnapshot = await getDocs(collection(db, 'category'));
 
@@ -114,7 +117,7 @@ const ProductScreen = ({ navigation }) => {
 
       if (cartSnapshot.empty) {
         // Item does not exist in the cart, add it as a new item with quantity 1
-        await addDoc(collection(db, 'cart'), { ...item, quantity: 1, user_id: userId  });
+        await addDoc(collection(db, 'cart'), { ...item, quantity: 1, user_id: userId });
       } else {
         // Item already exists in the cart, update the quantity
         const cartDoc = cartSnapshot.docs[0];
@@ -260,11 +263,11 @@ const styles = StyleSheet.create({
     height: '32%',
   },
   user_name: {
-    fontSize:30,
-    fontWeight:600,
-    color:'#000',
-    marginLeft:10,
-    marginTop:10,
+    fontSize: 30,
+    fontWeight: 600,
+    color: '#000',
+    marginLeft: 10,
+    marginTop: 10,
   },
   category_view: {
     flex: 1,

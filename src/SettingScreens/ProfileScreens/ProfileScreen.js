@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import themeContext from '../../config/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageContext } from '../../LanguageContext';
 import { API_KEY } from '../../common/APIKey';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase-config';
+import { db } from '../../config/firebase-config';
 
 const ProfileScreen = ({ navigation }) => {
 
@@ -39,14 +39,18 @@ const ProfileScreen = ({ navigation }) => {
         const getFirestoreData = async () => {
             try {
                 const mEmail = await AsyncStorage.getItem('EMAIL');
-                const userDataQuery = query(collection(db, 'user_mst'), where('email', '==', mEmail));
-                const userSnapshot = await getDocs(userDataQuery);
+                if (mEmail) {
+                    const userRef = query(collection(db,"user_mst"));
+                    const userDataQuery = query(userRef, where("email", "==", mEmail));
+                    const userSnapshot = await getDocs(userDataQuery);
 
-                if (userSnapshot.docs.length > 0) {
-                    const user = userSnapshot.docs[0].data();
-                    setUserData(user);
+                    if (userSnapshot.docs.length > 0) {
+                        const user = userSnapshot.docs[0].data();
+                        setUserData(user);
+                    }
+                } else {
+                    console.log('Something went wrong');
                 }
-                
             } catch (error) {
                 console.error('Error fetching firestore', error);
             }

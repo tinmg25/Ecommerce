@@ -8,7 +8,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { LanguageContext } from "../LanguageContext";
 
-const OrderItemCard = ({ item }) => {
+const OrderItemCard = ({ item, orderId }) => {
 
     const { translate } = useContext(LanguageContext);
 
@@ -40,11 +40,11 @@ const OrderItemCard = ({ item }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>{translate('order_id')} - {item.order_id}</Text>
-            <Text style={styles.label}>{translate('order_date')} - {formattedDate}</Text>
-            <Text style={styles.label}>{translate('total_amount')} - $ {item.total_amount}</Text>
+            {/* <Text style={styles.label}>{translate('order_id')} - {item.id}</Text> */}
+            <Text style={styles.label}>{translate('order_date')} - {item.order_date}</Text>
+            <Text style={styles.label}>{translate('total_amount')} - $ {item.total}</Text>
             <Text style={styles.label}>{translate('order_status')} - {statusText}</Text>
-            <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('OrderDetails',{ orders : item })}>
+            <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('OrderDetails',{ orderId: orderId, orders : item })}>
                 <Image source={require('../images/detail.png')} style={styles.detail_img}/>
             </TouchableOpacity>
         </View>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         borderRadius:10,
     },
     label: {
-        fontSize: 15,
+        fontSize: 18,
         color: '#000',
         fontWeight:'bold',
     },
