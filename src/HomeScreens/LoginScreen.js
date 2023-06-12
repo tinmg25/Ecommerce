@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     email_text: {
-        fontSize: 15,
+        fontSize: 18,
         color: "#000000",
         marginBottom: 10,
     },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     pwd_text: {
-        fontSize: 15,
+        fontSize: 18,
         color: "#000000",
         marginBottom: 10,
     },
@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     forgot_pwd: {
+        fontSize: 18,
         color: '#618CFB',
         textDecorationColor: "#618CFB",
         textDecorationLine: "underline",

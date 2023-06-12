@@ -15,6 +15,8 @@ import { LanguageContext } from "../LanguageContext";
 import { API_KEY } from "../common/APIKey";
 import { useNavigation } from '@react-navigation/native';
 import DropDownPicker from "react-native-dropdown-picker";
+import { db } from '../config/firebase-config';
+import { getDocs, collection, query, where } from "firebase/firestore";
 
 const SearchScreen = () => {
 
@@ -39,17 +41,38 @@ const SearchScreen = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const categoryResponse = await fetch(`${API_KEY}/api/category`);
-            const categoryResult = await categoryResponse.json();
-            setCategoryItems(categoryResult);
+        // const fetchData = async () => {
+        //     const categoryResponse = await fetch(`${API_KEY}/api/category`);
+        //     const categoryResult = await categoryResponse.json();
+        //     setCategoryItems(categoryResult);
 
-            const brandResponse = await fetch(`${API_KEY}/api/brand`);
-            const brandResult = await brandResponse.json();
-            setBrandItems(brandResult);
+        //     const brandResponse = await fetch(`${API_KEY}/api/brand`);
+        //     const brandResult = await brandResponse.json();
+        //     setBrandItems(brandResult);
+        // };
+
+        // fetchData();
+        const fetchFirebaseCategory = async () => {
+            const categoryLists = await getDocs(collection(db, 'category'));
+            const categoryData = categoryLists.docs.map(doc => ({
+                label: doc.data().category_name,
+                value: doc.id,
+            }));
+            setCategoryItems(categoryData);
         };
+        fetchFirebaseCategory();
+    }, []);
 
-        fetchData();
+    useEffect(() => {
+        const fetchFirebaseBrand = async () => {
+            const brandLists = await getDocs(collection(db, 'brand'));
+            const brandData = brandLists.docs.map(doc => ({
+                label: doc.data().brand_name,
+                value: doc.id
+            }));
+            setBrandItems(brandData);
+        }
+        fetchFirebaseBrand();
     }, []);
 
     const categoryItem = [
@@ -72,42 +95,62 @@ const SearchScreen = () => {
     const [brandId, setBrandId] = useState(null);
 
     useEffect(() => {
-        const searchProduct = async () => {
-            try {
+        // const searchProduct = async () => {
+        //     try {
 
-                if (categoryId !== null && brandId !== null) {
-                    const response = await fetch(`${API_KEY}/api/product/search?name=${name}&categoryId=${categoryId}&brandId=${brandId}`,
-                        {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-                    const data = await response.json();
-                    setProducts(data);
-                    setNoItem(data.length < 1);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        searchProduct();
-    }, [categoryId, brandId]);
+        //         if (categoryId !== null && brandId !== null) {
+        //             const response = await fetch(`${API_KEY}/api/product/search?name=${name}&categoryId=${categoryId}&brandId=${brandId}`,
+        //                 {
+        //                     method: 'GET',
+        //                     headers: {
+        //                         'Content-Type': 'application/json',
+        //                     },
+        //                 });
+        //             const data = await response.json();
+        //             setProducts(data);
+        //             setNoItem(data.length < 1);
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // };
+        // searchProduct();
 
+    }, [name]);
 
-    const searchProduct = () => {
-        if (categoryValue !== null) {
-            setCategoryId(categoryValue);
-        } else {
-            setCategoryId('');
+    const searchProduct = async () => {
+        // if (categoryValue !== null) {
+        //     setCategoryId(categoryValue);
+        // } else {
+        //     setCategoryId('');
+        // }
+
+        // if (brandValue !== null) {
+        //     setBrandId(brandValue);
+        // } else {
+        //     setBrandId('');
+        // }
+        try {
+            const productQuery = query(
+                collection(db, 'product_tbl')
+            );
+            const productSnapshot = await getDocs(productQuery);
+            const productsData = productSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            console.log('Products : ',productsData);
+            const filteredProducts = productsData.filter(product =>
+                product.product_name.toLowerCase().includes(name.toLowerCase())
+              );
+              console.log('Filtered Products:', filteredProducts);
+              setProducts(filteredProducts);
+              setNoItem(filteredProducts.length < 1);
+        } catch (error) {
+            console.log("Error Fetching Product", error);
         }
+    };
 
-        if (brandValue !== null) {
-            setBrandId(brandValue);
-        } else {
-            setBrandId('');
-        }
-    }
 
     const clearProduct = () => {
         setProducts([]);
@@ -122,7 +165,7 @@ const SearchScreen = () => {
         <View style={styles.search_item}>
             <TouchableOpacity onPress={() => navigateToProductDetails(item)}>
                 <Image
-                    source={item.image ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
+                    source={item.image_url ? { uri: `data:image/jpeg;base64,${item.image}` } : require('../images/no_image.png')}
                     style={styles.product_img}
                     resizeMode='cover'
                 />
@@ -161,7 +204,7 @@ const SearchScreen = () => {
                         onChangeText={text => setName(text)} />
                     <TouchableOpacity
                         style={styles.search_touch}
-                        onPress={() => searchProduct()}>
+                        onPress={searchProduct}>
                         <Image
                             style={styles.search_icon}
                             source={require('../images/search.png')} />
@@ -182,7 +225,7 @@ const SearchScreen = () => {
                         style={{ zIndex: 2, elevation: 2 }}
                         open={category}
                         value={categoryValue}
-                        items={categoryItem}
+                        items={categoryItems}
                         setOpen={setCategory}
                         setValue={setCategoryValue}
                         setItems={setCategoryItems}
@@ -195,7 +238,7 @@ const SearchScreen = () => {
                         style={{ zIndex: 2, elevation: 2 }}
                         open={brand}
                         value={brandValue}
-                        items={brandItem}
+                        items={brandItems}
                         setOpen={setBrand}
                         setValue={setBrandValue}
                         setItems={setBrandItems}
@@ -204,7 +247,7 @@ const SearchScreen = () => {
                 </View>
             </View>
             <View style={styles.result_list}>
-                { noItem ? (
+                {noItem ? (
                     <View style={styles.no_data}>
                         <Image style={styles.img} source={require('../images/empty_search.png')} />
                         <Text style={styles.no_search_text}>No Search Results</Text>
@@ -214,7 +257,7 @@ const SearchScreen = () => {
                         showsVerticalScrollIndicator={false}
                         data={products}
                         renderItem={renderProduct}
-                        keyExtractor={item => item.product_id} />
+                        keyExtractor={item => item.id} />
                 )}
             </View>
         </View>

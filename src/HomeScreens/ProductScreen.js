@@ -13,8 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, addItemToWishlist, removeItemFromWishlist } from '../redux/actions/Actions';
 import { LanguageContext } from '../LanguageContext';
 import { API_KEY } from '../common/APIKey';
-import { getDocs, collection, query, where, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, query, where, addDoc, updateDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductScreen = ({ navigation }) => {
@@ -33,8 +34,36 @@ const ProductScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('')
   const [userId, setUserId] = useState('');
+  const [wishlistItems, setWishlistItems] = useState([]);
 
   useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId('');
+      }
+    });
+
+    // Clean up the subscription
+    return () => unsubscribe();
+  }, []);
+
+  const checkIfItemInWishlist = async (itemId) => {
+    try {
+      const wishlistQuery = query(
+        collection(db, 'wishlist'),
+        where('id', '==', itemId),
+        where('user_id', '==', userId));
+      const wishlistSnapshot = await getDocs(wishlistQuery);
+
+      return !wishlistSnapshot.empty;
+    } catch (error) {
+      console.error('Error checking wishlist item', error);
+      return false;
+    }
+  };
     // fetchCategories();
     const fetchFirestoreData = async () => {
       try {
@@ -43,10 +72,8 @@ const ProductScreen = ({ navigation }) => {
         const userSnapshot = await getDocs(userQuery);
         const userDoc = userSnapshot.docs[0];
         if (userDoc) {
-          const userId = userDoc.id;
           const user = userDoc.data();
           const userName = user.name;
-          setUserId(userId);
           setUserName(userName);
         }
 
@@ -65,9 +92,20 @@ const ProductScreen = ({ navigation }) => {
               const productId = productDoc.id;
               const productData = productDoc.data();
 
+              const isInWishlist = await checkIfItemInWishlist(productId);
+
+              // Find the item in the wishlist items array
+              const wishlistItem = wishlistItems.find(item => item.id === productId);
+
+              // Update the isInWishlist property of the item
+              if (wishlistItem) {
+                wishlistItem.isInWishlist = isInWishlist;
+              }
+
               return {
                 id: productId,
                 ...productData,
+                isInWishlist: isInWishlist,
               };
             })
           );
@@ -81,15 +119,39 @@ const ProductScreen = ({ navigation }) => {
 
         setCategories(categoriesData);
         setLoading(false);
-
+        setWishlistItems(categoriesData);
       } catch (error) {
         console.error('Error fetching categories', error);
         setLoading(false);
       }
     }
 
-    fetchFirestoreData();
-  }, []);
+  useEffect(() => {
+    if (userId) {
+      fetchFirestoreData();
+
+      const unsubscribe = onSnapshot(
+        query(collection(db, 'wishlist'), where('user_id', '==', userId)),
+        (snapshot) => {
+          const updatedWishlistItems = wishlistItems.map((wishlistItem) => {
+            const snapshotItem = snapshot.docs.find((doc) => doc.data().id === wishlistItem.id);
+  
+            return {
+              ...wishlistItem,
+              isInWishlist: !!snapshotItem,
+            };
+          });
+  
+          setWishlistItems(updatedWishlistItems);
+        },
+        (error) => {
+          console.error('Error getting wishlist snapshot', error);
+        }
+      );
+  
+      return () => unsubscribe();
+    }
+  },[userId]);
 
   const fetchCategories = async () => {
     try {
@@ -130,35 +192,54 @@ const ProductScreen = ({ navigation }) => {
     } catch (error) {
       console.error('Error adding item', error);
     }
-  }
+  };
+
+  const addToWishlist = async (item) => {
+    try {
+      const wishlistQuery = query(collection(db, 'wishlist'), where('id', '==', item.id));
+      const wishlistSnapshot = await getDocs(wishlistQuery);
+
+      if (wishlistSnapshot.empty) {
+        await addDoc(collection(db, 'wishlist'), { ...item, quantity: 1, user_id: userId });
+      } else {
+        const wishlistDoc = wishlistSnapshot.docs[0];
+        const wishlistItemRef = doc(db, 'wishlist', wishlistDoc.id);
+        const wishlistItemData = wishlistDoc.data();
+        const updatedQuantity = wishlistItemData.quantity + 1;
+
+        await updateDoc(wishlistItemRef, { quantity: updatedQuantity });
+      }
+
+      const updatedCategories = categories.map((category) => {
+        const updatedProducts = category.products.map((product) => {
+          if (product.id === item.id) {
+            return {
+              ...product,
+              isInWishlist: true,
+            };
+          }
+          return product;
+        });
+
+        return {
+          ...category,
+          products: updatedProducts,
+        };
+      });
+
+      setCategories(updatedCategories);
+      // dispatch(removeItemFromWishlist(item.id));
+    } catch (error) {
+      console.error("Error fetching wishlist", error);
+      // dispatch(addItemToWishlist(item));
+    }
+  };
 
   const renderProduct = ({ item }) => {
 
     // const isItemInWishlist = items.reducers2.find(
     //   (wishlistItem) => wishlistItem.id === item.id
     // );
-
-    const toggleWishlist = async (item) => {
-      try {
-        const wishlistQuery = query(collection(db, 'wishlist'), where('id', '==', item.id));
-        const wishlistSnapshot = await getDocs(wishlistQuery);
-
-        if (wishlistSnapshot.empty) {
-          await addDoc(collection(db, 'wishlist'), { ...item, quantity: 1, user_id: userId });
-        } else {
-          const wishlistDoc = wishlistSnapshot.docs[0];
-          const wishlistItemRef = doc(db, 'wishlist', wishlistDoc.id);
-          const wishlistItemData = wishlistDoc.data();
-          const updatedQuantity = wishlistItemData.quantity + 1;
-
-          await updateDoc(wishlistItemRef, { quantity: updatedQuantity });
-        }
-        // dispatch(removeItemFromWishlist(item.id));
-      } catch (error) {
-        console.error("Error fetching wishlist", error);
-        // dispatch(addItemToWishlist(item));
-      }
-    };
 
     const navigateToProductDetails = product => {
       navigation.navigate('ProductDetails', { product });
@@ -190,7 +271,7 @@ const ProductScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.cart_btn}
             onPress={() => addtoCart(item)}>
-            <Text>{translate('add_to_cart')}</Text>
+            <Text style={styles.cart_txt}>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         </View>
         {/* <TouchableOpacity
@@ -205,11 +286,16 @@ const ProductScreen = ({ navigation }) => {
         </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.icon}
-          onPress={() => toggleWishlist(item)}>
-          <Image source={
-            require('../images/like.png')
-          }
-            style={styles.logo_img} />
+          onPress={() => addToWishlist(item)}>
+          {item.isInWishlist
+            ? <Image
+              source={require('../images/love.png')
+              }
+              style={styles.logo_img} />
+            : <Image
+              source={require('../images/like.png')
+              }
+              style={styles.logo_img} />}
         </TouchableOpacity>
       </View>
     );
@@ -237,7 +323,7 @@ const ProductScreen = ({ navigation }) => {
         style={[styles.img, { width: imageWidth }]}
         resizeMode='contain'
         source={require('../images/background_img.png')} />
-      <Text style={styles.user_name}>Welcome back {userName} !</Text>
+      <Text style={styles.user_name}>Welcome back {userName}</Text>
       <View style={styles.category_view}>
         {loading ? (
           <ActivityIndicator size="large" animating={true} />
@@ -329,7 +415,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 10,
     marginTop: 10,
-    fontFamily: 'NotoSerifJP-Black'
+    fontFamily: 'NotoSerifJP-Black',
+    color: '#000',
   },
   sub_view: {
     flexDirection: 'row',
@@ -341,13 +428,18 @@ const styles = StyleSheet.create({
   label2: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#000',
   },
   cart_btn: {
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 7,
-    fontFamily: 'NotoSerifJP-Black'
+    backgroundColor: '#04144F',
+    color: '#fff',
+  },
+  cart_txt: {
+    color: '#fff',
   },
   category_list: {
     marginVertical: 10,

@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     label: {
-        fontSize: 15,
+        fontSize: 18,
         color: "#000000",
         marginBottom: 5,
     },

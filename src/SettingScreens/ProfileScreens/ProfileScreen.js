@@ -46,6 +46,7 @@ const ProfileScreen = ({ navigation }) => {
 
                     if (userSnapshot.docs.length > 0) {
                         const user = userSnapshot.docs[0].data();
+                        console.log(user);
                         setUserData(user);
                     }
                 } else {

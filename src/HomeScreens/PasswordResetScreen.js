@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     email_text: {
-        fontSize: 15,
+        fontSize: 18,
         color: "#000000",
         marginBottom: 10,
     },

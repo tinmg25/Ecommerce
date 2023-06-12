@@ -144,7 +144,7 @@ const CardItemCard = ({
             onPress={() => {
               addItemToCart(item);
             }}>
-            <Text>{translate('add_to_cart')}</Text>
+            <Text style={styles.cart_txt}>{translate('add_to_cart')}</Text>
           </TouchableOpacity>
         ) : (
           // <TouchableOpacity
@@ -159,7 +159,7 @@ const CardItemCard = ({
             onPress={() => {
               removeItemFromCart(item);
             }}>
-            <Text>{translate('remove_item')}</Text>
+            <Text style={styles.cart_txt}>{translate('remove_item')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -251,6 +251,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 7,
+    backgroundColor: '#04144F',
+    color: '#fff',
+  },
+  cart_txt: {
+    color:'#fff',
   },
   icon: {
     width: 40,

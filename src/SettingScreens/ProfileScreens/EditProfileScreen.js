@@ -14,6 +14,8 @@ import theme from "../../config/theme";
 import { useNavigation } from '@react-navigation/native'
 import { LanguageContext } from "../../LanguageContext";
 import { API_KEY } from "../../common/APIKey";
+import { db } from "../../config/firebase-config";
+import { doc, updateDoc, query, where, getDocs, collection } from "firebase/firestore";
 
 const EditProfileScreen = ({ route }) => {
 
@@ -88,7 +90,8 @@ const EditProfileScreen = ({ route }) => {
 
         if (handleName(name) && handleEmail(email) &&
             handleAddress(address) && handlePhone(phone)) {
-            handleUpdate();
+            // handleUpdate();
+            handleFirestoreUserUpdate();
         }
 
     }
@@ -116,6 +119,25 @@ const EditProfileScreen = ({ route }) => {
             }
         } catch (e) {
             console.error('Something went wrong!', e);
+        }
+    };
+
+    const handleFirestoreUserUpdate = async () => {
+        try {
+            const userRef = query(collection(db, "user_mst"));
+            const userDataQuery = query(userRef, where("email", "==", userData.email));
+            const userSnapshot = await getDocs(userDataQuery);
+            const userUpdateRef = doc(db, 'user_mst', userSnapshot.docs[0].id);
+            await updateDoc(userUpdateRef, {
+                name: name,
+                email: email,
+                address: address,
+                phone: phone,
+            });
+            ToastAndroid.show('Update Successfully!', ToastAndroid.SHORT);
+            navigation.navigate('Settings');
+        } catch (e) {
+            console.error('Error Updating User data', e);
         }
     };
 

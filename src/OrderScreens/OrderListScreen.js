@@ -98,6 +98,7 @@ const OrderListScreen = () => {
             ) : (
                 <FlatList
                     data={orderList}
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => {
                         return (
                             <OrderItemCard
